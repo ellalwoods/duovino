@@ -9,7 +9,7 @@
   const overlay = document.getElementById('overlay');
 
   /* ---------- state ---------- */
-  const defaults = () => ({ days: {}, depth: 0, cellar: {}, flights: {}, settings: { hemi: 'N', sound: true } });
+  const defaults = () => ({ days: {}, units: {}, cellar: {}, flights: {}, settings: { hemi: 'N', sound: true } });
   const load = () => {
     try { const s = JSON.parse(localStorage.getItem(STORE)); return s ? { ...defaults(), ...s, settings: { ...defaults().settings, ...s.settings } } : defaults(); }
     catch { return defaults(); }
@@ -22,23 +22,35 @@
   const shuffle = a => { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
   const pick = a => a[Math.floor(Math.random() * a.length)];
   const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  const setWine = c => document.documentElement.style.setProperty('--wine', c);
 
-  // ?demo seeds a lived-in cellar so you can see the ageing mechanic straight away
+  /* ---------- syllabus ---------- */
+  const UNITS = [];
+  D.chapters.forEach((ch, ci) => ch.units.forEach((u, ui) => UNITS.push({ u, ch, ci, ui, n: UNITS.length })));
+  const UNIT = Object.fromEntries(UNITS.map(r => [r.u.id, r]));
+  const playable = r => !!r.u.lesson;
+  const done = r => !!S.units[r.u.id];
+  const unlocked = r => r.n === 0 || done(UNITS[r.n - 1]);
+  const unitState = r => done(r) ? 'done' : !playable(r) ? 'soon' : unlocked(r) ? 'current' : 'locked';
+  const nextUnit = () => UNITS.find(r => !done(r));
+  const doneCount = () => UNITS.filter(done).length;
+  const label = r => `${r.ci + 1}.${r.ui + 1}`;
+  const minutes = u => Math.max(3, Math.round(u.lesson.length * 0.4 + u.questions.length * 0.5));
+
+  // ?demo seeds a lived-in vineyard so you can see progress and the ageing mechanic straight away
   if (/[?&]demo\b/.test(location.search) && !S.demoSeeded) {
     const now = Date.now();
     for (let i = 1; i <= 9; i++) if (i !== 3 && i !== 6) S.days[key(new Date(now - i * DAY))] = 1;
-    S.depth = 64;
-    const ids = Object.keys(D.concepts);
-    ids.slice(0, 16).forEach((id, n) => {
+    S.units = { '1-1': { best: 83, plays: 1 }, '1-2': { best: 71, plays: 2 } };
+    const ids = [...new Set([...UNITS[0].u.questions, ...UNITS[1].u.questions].map(q => q.concept)), 'chablis', 'sancerre', 'nebbiolo', 'icewine'];
+    ids.forEach((id, n) => {
       const stage = n % 6;
-      const born = now - (40 + n * 9) * DAY;
       let due = now + INTERVALS[stage] * DAY;
-      if (n % 4 === 1) due = now - DAY;            // ready to drink
-      if (n === 6 || n === 13) due = now - 30 * DAY; // corked
-      S.cellar[id] = { stage, born, due, reviews: stage };
+      if (n % 4 === 1) due = now - DAY;
+      if (n === 6) due = now - 30 * DAY;
+      S.cellar[id] = { stage, born: now - (20 + n * 5) * DAY, due, reviews: stage };
     });
     S.flights.loire = { best: 86, plays: 2 };
-    S.flights.barolo = { best: 57, plays: 1 };
     S.demoSeeded = true; save();
   }
 
@@ -111,16 +123,6 @@
     return 1 + Math.round(((d - w1) / DAY - 3 + ((w1.getDay() + 6) % 7)) / 7);
   };
   const VINTAGE = ['Frost-hit', 'Difficult', 'Mixed', 'Good', 'Very good', 'Excellent', 'Excellent', 'Legendary'];
-
-  /* ---------- soil ---------- */
-  const STRATUM_PX = 110;
-  const stratumIndex = depth => { let i = 0; D.strata.forEach((s, n) => { if (depth >= s.at) i = n; }); return i; };
-  const depthPx = depth => {
-    const i = stratumIndex(depth), s = D.strata[i], next = D.strata[i + 1];
-    const frac = next ? (depth - s.at) / (next.at - s.at) : Math.min(1, (depth - s.at) / 60);
-    return (i + Math.min(frac, 0.95)) * STRATUM_PX + 8;
-  };
-
   /* ---------- cellar ---------- */
   const bottleState = e => {
     const now = Date.now();
@@ -234,41 +236,28 @@
     return `<svg class="wx frost" viewBox="0 0 80 80"><g stroke="#e9f2f7" stroke-width="2" stroke-linecap="round">${[0, 60, 120].map(r => `<g transform="rotate(${r} 40 40)"><line x1="40" y1="14" x2="40" y2="66"/><path d="M34 20 l6 6 6-6 M34 60 l6-6 6 6" fill="none"/></g>`).join('')}</g></svg>`;
   }
 
-  function rootsSVG(depth) {
-    const h = depthPx(depth), w = 300;
-    let x = 150, y = 0, d = `M${x} 0`, branches = '';
-    let seed = 7;
-    const rnd = () => (seed = (seed * 9301 + 49297) % 233280) / 233280;
-    while (y < h) {
-      const ny = Math.min(h, y + 26), nx = 150 + (rnd() - 0.5) * 34;
-      d += ` Q${x + (rnd() - 0.5) * 30} ${y + 13} ${nx} ${ny}`;
-      if (ny < h - 10) {
-        const dir = rnd() > 0.5 ? 1 : -1, len = 30 + rnd() * 50;
-        branches += `<path d="M${nx} ${ny} q${dir * len * 0.5} ${8 + rnd() * 10} ${dir * len} ${18 + rnd() * 20}" />`;
-      }
-      x = nx; y = ny;
-    }
-    return `<svg class="roots" viewBox="0 0 ${w} ${D.strata.length * STRATUM_PX}" preserveAspectRatio="xMidYMin meet" style="height:${D.strata.length * STRATUM_PX}px" aria-hidden="true">
-      <g fill="none" stroke="#e9d9b8" stroke-linecap="round" filter="url(#wobble)">
-        <path class="root-main" d="${d}" stroke-width="3.2" pathLength="1"/>
-        <g class="root-branches" stroke-width="1.3" opacity=".8">${branches}</g>
-      </g>
-      <circle cx="${x}" cy="${h}" r="4" fill="#f4e7c9" class="root-tip"/>
-    </svg>`;
+
+  /* ---------- tabs ---------- */
+  const TAB_ICONS = {
+    today: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2M5.3 5.3l1.6 1.6M17.1 17.1l1.6 1.6M5.3 18.7l1.6-1.6M17.1 6.9l1.6-1.6"/></svg>',
+    roots: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M12 9V3.5M12 5.5c-1.8-2-4.2-1.8-5-1 1 .9 3 1.4 5 1M12 5.5c1.8-2 4.2-1.8 5-1-1 .9-3 1.4-5 1"/><path d="M3 9h18"/><path d="M12 9c0 4-1 6-3.5 8.5M12 9c0 4 1.2 6.5 3.8 9M12 12.5c-1.6.4-3.5.1-5.5-1.2M12 14c2 0 3.6-.8 5.5-2.3M8.5 17.5l-1.5 3M15.8 18l.8 2.6"/></svg>',
+    cellar: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"><path d="M10.2 2.5h3.6v4.8c0 1.6 2.7 2.4 2.7 5.2v8.2c0 .5-.4.8-.8.8H8.3c-.4 0-.8-.3-.8-.8v-8.2c0-2.8 2.7-3.6 2.7-5.2z"/><path d="M7.5 13.5h9v4.5h-9z"/></svg>',
+  };
+  function tabbar(active) {
+    const ready = readyCount();
+    return `<nav class="tabbar" aria-label="Main">${[['today', 'Today'], ['roots', 'Roots'], ['cellar', 'Cellar']].map(([id, l]) =>
+      `<a href="#${id}" class="tab ${active === id ? 'on' : ''}" ${active === id ? 'aria-current="page"' : ''}>${TAB_ICONS[id]}<span>${l}</span>${id === 'cellar' && ready ? `<i class="badge-dot">${ready}</i>` : ''}</a>`).join('')}</nav>`;
   }
 
-  /* ---------- home ---------- */
-  function home() {
+  /* ---------- TODAY tab ---------- */
+  function today() {
     const se = season(), w = weather(), wk = week();
     const active = wk.filter(d => S.days[d.k]).length;
+    const nx = nextUnit(), ready = readyCount();
     const flights = D.flights.slice().sort((a, b) => (b.seasonal?.includes(se.stage) ? 1 : 0) - (a.seasonal?.includes(se.stage) ? 1 : 0));
-    const si = stratumIndex(S.depth);
-    const bottles = Object.entries(S.cellar).sort((a, b) => a[1].born - b[1].born);
-    const ready = readyCount();
-    document.documentElement.style.setProperty('--wine', '#7b2a2a');
-
-    app.innerHTML = `
-    <div class="home">
+    const readyBottles = Object.entries(S.cellar).filter(([, e]) => bottleState(e) !== 'resting').slice(0, 3);
+    setWine('#7b2a2a');
+    app.innerHTML = `<div class="tabview today">
       <section class="sky sky-${se.stage} wx-${w}">
         <header class="top">
           <h1 class="wordmark">Duo<em>vino</em></h1>
@@ -283,103 +272,297 @@
           ${weatherSVG(w)}
         </div>
         <div class="vintage">
-          <div class="vintage-head">
-            <span class="mono">VINTAGE · WK ${weekNo()}</span>
-            <span class="vintage-rating">${VINTAGE[active]}</span>
-          </div>
+          <div class="vintage-head"><span class="mono">VINTAGE · WK ${weekNo()}</span><span class="vintage-rating">${VINTAGE[active]}</span></div>
           <div class="week">${wk.map(d => `<span class="day ${S.days[d.k] ? 'on' : ''} ${d.future ? 'future' : ''} ${d.today ? 'today' : ''}"></span>`).join('')}</div>
           <p class="wx-text">${WEATHER_TEXT[w]}</p>
         </div>
         ${vineSVG(se.stage)}
       </section>
-
-      <section class="vine-zone">
-        <p class="zone-label mono">The Vine · today's flights</p>
+      <section class="today-body">
+        ${nextCard(nx)}
+        ${chapterStrip(nx)}
+        ${ready ? `<button class="cellar-nudge" data-act="go" data-h="#cellar">
+          <span class="cn-bottles">${readyBottles.map(([id, e]) => bottleSVG(id, e)).join('')}</span>
+          <span class="cn-text"><strong>${ready} bottle${ready === 1 ? '' : 's'} ready to taste</strong><span>Two minutes in the cellar keeps what you've learned from fading.</span></span>
+        </button>` : ''}
+        <p class="zone-label mono">Tasting specials</p>
         ${flights.map(f => {
           const rec = S.flights[f.id], inSeason = f.seasonal?.includes(se.stage);
-          return `<button class="flight-card ${inSeason ? 'in-season' : ''}" data-act="flight" data-id="${f.id}" style="--fw:${f.wine}">
-            <span class="fc-ring">${ring(rec ? rec.best : 0, f.wine, 58, rec ? rec.best + '%' : '')}</span>
-            <span class="fc-text">
-              ${inSeason ? '<span class="badge">In season</span>' : ''}
-              <strong>${f.title}</strong>
-              <span>${f.sub}</span>
-              <span class="mono fc-meta">${f.questions.length} glasses${rec ? ` · poured ${rec.plays}×` : ''}</span>
-            </span>
+          return `<button class="flight-card ${inSeason ? 'in-season' : ''}" data-act="go" data-h="#flight-${f.id}" style="--fw:${f.wine}">
+            <span class="fc-ring">${ring(rec ? rec.best : 0, f.wine, 52, rec ? rec.best + '%' : '')}</span>
+            <span class="fc-text">${inSeason ? '<span class="badge">In season</span>' : ''}<strong>${f.title}</strong><span>${f.sub}</span></span>
             <span class="swatch"></span>
           </button>`;
         }).join('')}
       </section>
+    </div>${tabbar('today')}`;
+  }
 
-      <section class="soil">
-        <div class="soil-head">
-          <p class="zone-label mono">The Soil · your roots</p>
-          <p class="depth"><span class="mono">ROOT DEPTH</span><strong>${(S.depth / 10).toFixed(1)} m</strong><span class="mono">in ${D.strata[si].name.toLowerCase()}</span></p>
-        </div>
-        <div class="strata">
-          ${rootsSVG(S.depth)}
-          ${D.strata.map((s, i) => `<div class="stratum s${i} ${i <= si ? 'reached' : 'locked'} ${i === si ? 'current' : ''}" style="--sc:${s.colour};height:${STRATUM_PX}px">
-            <div class="st-text">
-              <span class="mono st-name">${i <= si ? s.name : '? ? ?'}</span>
-              <span class="st-fact">${i <= si ? s.fact : `Reach ${(s.at / 10).toFixed(1)} m to discover this layer`}</span>
-            </div>
-          </div>`).join('')}
-        </div>
-      </section>
+  function nextCard(r) {
+    if (!r) return `<div class="next-card soon"><span class="mono nc-eyebrow">Grand Cru</span><span class="nc-title">You've finished the syllabus.</span></div>`;
+    const st = unitState(r), u = r.u, stratum = D.strata[r.ci].name;
+    if (st !== 'current') return `<button class="next-card soon" data-act="go" data-h="#roots" style="--cw:${r.ch.wine}">
+      <span class="mono nc-eyebrow">Coming soon · Chapter ${r.ci + 1} · ${stratum}</span>
+      <span class="nc-title"><em>${label(r)}</em> ${u.title}</span>
+      <span class="nc-sub">This unit is still being poured. In the meantime, try a tasting special or rescue a few bottles in your cellar.</span>
+    </button>`;
+    return `<button class="next-card" data-act="go" data-h="#unit-${u.id}" style="--cw:${r.ch.wine}">
+      <span class="mono nc-eyebrow">${doneCount() ? 'Up next' : 'Start here'} · Chapter ${r.ci + 1} · ${stratum}</span>
+      <span class="nc-title"><em>${label(r)}</em> ${u.title}</span>
+      <span class="nc-sub">${u.sub}</span>
+      <span class="mono nc-meta">Lesson ${u.lesson.length} cards · Tasting ${u.questions.length} questions · ~${minutes(u)} min</span>
+      <span class="nc-cta">Start lesson <span aria-hidden="true">→</span></span>
+    </button>`;
+  }
 
-      <section class="cellar-zone">
-        <p class="zone-label mono">The Cellar · what you know</p>
-        <button class="cellar-preview" data-act="cellar">
-          <div class="rack">${bottles.length ? bottles.slice(-8).map(([id, e]) => bottleSVG(id, e)).join('') : '<p class="empty">Empty racks. Every flight lays down new bottles.</p>'}</div>
-          <div class="cellar-meta">
-            <span><strong>${bottles.length}</strong> bottles laid down</span>
-            ${ready ? `<span class="ready-pill">${ready} ready to taste</span>` : `<span class="mono">all resting</span>`}
-          </div>
-        </button>
-      </section>
-      <footer class="foot mono">Drink less, taste more · Duovino</footer>
-    </div>`;
-    requestAnimationFrame(() => app.querySelector('.root-main')?.classList.add('grow'));
+  function chapterStrip(r) {
+    const ref = r || UNITS[UNITS.length - 1], us = UNITS.filter(x => x.ci === ref.ci);
+    return `<button class="ch-strip" data-act="go" data-h="#roots">
+      <span class="mono">Chapter ${ref.ci + 1} · ${ref.ch.title}</span>
+      <span class="ch-dots">${us.map(x => `<i class="${unitState(x)}"></i>`).join('')}</span>
+      <span class="mono">${us.filter(done).length}/${us.length}</span>
+    </button>`;
+  }
+
+  /* ---------- ROOTS tab: the syllabus as soil ---------- */
+  const OFF = [-46, 34, -18, 48, -40, 16, -8, 40];
+  const ROW = 96;
+  function roots(scroll = true) {
+    setWine('#7b2a2a');
+    const deepest = UNITS.filter(done).pop();
+    const chaptersHTML = D.chapters.map((ch, ci) => {
+      const st = D.strata[ci], rs = UNITS.filter(r => r.ci === ci);
+      const pts = rs.map((r, i) => ({ x: 150 + OFF[i % OFF.length], y: ROW * i + ROW / 2 }));
+      pts.push({ x: 150, y: ROW * rs.length + ROW / 2 });
+      const H = ROW * (rs.length + 1);
+      const pathThrough = arr => arr.reduce((d, p, i) => i ? `${d} Q${(arr[i - 1].x + p.x) / 2 + (i % 2 ? 22 : -22)} ${(arr[i - 1].y + p.y) / 2} ${p.x} ${p.y}` : `M150 0 Q150 ${p.y / 2} ${p.x} ${p.y}`, '');
+      const reached = rs.filter(r => ['done', 'current'].includes(unitState(r))).length;
+      const fullyDone = rs.every(done);
+      const solid = fullyDone ? pathThrough(pts) + ` L150 ${H}` : reached ? pathThrough(pts.slice(0, reached)) : '';
+      const rows = rs.map((r, i) => {
+        const s = unitState(r), off = OFF[i % OFF.length], rec = S.units[r.u.id];
+        const inner = s === 'done' ? `${ring(rec.best, '#f4e7c9', 64)}<span class="nb-num">${label(r)}</span>`
+          : s === 'current' ? `<span class="nb-num">${label(r)}</span>` : s === 'soon' ? '<span class="nb-num">···</span>' : `<span class="nb-num">${label(r)}</span>`;
+        const lab = off < 0 ? `left:calc(50% + ${off + 40}px)` : `right:calc(50% - ${off - 40}px)`;
+        return `<li class="node ${s}" style="top:${ROW * i}px">
+          <button class="node-btn" style="left:calc(50% + ${off}px)" data-act="preview" data-id="${r.u.id}" aria-label="${label(r)} ${esc(r.u.title)} (${s})">${inner}</button>
+          <div class="node-label ${off < 0 ? 'right' : 'left'}" style="${lab}"><span class="mono">${s === 'current' ? 'You are here' : s === 'soon' ? 'Being poured' : label(r)}</span><strong>${r.u.title}</strong><span>${r.u.sub}</span></div>
+        </li>`;
+      }).join('');
+      return `<section class="ch-band ch${ci} ${rs.some(r => unitState(r) !== 'locked' && unitState(r) !== 'soon') || fullyDone ? 'open' : 'closed'}" style="--sc:${st.colour};--cw:${ch.wine}">
+        <header class="ch-head">
+          <span class="mono">Chapter ${ci + 1} · ${st.name}</span>
+          <h2>${ch.title}</h2>
+          <p>${ch.blurb}</p>
+        </header>
+        <div class="path" style="height:${H}px">
+          <svg class="path-svg" viewBox="0 0 300 ${H}" width="300" height="${H}" aria-hidden="true">
+            <path class="p-dash" d="${pathThrough(pts)} L150 ${H}"/>
+            ${solid ? `<path class="p-solid" d="${solid}" filter="url(#wobble)"/>` : ''}
+          </svg>
+          <ol>${rows}
+            <li class="node checkpoint ${fullyDone ? 'current' : 'locked'}" style="top:${ROW * rs.length}px">
+              <button class="node-btn" style="left:50%" data-act="checkpoint" aria-label="Checkpoint tasting"><span class="nb-num">✦</span></button>
+              <div class="node-label right" style="left:calc(50% + 40px)"><span class="mono">Checkpoint</span><strong>The ${st.name} Tasting</strong><span>Break through to the next stratum</span></div>
+            </li>
+          </ol>
+        </div>
+        <p class="soil-fact"><span class="mono">About ${st.name.toLowerCase()}</span>${st.fact}</p>
+      </section>`;
+    }).join('');
+    app.innerHTML = `<div class="tabview roots-tab">
+      <header class="roots-head">
+        <p class="eyebrow">Your roots · the syllabus</p>
+        <h1>Six strata, ${UNITS.length} units</h1>
+        <p>Each chapter sits on the one before it. Every unit is a short lesson followed by a tasting. Your root grows down through the soil as you finish them.</p>
+        <div class="roots-stats mono"><span><strong>${doneCount()}</strong> units done</span><span>Deepest: <strong>${deepest ? label(deepest) : '—'}</strong></span><span>In: <strong>${D.strata[(nextUnit() || UNITS[UNITS.length - 1]).ci].name}</strong></span></div>
+      </header>
+      <div class="vine-top">${vineSVG(season().stage)}</div>
+      ${chaptersHTML}
+      <p class="foot mono">Bedrock · more to come</p>
+    </div>${tabbar('roots')}`;
+    if (scroll) requestAnimationFrame(() => {
+      const cur = app.querySelector('.node.current:not(.checkpoint)');
+      if (cur && doneCount()) cur.scrollIntoView({ block: 'center' });
+    });
+  }
+
+  function preview(id) {
+    const r = UNIT[id], s = unitState(r), rec = S.units[id], u = r.u;
+    const prev = UNITS[r.n - 1];
+    overlay.innerHTML = `<div class="modal" role="dialog" aria-modal="true"><div class="modal-card preview" style="--fw:${r.ch.wine}">
+      <button class="icon-btn close" data-act="close" aria-label="Close">${closeIcon()}</button>
+      <p class="eyebrow">Unit ${label(r)} · Chapter ${r.ci + 1} · ${D.strata[r.ci].name}</p>
+      <h2>${u.title}</h2>
+      <p class="review-q">${u.sub}</p>
+      ${playable(r) ? `<ol class="steps">
+        <li><span class="mono">1 · The Pour</span>A short lesson: ${u.lesson.length} cards</li>
+        <li><span class="mono">2 · The Taste</span>${u.questions.length} questions on what you just learned</li>
+        <li><span class="mono">3 · From your cellar</span>One bottle from an earlier unit, to keep it fresh</li>
+      </ol>` : ''}
+      ${rec ? `<p class="mono resting-note">Best ${rec.best}% · poured ${rec.plays}×</p>` : ''}
+      ${s === 'current' || s === 'done' ? `<button class="primary" data-act="go" data-h="#unit-${id}">${s === 'done' ? 'Pour it again' : 'Start lesson'}</button>`
+        : s === 'locked' ? `<p class="mono resting-note">Locked · finish ${label(prev)} ${prev.u.title} first</p>`
+        : `<p class="mono resting-note">Still being poured · this unit is planned but not written yet</p>`}
+    </div></div>`;
+    overlay.querySelector('.modal').addEventListener('click', ev => { if (ev.target.classList.contains('modal')) closeModal(); });
   }
 
   const gearIcon = () => `<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="3.2"/><path d="M12 2.5v3M12 18.5v3M2.5 12h3M18.5 12h3M5.3 5.3l2.1 2.1M16.6 16.6l2.1 2.1M5.3 18.7l2.1-2.1M16.6 7.4l2.1-2.1"/></svg>`;
   const closeIcon = () => `<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>`;
 
-  /* ---------- flight player ---------- */
+  /* ---------- player: unit (lesson → tasting) or special flight ---------- */
   let P = null;
+  const scoredCount = () => P.questions.filter(q => q.type !== 'recall').length;
+  function recallPick(exclude) {
+    const es = Object.entries(S.cellar).filter(([id]) => !exclude.has(id));
+    if (!es.length) return null;
+    const due = es.filter(([, e]) => bottleState(e) !== 'resting');
+    return pick(due.length ? due : es)[0];
+  }
+  function startUnit(id) {
+    const r = UNIT[id];
+    if (!r || !playable(r) || !(unlocked(r) || done(r))) { location.hash = '#roots'; return; }
+    const qs = r.u.questions.slice();
+    const rc = recallPick(new Set(qs.map(q => q.concept)));
+    if (rc) qs.splice(qs.length - 1, 0, { type: 'recall', concept: rc });
+    P = { kind: 'unit', r, id, title: r.u.title, tag: `Unit ${label(r)}`, wine: r.ch.wine, lesson: r.u.lesson, questions: qs, card: 0, i: 0, correct: 0, results: [], phase: 'lesson' };
+    setWine(P.wine);
+    renderLesson();
+  }
   function startFlight(id) {
     const f = D.flights.find(x => x.id === id);
-    if (!f) { location.hash = ''; return; }
-    P = { f, i: 0, correct: 0, gain: 0, results: [], locked: false };
-    document.documentElement.style.setProperty('--wine', f.wine);
+    if (!f) { location.hash = '#today'; return; }
+    P = { kind: 'flight', f, id, title: f.title, tag: 'Tasting special', wine: f.wine, questions: f.questions, i: 0, correct: 0, results: [], phase: 'practice' };
+    setWine(P.wine);
     renderQ();
   }
 
+  function glassFill(frac, colour) {
+    const top = 62 - 46 * frac;
+    return `<svg class="mini-glass" viewBox="0 0 60 104" width="30" height="52" aria-hidden="true">
+      <defs><clipPath id="mg"><path d="M12 6C10 40 16 62 30 64C44 62 50 40 48 6Z"/></clipPath></defs>
+      <rect clip-path="url(#mg)" x="0" y="${top}" width="60" height="80" fill="${colour}"/>
+      <path d="M12 6C10 40 16 62 30 64C44 62 50 40 48 6" fill="none" stroke="currentColor" stroke-width="2.4"/>
+      <path d="M30 64V94M18 99Q30 93 42 99" stroke="currentColor" stroke-width="2.4" fill="none" stroke-linecap="round"/>
+    </svg>`;
+  }
+
+  const ART = {
+    grape: () => `<svg class="art" viewBox="0 0 260 150" aria-hidden="true">
+      <circle cx="90" cy="78" r="58" fill="#4f1637"/><circle cx="90" cy="78" r="50" fill="#d9df9f"/>
+      <circle cx="90" cy="78" r="50" fill="url(#pulpg)"/>
+      <defs><radialGradient id="pulpg" cx=".4" cy=".35"><stop offset="0" stop-color="#f3f1c9"/><stop offset="1" stop-color="#c7d08a"/></radialGradient></defs>
+      <ellipse cx="78" cy="88" rx="7" ry="11" fill="#8a5a2c" transform="rotate(-20 78 88)"/><ellipse cx="102" cy="86" rx="7" ry="11" fill="#8a5a2c" transform="rotate(20 102 86)"/>
+      <path d="M90 20 q4 -12 14 -14" stroke="#5a3b28" stroke-width="3" fill="none"/>
+      <g font-family="DM Mono, monospace" font-size="11" fill="currentColor" letter-spacing="1">
+        <path d="M146 40 H172" stroke="currentColor"/><text x="176" y="44">SKIN</text>
+        <path d="M120 70 H172" stroke="currentColor"/><text x="176" y="74">PULP</text>
+        <path d="M108 92 L130 108 H172" stroke="currentColor" fill="none"/><text x="176" y="112">SEEDS</text>
+      </g></svg>`,
+    colours: () => {
+      const sw = (cols) => cols.map(([c, n], i) => `<g transform="translate(${i * 62} 0)"><circle cx="26" cy="22" r="20" fill="${c}"/><text x="26" y="58" text-anchor="middle">${n}</text></g>`).join('');
+      return `<svg class="art" viewBox="0 0 250 150" aria-hidden="true"><g font-family="DM Mono, monospace" font-size="9" fill="currentColor" letter-spacing=".5">
+        <g transform="translate(30 4)">${sw([[D.C.lemon, 'LEMON'], [D.C.gold, 'GOLD'], [D.C.amber, 'AMBER']])}</g>
+        <g transform="translate(0 76)">${sw([[D.C.purple, 'PURPLE'], [D.C.ruby, 'RUBY'], [D.C.garnet, 'GARNET'], [D.C.tawny, 'TAWNY']])}</g>
+        <path d="M30 70 H230" stroke="currentColor" stroke-dasharray="2 4" opacity=".4"/>
+      </g></svg>`;
+    },
+  };
+
+  function cardHTML(c) {
+    let h = '';
+    if (c.art) h += ART[c.art]();
+    if (c.big) h += `<p class="big">${c.big}</p>`;
+    h += `<h2>${c.title}</h2>`;
+    if (c.body) h += `<p class="lbody">${c.body}</p>`;
+    if (c.kind === 'try') h += `<div class="try"><p class="mono">Try it</p><p class="try-prompt">${c.prompt}</p><button class="reveal-btn" data-act="tryreveal">Tap to find out</button><p class="try-answer" hidden>${c.reveal}</p></div>`;
+    if (c.kind === 'compare') h += `<div class="compare">${c.cols.map(col => `<div class="col"><h3>${col.h}</h3><ul>${col.items.map(i => `<li>${i}</li>`).join('')}</ul></div>`).join('')}</div>`;
+    if (c.kind === 'scale') h += `<div class="scale"><div class="scale-bar"></div>${c.marks.map((m, i) => `<div class="mark ${i % 2 ? 'below' : 'above'}" style="left:${m.at * 100}%;animation-delay:${0.2 + i * 0.15}s"><span>${m.t}</span></div>`).join('')}<div class="scale-ends mono"><span>${c.low}</span><span>${c.high}</span></div></div>`;
+    if (c.kind === 'layers') h += `<div class="layers">${c.rows.map((r, i) => `<div class="layer l${i}" style="animation-delay:${i * 0.12}s"><span class="mono">${r.h}</span><p>${r.t}</p></div>`).join('')}</div>`;
+    return h;
+  }
+
+  function renderLesson(dir = 1) {
+    const c = P.lesson[P.card], n = P.lesson.length, last = P.card === n - 1;
+    P.phase = 'lesson';
+    app.innerHTML = `<div class="player lesson-view" style="--fw:${P.wine}"><div class="tint"></div>
+      <header class="p-top">
+        <button class="icon-btn" data-act="quit" aria-label="Leave">${closeIcon()}</button>
+        <div class="p-title"><span class="mono">The Pour · ${P.tag}</span><strong>${P.title}</strong></div>
+        ${glassFill((P.card + 1) / n, P.wine)}
+      </header>
+      <div class="lstage"><article class="lcard k-${c.kind} ${dir < 0 ? 'back' : ''}">${cardHTML(c)}</article></div>
+      <div class="lnav">
+        <button class="ghost-btn" data-act="lprev" ${P.card ? '' : 'disabled'}>Back</button>
+        <div class="ldots">${P.lesson.map((_, i) => `<i class="${i <= P.card ? 'on' : ''}"></i>`).join('')}</div>
+        <button class="primary" data-act="lnext">${last ? 'Now taste it' : 'Next'}</button>
+      </div>
+    </div>`;
+    const stage = app.querySelector('.lstage');
+    let x0 = null;
+    stage.addEventListener('pointerdown', e => { x0 = e.clientX; });
+    stage.addEventListener('pointerup', e => {
+      if (x0 === null) return;
+      const dx = e.clientX - x0; x0 = null;
+      if (dx < -50) lessonStep(1); else if (dx > 50 && P.card) lessonStep(-1);
+    });
+  }
+  function lessonStep(d) {
+    if (d > 0 && P.card === P.lesson.length - 1) return interlude();
+    P.card = Math.max(0, P.card + d);
+    buzz(5);
+    renderLesson(d);
+  }
+  function interlude() {
+    const n = scoredCount(), rc = P.questions.some(q => q.type === 'recall');
+    P.phase = 'interlude';
+    clink();
+    app.innerHTML = `<div class="player interlude" style="--fw:${P.wine}"><div class="tint"></div>
+      <header class="p-top">
+        <button class="icon-btn" data-act="quit" aria-label="Leave">${closeIcon()}</button>
+        <div class="p-title"><span class="mono">${P.tag}</span><strong>${P.title}</strong></div>
+        ${glassFill(1, P.wine)}
+      </header>
+      <div class="il-body">
+        ${BOTTY}
+        <p class="eyebrow">Lesson poured</p>
+        <h2>Now, taste it.</h2>
+        <p>${n} questions on what you just learned${rc ? ', plus one bottle from your cellar to keep it fresh' : ''}. You'll sort, place things on scales, put things in order and pick answers.</p>
+        <button class="primary" data-act="practice">Start tasting</button>
+        <button class="link-btn" data-act="relesson">Read the lesson again</button>
+      </div>
+    </div>`;
+  }
+
   function playerShell(inner) {
-    const pct = (P.i / P.f.questions.length) * 100;
-    return `<div class="player" style="--fw:${P.f.wine}">
+    const pct = (P.i / P.questions.length) * 100;
+    return `<div class="player" style="--fw:${P.wine}">
       <div class="tint"></div>
       <header class="p-top">
-        <button class="icon-btn" data-act="quit" aria-label="Leave flight">${closeIcon()}</button>
-        <div class="p-title"><span class="mono">GLASS ${P.i + 1} OF ${P.f.questions.length}</span><strong>${P.f.title}</strong></div>
-        ${ring(pct, P.f.wine, 44)}
+        <button class="icon-btn" data-act="quit" aria-label="Leave">${closeIcon()}</button>
+        <div class="p-title"><span class="mono">${P.kind === 'unit' ? 'The Taste' : P.tag} · ${P.i + 1} of ${P.questions.length}</span><strong>${P.title}</strong></div>
+        ${ring(pct, P.wine, 44)}
       </header>
       <div class="q-body">${inner}</div>
     </div>`;
   }
 
+  const TYPE_LABEL = { choice: 'Question', blind: 'Blind · mystery glass', label: 'Label decoder', order: 'Put in order', sort: 'Sort it', slider: 'Place it on the scale', recall: 'From your cellar' };
   function renderQ() {
-    const q = P.f.questions[P.i];
-    P.locked = false;
-    const typeLabel = { choice: 'Question', blind: 'Blind · mystery glass', label: 'Label decoder', order: 'Put in order' }[q.type];
-    let body = `<p class="eyebrow">${typeLabel}</p><h2 class="q">${q.q}</h2>`;
-    if (q.type === 'choice') {
-      P.order = shuffle(q.options.map((_, i) => i));
-      body += `<div class="options">${P.order.map(i => `<button class="opt" data-act="choose" data-i="${i}">${q.options[i]}</button>`).join('')}</div>`;
-    }
+    const q = P.questions[P.i];
+    P.locked = false; P.phase = 'practice';
+    const title = q.type === 'recall' ? D.concepts[q.concept].q : q.q;
+    let body = `<p class="eyebrow">${TYPE_LABEL[q.type]}</p><h2 class="q">${title}</h2>`;
+    if (q.type === 'choice') body += `<div class="options">${shuffle(q.options.map((_, i) => i)).map(i => `<button class="opt" data-act="choose" data-i="${i}">${q.options[i]}</button>`).join('')}</div>`;
     if (q.type === 'blind') body += blindUI(q);
     if (q.type === 'label') body += labelUI(q);
     if (q.type === 'order') { P.seq = []; P.pool = shuffle(q.items); body += orderUI(q); }
+    if (q.type === 'sort') { P.sort = { items: shuffle(q.items), k: 0, placed: [] }; body += sortUI(q); }
+    if (q.type === 'slider') body += sliderUI(q);
+    if (q.type === 'recall') body += recallUI(q);
     app.innerHTML = playerShell(body);
+    window.scrollTo(0, 0);
     if (q.type === 'blind') initSwirl(q);
   }
 
@@ -403,11 +586,10 @@
       </div>
       <ol class="clues">${q.clues.map((c, i) => `<li class="clue ${i < 1 ? 'shown' : ''}" data-c="${i}"><span class="mono">${c.stage}</span><p>${i < 1 ? c.text : 'Swirl the glass to reveal'}</p></li>`).join('')}</ol>
       <button class="link-btn" data-act="reveal">Can't swirl? Tap to reveal the next clue</button>
-      <p class="blind-score mono">Guess now for <strong class="pts">+${blindPts(1)}</strong> root depth</p>
+      <p class="blind-score mono">Clues so far: <strong class="pts">1 of ${q.clues.length}</strong> · the earlier you call it, the better</p>
       <div class="options grid2">${P.blindOpts.map(i => `<button class="opt" data-act="guess" data-i="${i}">${q.options[i]}</button>`).join('')}</div>
     </div>`;
   }
-  const blindPts = clues => (4 - clues) * 2;
 
   function initSwirl(q) {
     const wrap = app.querySelector('.glass-wrap'), winePath = app.querySelector('.wine'), ringC = app.querySelector('.swirl-ring circle');
@@ -451,7 +633,7 @@
     P.clues++;
     app.querySelector('.glass-wrap').classList.add('opened');
     setTimeout(() => app.querySelector('.glass-wrap')?.classList.remove('opened'), 2400);
-    app.querySelector('.pts').textContent = '+' + blindPts(P.clues);
+    app.querySelector('.pts').textContent = `${P.clues} of ${q.clues.length}`;
     if (P.clues >= q.clues.length) {
       app.querySelector('.swirl-hint').textContent = 'FULLY OPEN';
       app.querySelector('[data-act="reveal"]').remove();
@@ -461,7 +643,7 @@
 
   /* Label decoder */
   function labelUI(q) {
-    return `<div class="wine-label label-${q.label.style}" style="--lw:${P.f.wine}">
+    return `<div class="wine-label label-${q.label.style}" style="--lw:${P.wine}">
       <div class="lbl-border">
         ${q.label.lines.map(line => `<div class="lbl-line">${line.map(s => `<button class="term ${s.big ? 'big' : ''} ${s.small ? 'small' : ''}" data-act="term" data-k="${s.k}">${s.t}</button>`).join('')}</div>`).join('')}
       </div>
@@ -476,7 +658,7 @@
     </div>`;
   }
   function refreshOrder() {
-    const q = P.f.questions[P.i];
+    const q = P.questions[P.i];
     app.querySelector('.order').outerHTML = orderUI(q);
     if (P.seq.length === q.items.length) {
       const ok = P.seq.every((t, i) => t === q.items[i]);
@@ -485,22 +667,82 @@
     }
   }
 
+
+  /* Sort into buckets */
+  function sortUI(q) {
+    const s = P.sort, cur = s.items[s.k];
+    return `<div class="sort">
+      <div class="sort-stage">${cur ? `<div class="sort-card">${cur.t}</div><span class="mono">${s.k + 1} of ${s.items.length} · tap a group</span>` : '<span class="mono">All sorted</span>'}</div>
+      <div class="buckets n${q.buckets.length}">${q.buckets.map((b, i) => `<button class="bucket" data-act="bucket" data-b="${i}"><strong>${b}</strong><span class="b-items">${s.placed.filter(p => p.b === i).map(p => `<em class="${p.ok ? 'ok' : 'no'}">${p.t}</em>`).join('')}</span></button>`).join('')}</div>
+    </div>`;
+  }
+  function sortTap(q, b) {
+    const s = P.sort, cur = s.items[s.k];
+    if (!cur || P.locked) return;
+    const ok = b === cur.b;
+    s.placed.push({ t: cur.t, b, ok });
+    s.k++;
+    app.querySelector('.sort').outerHTML = sortUI(q);
+    const el = app.querySelector(`.bucket[data-b="${b}"]`);
+    el.classList.add(ok ? 'pulse' : 'shake');
+    ok ? buzz(8) : buzz([20, 30, 20]);
+    if (s.k >= s.items.length) {
+      const wrong = s.placed.filter(p => !p.ok);
+      answer(!wrong.length, wrong.length ? 'Should be: ' + wrong.map(p => `${p.t} → ${q.buckets[q.items.find(i => i.t === p.t).b]}`).join(' · ') : '');
+    }
+  }
+
+  /* Place on a scale */
+  function sliderUI(q) {
+    const lo = Math.max(0, q.answer - q.tol), hi = Math.min(1, q.answer + q.tol);
+    return `<div class="slider-q">
+      <div class="slider-wrap">
+        <div class="target" hidden style="left:${lo * 100}%;width:${(hi - lo) * 100}%"></div>
+        <input type="range" class="range" min="0" max="100" value="50" aria-label="${esc(q.q)}">
+      </div>
+      <div class="ends mono"><span>${q.low}</span><span>${q.high}</span></div>
+      <button class="primary" data-act="place">Place it here</button>
+    </div>`;
+  }
+  function place(q) {
+    if (P.locked) return;
+    const range = app.querySelector('.range'), v = range.value / 100;
+    const ok = Math.abs(v - q.answer) <= q.tol;
+    range.disabled = true;
+    app.querySelector('.target').hidden = false;
+    app.querySelector('[data-act="place"]').remove();
+    const where = q.answer < 0.34 ? `towards "${q.low}"` : q.answer > 0.66 ? `towards "${q.high}"` : 'in the middle';
+    answer(ok, ok ? '' : `It belongs ${where}, inside the highlighted zone.`);
+  }
+
+  /* Recall a bottle from the cellar (not scored; ages the bottle) */
+  function recallUI(q) {
+    const c = D.concepts[q.concept], e = S.cellar[q.concept];
+    return `<div class="recall" style="--fw:${c.wine}">
+      <div class="r-bottle">${bottleSVG(q.concept, e)}</div>
+      <p class="mono r-name">${c.name} · ${c.kind}</p>
+      <p class="hint mono">Answer in your head, then pour.</p>
+      <div class="review-a" hidden><p>${c.a}</p></div>
+      <button class="primary" data-act="rpeek">Pour (reveal answer)</button>
+      <div class="judge" hidden><button class="opt" data-act="rjudge" data-ok="0">I'd forgotten</button><button class="primary" data-act="rjudge" data-ok="1">I knew it</button></div>
+    </div>`;
+  }
+
   /* Answer & feedback */
   function answer(ok, correction) {
     if (P.locked) return;
     P.locked = true;
-    const q = P.f.questions[P.i];
-    let gain = 0;
-    if (ok) { gain = q.type === 'blind' ? blindPts(P.clues) : 2; P.correct++; P.gain += gain; clink(); buzz(15); }
-    else { thud(); buzz([30, 40, 30]); }
+    const q = P.questions[P.i];
+    if (ok) { P.correct++; clink(); buzz(15); } else { thud(); buzz([30, 40, 30]); }
     P.results.push({ concept: q.concept, ok });
+    const extra = q.type === 'blind' && ok ? `<p class="mono gain">Called it after ${P.clues} of ${q.clues.length} clue${P.clues === 1 ? '' : 's'}</p>` : '';
     const sheet = document.createElement('div');
     sheet.className = `sheet ${ok ? 'ok' : 'bad'}`;
     sheet.innerHTML = `<div class="sheet-in">
-      <div class="sheet-head">${BOTTY}<div><h3>${ok ? pick(D.botty.good) : pick(D.botty.bad)}</h3>${ok && gain ? `<p class="mono gain">+${(gain / 10).toFixed(1)} m roots</p>` : ''}</div></div>
+      <div class="sheet-head">${BOTTY}<div><h3>${ok ? pick(D.botty.good) : pick(D.botty.bad)}</h3>${extra}</div></div>
       ${correction ? `<p class="correction">${correction}</p>` : ''}
       <p>${q.explain}</p>
-      <button class="primary" data-act="next">${P.i + 1 < P.f.questions.length ? 'Next glass' : 'Finish the flight'}</button>
+      <button class="primary" data-act="next">${P.i + 1 < P.questions.length ? 'Next' : 'Finish'}</button>
     </div>`;
     app.querySelector('.player').appendChild(sheet);
     requestAnimationFrame(() => sheet.classList.add('up'));
@@ -508,17 +750,17 @@
 
   function next() {
     P.i++;
-    if (P.i < P.f.questions.length) renderQ(); else finish();
+    if (P.i < P.questions.length) renderQ(); else finish();
   }
 
   function finish() {
-    const f = P.f, pct = Math.round((P.correct / f.questions.length) * 100), now = Date.now();
-    const before = stratumIndex(S.depth);
+    const n = scoredCount(), pct = Math.round((P.correct / n) * 100), now = Date.now();
     S.days[todayKey()] = (S.days[todayKey()] || 0) + 1;
-    S.depth += P.gain;
-    const rec = S.flights[f.id] || { best: 0, plays: 0 };
-    S.flights[f.id] = { best: Math.max(rec.best, pct), plays: rec.plays + 1 };
-    // Lay down bottles. Missed concepts are ready to taste again immediately.
+    let first = false;
+    const store = P.kind === 'unit' ? S.units : S.flights;
+    const rec = store[P.id];
+    first = !rec;
+    store[P.id] = { best: Math.max(rec ? rec.best : 0, pct), plays: (rec ? rec.plays : 0) + 1 };
     const laid = [], seen = new Set();
     P.results.forEach(({ concept, ok }) => {
       if (seen.has(concept)) return; seen.add(concept);
@@ -527,25 +769,37 @@
       else if (!ok) e.due = Math.min(e.due, now);
     });
     save();
-    const after = stratumIndex(S.depth);
     pop(); buzz([20, 60, 20]);
-    app.innerHTML = `<div class="player result" style="--fw:${f.wine}">
+    let unlock = '', nextBtn = '';
+    if (P.kind === 'unit') {
+      const nx = UNITS[P.r.n + 1];
+      if (first && nx) {
+        const newStratum = nx.ci !== P.r.ci;
+        unlock = `<div class="unlock"><span class="mono">${newStratum ? 'New stratum reached' : 'Your roots grew'}</span>
+          <strong>${newStratum ? D.strata[nx.ci].name + ': ' + nx.ch.title : `${label(nx)} ${nx.u.title}`}</strong>
+          <p>${playable(nx) ? (newStratum ? D.strata[nx.ci].fact : nx.u.sub) : 'The next unit is still being poured. It\'s planned in the syllabus but not written yet.'}</p></div>`;
+      }
+      if (nx && playable(nx)) nextBtn = `<button class="primary" data-act="go" data-h="#unit-${nx.u.id}">Next: ${label(nx)} ${nx.u.title}</button><button class="link-btn" data-act="go" data-h="#roots">Back to your roots</button>`;
+    }
+    if (!nextBtn) nextBtn = `<button class="primary" data-act="go" data-h="#${P.kind === 'unit' ? 'roots' : 'today'}">${P.kind === 'unit' ? 'Back to your roots' : 'Back to the vineyard'}</button>`;
+    app.innerHTML = `<div class="player result" style="--fw:${P.wine}">
       <div class="tint"></div>
       <div class="res">
-        <p class="eyebrow">Flight complete</p>
-        <h2>${f.title}</h2>
-        <div class="big-ring">${ring(pct, f.wine, 200)}<div class="big-num"><strong>${pct}%</strong><span class="mono">${P.correct} of ${f.questions.length} glasses</span></div></div>
+        <p class="eyebrow">${P.kind === 'unit' ? P.tag + ' complete' : 'Flight complete'}</p>
+        <h2>${P.title}</h2>
+        <div class="big-ring">${ring(pct, P.wine, 200)}<div class="big-num"><strong>${pct}%</strong><span class="mono">${P.correct} of ${n} correct</span></div></div>
         <div class="res-stats">
-          <div><span class="mono">ROOTS</span><strong>+${(P.gain / 10).toFixed(1)} m</strong></div>
-          <div><span class="mono">WEATHER</span><strong>Sunny</strong></div>
-          <div><span class="mono">NEW BOTTLES</span><strong>${laid.length}</strong></div>
+          <div><span class="mono">Weather</span><strong>Sunny</strong></div>
+          <div><span class="mono">New bottles</span><strong>${laid.length}</strong></div>
+          <div><span class="mono">Best</span><strong>${store[P.id].best}%</strong></div>
         </div>
-        ${after > before ? `<div class="unlock"><span class="mono">NEW STRATUM REACHED</span><strong>${D.strata[after].name}</strong><p>${D.strata[after].fact}</p></div>` : ''}
-        ${laid.length ? `<div class="laid"><p class="mono">LAID DOWN IN YOUR CELLAR</p><div class="rack small">${laid.map(id => bottleSVG(id, S.cellar[id])).join('')}</div></div>` : ''}
-        <button class="primary" data-act="home">Back to the vineyard</button>
-        <button class="link-btn" data-act="flight" data-id="${f.id}">Pour this flight again</button>
+        ${unlock}
+        ${laid.length ? `<div class="laid"><p class="mono">Laid down in your cellar</p><div class="rack small">${laid.map(id => bottleSVG(id, S.cellar[id])).join('')}</div></div>` : ''}
+        ${nextBtn}
+        <button class="link-btn" data-act="replay">Pour this again</button>
       </div>
     </div>`;
+    window.scrollTo(0, 0);
   }
 
   /* ---------- cellar screen ---------- */
@@ -560,16 +814,15 @@
     const rows = [];
     for (let i = 0; i < entries.length; i += 4) rows.push(entries.slice(i, i + 4));
     app.innerHTML = `<div class="cellar">
-      <header class="p-top">
-        <button class="icon-btn" data-act="home" aria-label="Back">${closeIcon()}</button>
-        <div class="p-title"><span class="mono">${entries.length} BOTTLES</span><strong>The Cellar</strong></div>
-        <span></span>
+      <header class="tab-head">
+        <p class="eyebrow">${entries.length} bottles laid down</p>
+        <h1>The Cellar</h1>
       </header>
       <p class="cellar-intro">Every bottle is something you know. Taste a <em>ready</em> bottle to age it: the more often you remember it, the dustier and older it gets. Leave one too long and it turns <em>corked</em>, but one good tasting brings it back.</p>
       <div class="legend mono"><span class="lg ready">${counts.ready} ready</span><span class="lg corked">${counts.corked} corked</span><span class="lg resting">${counts.resting} resting</span></div>
       ${entries.length ? rows.map(r => `<div class="shelf">${r.map(([id, e]) => `<button class="slot-b" data-act="bottle" data-id="${id}">${bottleSVG(id, e)}<span class="mono">${bottleState(e) === 'resting' ? restLabel(e) : bottleState(e)}</span></button>`).join('')}</div>`).join('')
-        : `<div class="empty-cellar">${BOTTY}<p>Nothing laid down yet. Finish a flight and your first bottles will appear here.</p><button class="primary" data-act="home">Find a flight</button></div>`}
-    </div>`;
+        : `<div class="empty-cellar">${BOTTY}<p>Nothing laid down yet. Finish your first unit and its ideas will appear here as bottles.</p><button class="primary" data-act="go" data-h="#today">Start learning</button></div>`}
+    </div>${tabbar('cellar')}`;
   }
   const restLabel = e => { const d = Math.ceil((e.due - Date.now()) / DAY); return d <= 1 ? 'tomorrow' : `${d} days`; };
   const AGE_NAMES = ['Young', 'Developing', 'Mature', 'Aged', 'Venerable', 'Legendary'];
@@ -595,15 +848,24 @@
     </div>`;
     overlay.querySelector('.modal').addEventListener('click', ev => { if (ev.target.classList.contains('modal')) closeModal(); });
   }
-  const closeModal = () => { overlay.innerHTML = ''; if (location.hash === '#cellar') cellar(); else route(); };
-
-  function judge(id, ok) {
-    const e = S.cellar[id], now = Date.now();
+  const closeModal = () => {
+    overlay.innerHTML = '';
+    const h = location.hash.slice(1) || 'today';
+    if (h === 'cellar') cellar(); else if (h === 'roots') roots(false); else if (h === 'today') today();
+  };
+  function ageBottle(id, ok) {
+    const e = S.cellar[id];
+    if (!e) return;
     if (ok) { e.stage = Math.min(INTERVALS.length - 1, e.stage + 1); e.reviews++; clink(); buzz(15); }
     else { e.stage = 0; thud(); }
-    e.due = now + INTERVALS[e.stage] * DAY;
+    e.due = Date.now() + INTERVALS[e.stage] * DAY;
     S.days[todayKey()] = S.days[todayKey()] || 1;
     save();
+  }
+
+  function judge(id, ok) {
+    ageBottle(id, ok);
+    const e = S.cellar[id];
     const card = overlay.querySelector('.modal-card');
     card.querySelector('.mb-bottle').innerHTML = bottleSVG(id, e);
     card.querySelector('.mb-bottle').classList.add('aged');
@@ -619,7 +881,7 @@
       <p class="eyebrow">Settings</p><h2>Your vineyard</h2>
       <p class="set-label mono">HEMISPHERE</p>
       <div class="seg">${['N', 'S'].map(h => `<button class="${S.settings.hemi === h ? 'on' : ''}" data-act="hemi" data-h="${h}">${h === 'N' ? 'Northern' : 'Southern'}</button>`).join('')}</div>
-      <p class="set-note">The sky, vine and seasonal flights follow the vineyard calendar of your hemisphere.</p>
+      <p class="set-note">The sky, vine and seasonal specials follow the vineyard calendar of your hemisphere.</p>
       <p class="set-label mono">SOUND</p>
       <div class="seg">${[true, false].map(v => `<button class="${S.settings.sound === v ? 'on' : ''}" data-act="sound" data-v="${v}">${v ? 'Clinks on' : 'Silent'}</button>`).join('')}</div>
       <p class="set-label mono">PROGRESS</p>
@@ -638,17 +900,30 @@
     </div></div>`;
   }
 
+
   /* ---------- events ---------- */
+  const go = h => { if (location.hash === h) route(); else location.hash = h; };
   document.addEventListener('click', ev => {
     const b = ev.target.closest('[data-act]');
-    if (!b) return;
+    if (!b || b.disabled) return;
     const act = b.dataset.act;
-    const q = P && P.f.questions[P.i];
+    const q = P && P.questions && P.questions[P.i];
     switch (act) {
-      case 'flight': { const h = '#flight-' + b.dataset.id; if (location.hash === h) { window.scrollTo(0, 0); startFlight(b.dataset.id); } else location.hash = h; break; }
-      case 'cellar': location.hash = '#cellar'; break;
-      case 'home': location.hash = ''; break;
-      case 'quit': if (P && P.i > 0) ask('Leave this flight?', 'Your answers in this flight won\'t be saved.', 'Leave', () => { location.hash = ''; }); else location.hash = ''; break;
+      case 'go': go(b.dataset.h); break;
+      case 'preview': preview(b.dataset.id); break;
+      case 'checkpoint': ask('Checkpoint tastings', 'At the end of each chapter there will be a longer mixed tasting with a blind finale. Pass it to break through to the next stratum. Coming soon.', 'Lovely', () => {}); break;
+      case 'quit': {
+        const back = P && P.kind === 'flight' ? '#today' : '#' + lastTab;
+        const started = P && ((P.phase === 'lesson' && P.card > 0) || P.phase === 'interlude' || (P.phase === 'practice' && P.i > 0));
+        if (started) ask('Leave this unit?', 'Your progress in it won\'t be saved.', 'Leave', () => go(back)); else go(back);
+        break;
+      }
+      case 'replay': go(`#${P.kind}-${P.id}`); break;
+      case 'lnext': lessonStep(1); break;
+      case 'lprev': lessonStep(-1); break;
+      case 'tryreveal': { const t = b.closest('.try'); t.querySelector('.try-answer').hidden = false; b.remove(); clink(); break; }
+      case 'practice': P.i = 0; P.correct = 0; P.results = []; renderQ(); break;
+      case 'relesson': P.card = 0; renderLesson(); break;
       case 'choose': {
         if (P.locked) return;
         const i = +b.dataset.i, ok = i === q.answer;
@@ -662,8 +937,8 @@
         const i = +b.dataset.i, ok = i === q.answer;
         app.querySelectorAll('.opt').forEach(o => { if (+o.dataset.i === q.answer) o.classList.add('right'); });
         if (!ok) b.classList.add('wrong');
-        app.querySelectorAll('.clue').forEach((li, n) => { li.classList.add('shown'); li.querySelector('p').textContent = q.clues[n].text; });
         answer(ok, ok ? '' : `It was ${q.options[q.answer]}.`);
+        app.querySelectorAll('.clue').forEach((li, n) => { li.classList.add('shown'); li.querySelector('p').textContent = q.clues[n].text; });
         break;
       }
       case 'reveal': revealClue(q); break;
@@ -677,6 +952,10 @@
       }
       case 'slot': if (!P.locked && !P.seq.includes(b.dataset.t)) { P.seq.push(b.dataset.t); buzz(6); refreshOrder(); } break;
       case 'unslot': if (!P.locked && P.seq[+b.dataset.i]) { P.seq.splice(+b.dataset.i, 1); refreshOrder(); } break;
+      case 'bucket': sortTap(q, +b.dataset.b); break;
+      case 'place': place(q); break;
+      case 'rpeek': { const r = b.closest('.recall'); r.querySelector('.review-a').hidden = false; r.querySelector('.judge').hidden = false; r.querySelector('.hint').remove(); b.remove(); break; }
+      case 'rjudge': ageBottle(q.concept, b.dataset.ok === '1'); next(); break;
       case 'next': next(); break;
       case 'bottle': openBottle(b.dataset.id); break;
       case 'peek': {
@@ -691,21 +970,25 @@
       case 'forgot': judge(b.dataset.id, false); break;
       case 'close': closeModal(); break;
       case 'close-ask': askFn = null; overlay.innerHTML = ''; break;
-      case 'settings': settings(); break;
-      case 'hemi': S.settings.hemi = b.dataset.h; save(); settings(); home(); break;
-      case 'sound': S.settings.sound = b.dataset.v === 'true'; save(); settings(); if (S.settings.sound) clink(); break;
-      case 'reset': ask('Pour it all away?', 'Your cellar, roots and vintages will be emptied. This can\'t be undone.', 'Reset everything', () => { S = defaults(); save(); home(); }); break;
       case 'ask-yes': { const fn = askFn; askFn = null; overlay.innerHTML = ''; fn && fn(); break; }
+      case 'settings': settings(); break;
+      case 'hemi': S.settings.hemi = b.dataset.h; save(); today(); settings(); break;
+      case 'sound': S.settings.sound = b.dataset.v === 'true'; save(); settings(); if (S.settings.sound) clink(); break;
+      case 'reset': ask('Pour it all away?', 'Your cellar, roots and vintages will be emptied. This can\'t be undone.', 'Reset everything', () => { S = defaults(); save(); go('#today'); }); break;
     }
   });
 
+  let lastTab = 'today';
   function route() {
     overlay.innerHTML = '';
-    const h = location.hash;
     window.scrollTo(0, 0);
-    if (h.startsWith('#flight-')) startFlight(h.slice(8));
-    else if (h === '#cellar') cellar();
-    else { P = null; home(); }
+    const h = location.hash.slice(1);
+    if (h.startsWith('unit-')) return startUnit(h.slice(5));
+    if (h.startsWith('flight-')) return startFlight(h.slice(7));
+    P = null;
+    if (h === 'roots') { lastTab = 'roots'; roots(); }
+    else if (h === 'cellar') { lastTab = 'cellar'; cellar(); }
+    else { lastTab = 'today'; today(); }
   }
   window.addEventListener('hashchange', route);
   route();
