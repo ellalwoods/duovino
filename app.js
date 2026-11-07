@@ -34,7 +34,9 @@
   }));
   const TB = D.trackB;
   let gate = null;
-  TB.intro.units.forEach((u, i) => { gate = add(u, { track: 'B', tag: `B0.${i + 1}`, wine: TB.wine, group: TB.intro.title, prev: gate }); });
+  // Track B requires Topsoil (Track A, chapter 1). Only written units count, so the gate grows as Topsoil does.
+  const TOPSOIL = UNITS.filter(r => r.track === 'A' && r.ci === 0);
+  TB.intro.units.forEach((u, i) => { gate = add(u, { track: 'B', tag: `B0.${i + 1}`, wine: TB.wine, group: TB.intro.title, prev: gate, req: i ? null : TOPSOIL }); });
   TB.countries.forEach((c, k) => {
     let n = 0;
     c.regions.forEach(rg => {
@@ -45,7 +47,9 @@
   const UNIT = Object.fromEntries(UNITS.map(r => [r.u.id, r]));
   const playable = r => !!r.u.lesson;
   const done = r => !!S.units[r.u.id];
-  const unlocked = r => !r.prev || done(r.prev);
+  const reqMet = r => !r.req || r.req.every(x => !playable(x) || done(x));
+  const unlocked = r => (!r.prev || done(r.prev)) && reqMet(r);
+  const reqText = () => { const w = TOPSOIL.filter(playable); return `Topsoil (${w[0].tag}–${w[w.length - 1].tag})`; };
   const unitState = r => done(r) ? 'done' : !playable(r) ? 'soon' : unlocked(r) ? 'current' : 'locked';
   const nextUnit = (track = 'A') => { const left = UNITS.filter(r => r.track === track && !done(r)); return left.find(r => unitState(r) === 'current') || left[0]; };
   const doneCount = (track = 'A') => UNITS.filter(r => r.track === track && done(r)).length;
@@ -320,6 +324,11 @@
     if (!r) return `<div class="next-card soon"><span class="mono nc-eyebrow">Grand Cru</span><span class="nc-title">You've finished the syllabus.</span></div>`;
     const st = unitState(r), u = r.u, home = r.track === 'A' ? '#roots' : '#list';
     const small = r.track === 'B' ? ' small' : '';
+    if (st === 'locked' && !reqMet(r)) return `<button class="next-card soon${small}" data-act="go" data-h="#roots" style="--cw:${r.wine}">
+      <span class="mono nc-eyebrow">Opens after ${reqText()} · ${r.group}</span>
+      <span class="nc-title"><em>${label(r)}</em> ${u.title}</span>
+      <span class="nc-sub">Label reading builds on tasting words like "high acidity" and "full body". Finish Topsoil in Track A and the Wine List opens.</span>
+    </button>`;
     if (st !== 'current') return `<button class="next-card soon${small}" data-act="go" data-h="${home}" style="--cw:${r.wine}">
       <span class="mono nc-eyebrow">Coming soon · ${r.group}</span>
       <span class="nc-title"><em>${label(r)}</em> ${u.title}</span>
@@ -433,7 +442,7 @@
         <p>Every lesson starts from a label and works outwards: appellation, then grapes, then the rules, then the taste.</p>
         <div class="roots-stats mono"><span><strong>${doneCount('B')}</strong> of ${trackCount('B')} poured</span><span>Start with <strong>B0</strong>, then any region</span></div>
       </header>
-      ${section('Before you order', introRs, 'How labels work. Finish these three to open the whole list.')}
+      ${section('Before you order', introRs, reqMet(UNIT['b0-1']) ? 'How labels work. Finish these three to open the whole list.' : `Opens once you've finished ${reqText()} in Track A. Then finish these three to open the whole list.`)}
       ${countries}
       <p class="foot mono">Rules are checked against each region's official regulations before a unit is poured</p>
     </div>${tabbar('list')}`;
@@ -455,6 +464,7 @@
       </ol>` : ''}
       ${rec ? `<p class="mono resting-note">Best ${rec.best}% · poured ${rec.plays}×</p>` : ''}
       ${s === 'current' || s === 'done' ? `<button class="primary" data-act="go" data-h="#unit-${id}">${s === 'done' ? 'Pour it again' : 'Start lesson'}</button>`
+        : s === 'locked' && !reqMet(r) ? `<p class="mono resting-note">Locked · finish ${reqText()} in Track A first</p><button class="primary" data-act="go" data-h="#roots">Go to Topsoil</button>`
         : s === 'locked' ? `<p class="mono resting-note">Locked · finish ${label(prev)} ${prev.u.title} first</p>`
         : `<p class="mono resting-note">${r.track === 'B' ? 'Still being poured · written once its rules are checked against the official regulations' : 'Still being poured · this unit is planned but not written yet'}</p>`}
     </div></div>`;

@@ -108,7 +108,7 @@ They become **Tasting Specials** on the Today tab: optional bonus flights, with 
 
 Every Track B lesson **starts from a label** and works outwards: label → appellation → grapes → rules → taste. On the Wine List tab it's laid out like a restaurant wine list, with countries as sections, regions as headings and each appellation unit as an entry.
 
-**Unlocking:** the three B0 units come first and in order. Finishing B0 opens every region, and units within a region unlock in order.
+**Unlocking:** Track B requires **Topsoil** (Track A, chapter 1) first, so tasting vocabulary like "high acidity" and "full body" is already familiar. The gate counts only the Topsoil units that are written (currently 1.1–1.3), so it grows as 1.4–1.6 are added. After that, the three B0 units come in order. Finishing B0 opens every region, and units within a region unlock in order.
 
 ## B0. How labels work ✅ *built*
 
@@ -191,5 +191,5 @@ Appellation rules (permitted grapes, minimum percentages, ageing minimums, sweet
 
 ## Open questions (Track B)
 1. **Champagne:** you mentioned a full Champagne unit "as set out earlier", but I don't have that spec. Can you paste it?
-2. **Overlap with Track A's Chalk chapter** ("Reading the Old World": wine law, France, Champagne, Italy, Spain, Germany, Portugal) is now largely covered by Track B. Keep both, or should Chalk focus on something else? I've left Track A unchanged as asked.
-3. **Should Track B require any of Track A first?** (e.g. Topsoil, so tasting words like "high acidity" are already familiar.) At the moment it doesn't.
+2. ~~Overlap with Track A's Chalk chapter~~ **Decided:** overlap is fine. Chalk stays as it is.
+3. ~~Should Track B require Track A first?~~ **Decided:** yes, Topsoil is required.
