@@ -295,3 +295,6 @@ em { font-style: italic; }
   *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
   .root-main { stroke-dashoffset: 0; }
 }
+.ask { text-align: center; }
+.ask .botty { width: 72px; height: 72px; }
+.ask h2 { margin: 6px 0 8px; }

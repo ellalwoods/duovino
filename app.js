@@ -628,6 +628,16 @@
     overlay.querySelector('.modal').addEventListener('click', ev => { if (ev.target.classList.contains('modal')) closeModal(); });
   }
 
+  /* in-page confirm dialog (native confirm() is blocked in some frames) */
+  let askFn = null;
+  function ask(title, text, yes, fn) {
+    askFn = fn;
+    overlay.innerHTML = `<div class="modal" role="dialog" aria-modal="true"><div class="modal-card ask">
+      ${BOTTY}<h2>${title}</h2><p class="review-q">${text}</p>
+      <div class="judge"><button class="opt" data-act="close-ask">Stay</button><button class="primary" data-act="ask-yes">${yes}</button></div>
+    </div></div>`;
+  }
+
   /* ---------- events ---------- */
   document.addEventListener('click', ev => {
     const b = ev.target.closest('[data-act]');
@@ -635,10 +645,10 @@
     const act = b.dataset.act;
     const q = P && P.f.questions[P.i];
     switch (act) {
-      case 'flight': { const h = '#flight/' + b.dataset.id; if (location.hash === h) { window.scrollTo(0, 0); startFlight(b.dataset.id); } else location.hash = h; break; }
+      case 'flight': { const h = '#flight-' + b.dataset.id; if (location.hash === h) { window.scrollTo(0, 0); startFlight(b.dataset.id); } else location.hash = h; break; }
       case 'cellar': location.hash = '#cellar'; break;
       case 'home': location.hash = ''; break;
-      case 'quit': if (P && P.i > 0 && !confirm('Leave this flight? Progress in this flight will be lost.')) return; location.hash = ''; break;
+      case 'quit': if (P && P.i > 0) ask('Leave this flight?', 'Your answers in this flight won\'t be saved.', 'Leave', () => { location.hash = ''; }); else location.hash = ''; break;
       case 'choose': {
         if (P.locked) return;
         const i = +b.dataset.i, ok = i === q.answer;
@@ -680,10 +690,12 @@
       case 'remembered': judge(b.dataset.id, true); break;
       case 'forgot': judge(b.dataset.id, false); break;
       case 'close': closeModal(); break;
+      case 'close-ask': askFn = null; overlay.innerHTML = ''; break;
       case 'settings': settings(); break;
       case 'hemi': S.settings.hemi = b.dataset.h; save(); settings(); home(); break;
       case 'sound': S.settings.sound = b.dataset.v === 'true'; save(); settings(); if (S.settings.sound) clink(); break;
-      case 'reset': if (confirm('Reset all progress? Your cellar will be emptied.')) { S = defaults(); save(); overlay.innerHTML = ''; home(); } break;
+      case 'reset': ask('Pour it all away?', 'Your cellar, roots and vintages will be emptied. This can\'t be undone.', 'Reset everything', () => { S = defaults(); save(); home(); }); break;
+      case 'ask-yes': { const fn = askFn; askFn = null; overlay.innerHTML = ''; fn && fn(); break; }
     }
   });
 
@@ -691,7 +703,7 @@
     overlay.innerHTML = '';
     const h = location.hash;
     window.scrollTo(0, 0);
-    if (h.startsWith('#flight/')) startFlight(h.slice(8));
+    if (h.startsWith('#flight-')) startFlight(h.slice(8));
     else if (h === '#cellar') cellar();
     else { P = null; home(); }
   }
