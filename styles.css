@@ -79,7 +79,7 @@ em { font-style: italic; }
 .tabview { padding-bottom: calc(84px + var(--safe-bot)); min-height: 100dvh; }
 .tabbar {
   position: fixed; bottom: 0; left: 50%; transform: translateX(-50%); z-index: 30;
-  width: 100%; max-width: 480px; display: grid; grid-template-columns: repeat(3, 1fr);
+  width: 100%; max-width: 480px; display: grid; grid-template-columns: repeat(4, 1fr);
   padding: 8px 10px calc(8px + var(--safe-bot)); background: rgba(245,238,226,.92); backdrop-filter: blur(10px);
   border-top: 1px solid #e3d6c1;
 }
@@ -452,3 +452,62 @@ em { font-style: italic; }
 .ask { text-align: center; }
 .ask .botty { width: 72px; height: 72px; }
 .ask h2 { margin: 6px 0 8px; }
+
+/* ========== WINE LIST (Track B) ========== */
+.winelist { background: #2b1c1f var(--grain); }
+.wl-head { padding: calc(22px + var(--safe-top)) 20px 18px; color: #f2e6d6; }
+.wl-head .eyebrow { color: #c9a77a; }
+.wl-head h1 { font-size: 40px; font-weight: 500; font-style: italic; letter-spacing: -.02em; font-variation-settings: 'SOFT' 100, 'WONK' 1; }
+.wl-head p { font-size: 15px; line-height: 1.45; margin: 8px 0 0; color: #d8c6bc; }
+.wl-head .roots-stats { color: #a8918c; }
+.wl-head .roots-stats strong { color: #f2e6d6; }
+.wl-card {
+  margin: 0 12px 16px; padding: 22px 16px 14px; background: #fbf5e7 var(--grain); color: var(--ink);
+  border-radius: 4px; box-shadow: 0 18px 40px -20px #000; position: relative;
+  outline: 1px solid rgba(42,26,31,.35); outline-offset: -8px;
+}
+.wl-card::after { content: ''; position: absolute; top: -14px; right: 18px; width: 64px; height: 64px; border-radius: 50%; border: 5px solid rgba(123,42,42,.18); filter: url(#stain); pointer-events: none; }
+.wl-country { text-align: center; font-size: 13px; font-family: var(--mono); font-weight: 500; letter-spacing: .3em; text-transform: uppercase; padding-bottom: 10px; margin: 0 8px 4px; border-bottom: 1px solid rgba(42,26,31,.25); }
+.wl-sub { text-align: center; font-style: italic; color: var(--ink-soft); margin: 8px 0 4px; font-size: 14px; }
+.wl-region { text-align: center; font-size: 20px; font-style: italic; font-weight: 500; margin: 18px 0 4px; font-variation-settings: 'SOFT' 100, 'WONK' 1; }
+.wl-entries { list-style: none; margin: 0; padding: 0; }
+.wl-entry { display: flex; align-items: flex-end; gap: 8px; width: 100%; padding: 9px 6px; text-align: left; border-radius: 8px; }
+.wl-entry:active { background: rgba(123,42,42,.08); }
+.wl-tag { flex: none; width: 38px; font-size: 9px; color: var(--ink-soft); padding-bottom: 3px; }
+.wl-name { font-size: 16px; line-height: 1.2; font-weight: 500; max-width: 62%; }
+.wl-name small { display: block; font-size: 12.5px; font-weight: 400; font-style: italic; color: var(--ink-soft); margin-top: 1px; }
+.wl-leader { flex: 1; border-bottom: 1.5px dotted rgba(42,26,31,.4); margin-bottom: 6px; min-width: 14px; }
+.wl-status { flex: none; min-width: 40px; display: grid; justify-items: end; align-items: end; }
+.wl-status .ring { width: 30px; height: 30px; }
+.wl-soon { font-size: 9px; color: #a8977e; padding-bottom: 3px; }
+.wl-pour { font-family: var(--mono); font-size: 10px; letter-spacing: .1em; text-transform: uppercase; padding: 5px 10px; border-radius: 99px; background: var(--ink); color: var(--paper); animation: beckonSmall 2.4s ease-in-out infinite; }
+@keyframes beckonSmall { 50% { box-shadow: 0 0 0 4px rgba(42,26,31,.15); } }
+.wl-entry.soon .wl-name, .wl-entry.locked .wl-name { color: #8f7f78; font-weight: 400; }
+.wl-entry.current .wl-name { font-weight: 650; }
+.winelist .foot { color: #a8918c; padding: 8px 24px 20px; line-height: 1.6; }
+.next-card.small .nc-title { font-size: 22px; }
+
+/* lesson: label & facts cards */
+.lcard .wine-label { margin: 6px auto 4px; }
+.term.noted { border-bottom: 2px solid var(--fw); background: color-mix(in srgb, var(--fw) 14%, transparent); }
+.term.picked { background: color-mix(in srgb, var(--fw) 40%, transparent); }
+.term.static { cursor: default; border-bottom-color: transparent; }
+.lnote { min-height: 44px; margin: 14px 0 0; padding: 10px 12px; border-radius: 12px; text-align: center; color: var(--ink-soft); }
+.lnote.on { font-family: var(--serif); text-transform: none; letter-spacing: 0; font-size: 16px; line-height: 1.4; color: var(--ink); text-align: left; background: color-mix(in srgb, var(--fw) 16%, #fff); animation: rise .25s; }
+.facts { margin: 14px 0 0; display: flex; flex-direction: column; border-top: 1px solid #e3d6c1; }
+.facts div { display: grid; grid-template-columns: 96px 1fr; gap: 12px; padding: 11px 0; border-bottom: 1px solid #e3d6c1; animation: rise .35s backwards; }
+.facts dt { font-size: 10.5px; padding-top: 3px; color: color-mix(in srgb, var(--fw) 70%, var(--ink)); }
+.facts dd { margin: 0; font-size: 15.5px; line-height: 1.4; }
+.layer.l3 { background: color-mix(in srgb, var(--fw) 80%, #2a1a1f); color: #fff8ec; }
+.label-spain .lbl-border { border-color: #8b1a2b; outline-color: #c4842c; border-width: 2px; }
+.label-spain .term.big { font-style: normal; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; font-size: 30px; }
+
+/* chain drill */
+.chain .wine-label { transform: rotate(-1deg) scale(.92); margin-top: -8px; }
+.chain-steps { display: flex; align-items: center; justify-content: center; list-style: none; padding: 0; margin: 14px 0 6px; }
+.chain-steps i { width: 26px; height: 2px; background: #dccdb5; }
+.chain-steps li span { display: grid; place-items: center; width: 26px; height: 26px; border-radius: 50%; border: 1.5px solid #cdbca2; font-size: 11px; }
+.chain-steps li.now span { border-color: var(--fw); background: var(--fw); color: #fff8ec; }
+.chain-steps li.past span { background: var(--ink); border-color: var(--ink); color: var(--paper); }
+.chain-q { font-size: 20px; font-weight: 500; text-align: center; margin: 6px 0 14px; animation: rise .3s; }
+.wl-status .ring-label { font-size: 40px; font-family: var(--serif); fill: var(--wine); }

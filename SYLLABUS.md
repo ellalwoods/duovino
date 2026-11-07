@@ -1,4 +1,13 @@
-# Duovino syllabus: brainstorm v0.1
+# Duovino syllabus v0.2
+
+Two tracks:
+
+- **Track A: How wine works.** The six soil chapters below, shown on the **Roots** tab. Unchanged.
+- **Track B: Reading the label.** Every lesson starts from a label and works out to grapes, rules and taste. Shown on the **Wine List** tab. [Jump to Track B](#track-b-reading-the-label).
+
+---
+
+# Track A: How wine works
 
 ## The idea: the soil *is* the syllabus
 
@@ -88,7 +97,99 @@ Each chapter ends with a **Checkpoint Tasting**: a longer mixed test with a blin
 ## What happens to the original four flights
 They become **Tasting Specials** on the Today tab: optional bonus flights, with the seasonal one highlighted. Their content will later be folded into the units they belong to (Winter → Clay 1 and 4, Cool vs Warm → Clay 2 and Schist 1, Loire → Chalk 2, Barolo → Chalk 4).
 
-## Questions for you
+## Open questions (Track A)
 1. Does the **order** feel right? An alternative is to teach grapes (Schist) *before* the winery (Limestone), so you meet the fun stuff sooner.
 2. Should **Old World regions** have their own chapter, or should they be woven into each grape?
 3. Would you rather units were **shorter** (3–4 cards + 4 questions, about 3 minutes) or **as now** (6–7 + 7, about 6 minutes)?
+
+---
+
+# Track B: Reading the label
+
+Every Track B lesson **starts from a label** and works outwards: label → appellation → grapes → rules → taste. On the Wine List tab it's laid out like a restaurant wine list, with countries as sections, regions as headings and each appellation unit as an entry.
+
+**Unlocking:** the three B0 units come first and in order. Finishing B0 opens every region, and units within a region unlock in order.
+
+## B0. How labels work ✅ *built*
+
+| Unit | Covers |
+|---|---|
+| **B0.1 Place, not grape** | European labels name the place, so the appellation tells you the grapes. Where the appellation sits on French, Italian, Spanish, Portuguese and German labels. Exceptions: Alsace, IGP Pays d'Oc, most of Germany and Austria |
+| **B0.2 The quality ladders** | EU PDO/PGI. France: AOC/AOP, IGP, Vin de France. Italy: DOCG, DOC, IGT. Spain: DOCa/DOQ, DO, Vino de Pago. Germany: Prädikatswein, Qualitätswein, Landwein (a Prädikat means ripeness, not sweetness) |
+| **B0.3 Law words & sales words** | Grand Cru, Premier Cru, Cru Classé, Classico, Superiore, Riserva/Reserva, plus unregulated terms such as Vieilles Vignes and Réserve |
+
+B0 deliberately gives **no** appellation-specific numbers (ageing minimums, grape percentages). Those belong in the appellation units, after the rules have been checked.
+
+## The appellation card: template for every appellation unit
+
+Lesson cards, in this order:
+
+| # | Card | App card type |
+|---|---|---|
+| 1 | **The label:** how it appears, with 1–2 sample labels; tap words for notes | `label` |
+| 2 | **Where it is** | `facts` / `text` |
+| 3 | **Styles & colours permitted** | `facts` |
+| 4 | **Permitted grapes & the usual blend** | `facts` / `scale` |
+| 5 | **Rules a drinker would notice:** ageing minimums, sweetness terms, tiers | `facts` |
+| 6 | **Sub-appellations & quality tiers inside it** | `layers` |
+| 7 | **What it tastes like:** aromas, structure, how it ages | `compare` / `scale` |
+| 8 | **Tell it apart:** neighbours and easily confused names | `compare` / `try` |
+
+## Drills (repeated across the track)
+
+| Drill | App question type |
+|---|---|
+| Label → appellation → grapes → taste | `chain` (one label, three linked steps) |
+| Taste description → appellation | `blind` (swirl to reveal clues) |
+| Spot the tier on the label | `label` (tap the word) |
+| Pick the odd one out | `odd` |
+| Lookalike names (Montepulciano d'Abruzzo vs Vino Nobile di Montepulciano, Pouilly-Fumé vs Pouilly-Fuissé) | `sort` with the two names as the groups |
+
+## The list (91 units)
+
+**France**
+- Champagne: Champagne AOC *(needs the full unit spec; see open questions)*
+- Burgundy: the Burgundy rule (red = Pinot Noir, white = Chardonnay) · Bourgogne → village → Premier Cru → Grand Cru · Chablis (four tiers) · Côte de Nuits & Côte de Beaune villages · Mâcon & Pouilly-Fuissé · Beaujolais (Gamay, ten crus)
+- Bordeaux: permitted red grapes · Left Bank vs Right Bank · Médoc villages (Pauillac, Margaux, St-Julien, St-Estèphe) · Pessac-Léognan · St-Émilion & Pomerol · White Bordeaux · Sauternes & Barsac · Bordeaux Supérieur
+- Rhône: Northern Syrah appellations (Côte-Rôtie, Hermitage, Crozes-Hermitage, St-Joseph, Cornas) · Condrieu · Southern Grenache appellations (Châteauneuf-du-Pape, Gigondas, Vacqueyras, Tavel) · Côtes du Rhône & Villages
+- Loire: Muscadet · Sancerre & Pouilly-Fumé · Vouvray & Savennières · Chinon, Bourgueil, Saumur-Champigny · Crémant de Loire
+- Provence: Côtes de Provence & sub-zones · Coteaux d'Aix · Bandol · Cassis · the rosé grapes
+- Alsace: grape-named labels, Grand Cru, VT/SGN, Crémant d'Alsace
+- South & beyond: Languedoc · Picpoul de Pinet · Roussillon · Cahors · Madiran · Jurançon · Jura (vin jaune)
+
+**Italy**
+- Piedmont: Barolo & Barbaresco · Barbera d'Asti & d'Alba · Dolcetto · Gavi · Moscato d'Asti
+- Tuscany: Chianti vs Chianti Classico · Brunello & Rosso di Montalcino · Vino Nobile di Montepulciano · Bolgheri · Toscana IGT
+- Veneto: Valpolicella, Ripasso, Amarone, Recioto · Soave · Prosecco DOC vs DOCG
+- Northern sparkling & whites: Franciacorta · Trento · Alto Adige · Friuli Collio
+- South & islands: Etna · Taurasi · Fiano di Avellino · Greco di Tufo · Montepulciano d'Abruzzo · Primitivo di Manduria · Cannonau di Sardegna
+
+**Spain & Portugal**
+- Spain: Rioja · Ribera del Duero · Priorat · Toro · Rías Baixas · Rueda · Cava · Jerez/Sherry
+- Portugal: Port · Vinho Verde · Douro · Dão · Bairrada · Madeira
+
+**Germany, Austria & Hungary**
+- Reading a German label · Trocken & feinherb · VDP tiers incl. GG · Austrian DACs (Wachau terms, Kamptal, Kremstal) · Tokaji (Aszú, puttonyos, Szamorodni)
+
+**New World**
+- How these labels differ (grape-named, the place doesn't fix the grape, percentage rules) · Australia: GI system, key regions · New Zealand · USA AVAs · Chile · Argentina · South Africa Wine of Origin
+
+## Rule-checking before a unit is written
+
+Appellation rules (permitted grapes, minimum percentages, ageing minimums, sweetness terms) change from time to time, and the app's credibility depends on getting them right. So:
+
+1. **Source first.** Before writing an appellation unit, check every rule it states against the official text:
+   - France: the appellation's *cahier des charges* (INAO)
+   - Italy: the *disciplinare di produzione*
+   - Spain: the *pliego de condiciones*
+   - Portugal, Germany, Austria and Hungary: the equivalent official specification
+   - New World: the national labelling law (e.g. the US TTB for AVAs and percentage rules, Wine Australia for GIs)
+2. **Record it in the data.** Each unit gets `sources` (official document and version/date) and `checked` (the date of the check). A unit gets `lesson` and `questions` only once both are filled in. Until then it shows as *"Still being poured"* on the Wine List.
+3. **Re-check on a schedule,** e.g. yearly, or whenever a region announces changes.
+
+**Content already in the app that needs the same check:** the original Tasting specials state some rules: Barolo 38 months and Riserva 62 months, the four Chablis tiers, Icewine picking temperatures. They should be checked against their disciplinare / cahier des charges too, or retired once Track B covers them.
+
+## Open questions (Track B)
+1. **Champagne:** you mentioned a full Champagne unit "as set out earlier", but I don't have that spec. Can you paste it?
+2. **Overlap with Track A's Chalk chapter** ("Reading the Old World": wine law, France, Champagne, Italy, Spain, Germany, Portugal) is now largely covered by Track B. Keep both, or should Chalk focus on something else? I've left Track A unchanged as asked.
+3. **Should Track B require any of Track A first?** (e.g. Topsoil, so tasting words like "high acidity" are already familiar.) At the moment it doesn't.

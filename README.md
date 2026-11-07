@@ -5,10 +5,11 @@ See [`CONCEPT.md`](CONCEPT.md) for the full product concept.
 
 ## What's in this build
 
-Three tabs:
+Four tabs:
 
 - **Today:** the seasonal sky (weather and the weekly *Vintage*), your **Up next** unit, a nudge when cellar bottles are ready, and optional **Tasting specials**.
 - **Roots:** the syllabus drawn as soil. There are six chapters, one per stratum (Topsoil â†’ Granite), and 37 units. Your root grows down through the units as you finish them. See [`SYLLABUS.md`](SYLLABUS.md).
+- **Wine list:** Track B, *Reading the label*. 91 units set out like a restaurant wine list, by country and region. Every lesson starts from a label. B0 (how labels work) is written; appellation units are written only after their rules have been checked against the official regulations (see `SYLLABUS.md`).
 - **Cellar:** every concept you learn becomes a bottle. Due bottles glow, tasting them ages them, and neglected ones get *corked*.
 
 Each unit is a **lesson, then a tasting**:
@@ -39,8 +40,9 @@ To use it on your phone, enable **GitHub Pages** for this repository (Settings â
 | `index.html` | Shell and shared SVG filters (wine-stain edges, dust) |
 | `styles.css` | The whole visual language |
 | `data.js` | Seasons, soil strata, concepts, tasting specials |
-| `syllabus.js` | Chapters, units, lesson cards and questions |
+| `syllabus.js` | Track A: chapters, units, lesson cards and questions |
+| `labels.js` | Track B: B0 units and the wine list skeleton |
 | `app.js` | Screens, games, swirl gesture, spaced-repetition cellar, sounds |
 | `sw.js`, `manifest.webmanifest`, `icon.svg` | Offline support and home-screen install |
 
-To write a unit, give its entry in `syllabus.js` a `lesson` (card kinds: `text`, `try`, `compare`, `scale`, `layers`) and `questions` (types: `choice`, `sort`, `slider`, `order`, `label`, `blind`), and add its concepts to `D.concepts`.
+To write a unit, give its entry in `syllabus.js` a `lesson` (card kinds: `text`, `try`, `compare`, `scale`, `layers`, `label`, `facts`) and `questions` (types: `choice`, `odd`, `sort`, `slider`, `order`, `label`, `chain`, `blind`), and add its concepts to `D.concepts`.
