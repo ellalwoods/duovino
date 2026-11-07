@@ -215,7 +215,7 @@
   const u = (id, title, sub) => ({ id: 'b-' + id, title, sub });
   const countries = [
     { name: 'France', wine: C.garnet, regions: [
-      { name: 'Champagne', units: [u('fr-champagne', 'Champagne AOC', 'Grapes, methods, dosage, tiers')] },
+      { name: 'Champagne AOC', units: D.champagneUnits || [u('fr-champagne', 'Champagne AOC', 'Grapes, methods, dosage, tiers')] },
       { name: 'Burgundy', units: [
         u('fr-burg-rule', 'The Burgundy rule', 'Red is Pinot Noir, white is Chardonnay'),
         u('fr-burg-tiers', 'Bourgogne to Grand Cru', 'Regional → village → Premier Cru → Grand Cru'),

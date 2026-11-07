@@ -148,7 +148,7 @@ Lesson cards, in this order:
 ## The list (91 units)
 
 **France**
-- Champagne: Champagne AOC *(needs the full unit spec; see open questions)*
+- Champagne AOC: 10 lessons + checkpoint, **written as drafts** (see below): 1 Reading a Champagne label · 2 The place · 3 The grapes · 4 How it's made · 5 The dosage ladder · 6 The styles · 7 Who makes it · 8 How it tastes & ages · 9 The region's other wines · 10 Champagne vs other sparkling · Checkpoint
 - Burgundy: the Burgundy rule (red = Pinot Noir, white = Chardonnay) · Bourgogne → village → Premier Cru → Grand Cru · Chablis (four tiers) · Côte de Nuits & Côte de Beaune villages · Mâcon & Pouilly-Fuissé · Beaujolais (Gamay, ten crus)
 - Bordeaux: permitted red grapes · Left Bank vs Right Bank · Médoc villages (Pauillac, Margaux, St-Julien, St-Estèphe) · Pessac-Léognan · St-Émilion & Pomerol · White Bordeaux · Sauternes & Barsac · Bordeaux Supérieur
 - Rhône: Northern Syrah appellations (Côte-Rôtie, Hermitage, Crozes-Hermitage, St-Joseph, Cornas) · Condrieu · Southern Grenache appellations (Châteauneuf-du-Pape, Gigondas, Vacqueyras, Tavel) · Côtes du Rhône & Villages
@@ -189,7 +189,25 @@ Appellation rules (permitted grapes, minimum percentages, ageing minimums, sweet
 
 **Content already in the app that needs the same check:** the original Tasting specials state some rules: Barolo 38 months and Riserva 62 months, the four Chablis tiers, Icewine picking temperatures. They should be checked against their disciplinare / cahier des charges too, or retired once Track B covers them.
 
+## Champagne: verification status
+
+All 11 Champagne units are written but marked `draft: true`. Drafts are locked in the app; open it with `?drafts` to preview them under a "draft" banner. Each unit lists exactly what still needs checking (`toCheck`), shown in its preview card.
+
+**Why they're drafts:** the official texts couldn't be read from this session because the environment's network policy blocks `extranet.inao.gouv.fr`, `info.agriculture.gouv.fr`, `ec.europa.eu` and `eur-lex.europa.eu`. Secondary sources (searched 2026-11-07) agree with most of the spec, but flag:
+
+| Item | Spec | What secondary sources say | Status |
+|---|---|---|---|
+| NV ageing | 15 months | 15 months from tirage; a 12-months-on-lees minimum is also often cited | check CDC |
+| Vintage ageing | 3 years | 36 months from tirage | check CDC |
+| Dosage bands | as listed | Match EU Reg. 2019/33 Annex III Part A (Brut Nature: no sugar added after the second fermentation) | check regulation text |
+| Grand Cru villages | 17 | 17 | check CDC |
+| Premier Cru villages | 42 | 42, though some sources say 43 or 44 | check CDC |
+| Permitted grapes | 7 | 7 **plus Voltis**, a disease-resistant variety added on a trial basis (~2022; reported caps of 5% of an estate's vineyard area and 10% of a blend) | **added to lesson 3**; check CDC |
+| Tirage date | n/a | From 1 January after the harvest | check CDC |
+
+To finish: allow those hosts for this repository (a personal "duovino" environment), read the current cahier des charges and Reg. 2019/33, fix anything that differs, then set `draft: false` with `sources` and `checked` on each unit.
+
 ## Open questions (Track B)
-1. **Champagne:** you mentioned a full Champagne unit "as set out earlier", but I don't have that spec. Can you paste it?
+1. ~~Champagne spec~~ **Received** and written up as drafts in `champagne.js`.
 2. ~~Overlap with Track A's Chalk chapter~~ **Decided:** overlap is fine. Chalk stays as it is.
 3. ~~Should Track B require Track A first?~~ **Decided:** yes, Topsoil is required.

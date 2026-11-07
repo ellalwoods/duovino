@@ -29,7 +29,7 @@ python3 -m http.server 8000
 # open http://localhost:8000
 ```
 
-Add `?demo` to the URL (`http://localhost:8000/?demo`) to start with a lived-in cellar, with two units done and a cellar of ageing and corked bottles.
+Add `?drafts` to preview draft units (e.g. Champagne) that are waiting for their rule check. Add `?demo` to the URL (`http://localhost:8000/?demo`) to start with a lived-in cellar, with two units done and a cellar of ageing and corked bottles.
 
 To use it on your phone, enable **GitHub Pages** for this repository (Settings → Pages → deploy from branch), then open the URL in Safari and tap **Share → Add to Home Screen**.
 
@@ -42,6 +42,7 @@ To use it on your phone, enable **GitHub Pages** for this repository (Settings �
 | `data.js` | Seasons, soil strata, concepts, tasting specials |
 | `syllabus.js` | Track A: chapters, units, lesson cards and questions |
 | `labels.js` | Track B: B0 units and the wine list skeleton |
+| `champagne.js` | Track B: Champagne AOC (10 lessons + checkpoint, drafts until rule-checked) |
 | `app.js` | Screens, games, swirl gesture, spaced-repetition cellar, sounds |
 | `sw.js`, `manifest.webmanifest`, `icon.svg` | Offline support and home-screen install |
 

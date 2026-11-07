@@ -511,3 +511,20 @@ em { font-style: italic; }
 .chain-steps li.past span { background: var(--ink); border-color: var(--ink); color: var(--paper); }
 .chain-q { font-size: 20px; font-weight: 500; text-align: center; margin: 6px 0 14px; animation: rise .3s; }
 .wl-status .ring-label { font-size: 40px; font-family: var(--serif); fill: var(--wine); }
+
+/* drafts & Champagne labels */
+.draft-banner { position: relative; margin: 10px 0 0; padding: 7px 12px; border-radius: 10px; background: #fbe7b7; color: #6a4a12; font-size: 10px; text-align: center; border: 1px dashed #c4842c; }
+.draft-box { margin: 0 0 16px; padding: 12px 14px; border-radius: 14px; background: #fbe7b7; border: 1px dashed #c4842c; color: #4a3410; font-size: 14px; }
+.draft-box .mono { margin: 0 0 6px; font-size: 10px; }
+.draft-box p { margin: 0 0 6px; }
+.draft-box ul { margin: 0; padding-left: 18px; }
+.draft-box li { margin: 2px 0; line-height: 1.35; }
+.buckets.n4 { grid-template-columns: 1fr 1fr; }
+.buckets.n4 .bucket { min-height: 110px; }
+.label-champagne { background: #fbf7ee var(--grain); }
+.label-champagne .lbl-border { border: 1px solid #b8963e; outline: 3px double #b8963e; outline-offset: 4px; border-radius: 2px; }
+.label-champagne .term.big { font-style: normal; font-weight: 400; letter-spacing: .22em; text-transform: uppercase; font-size: 26px; }
+.label-back { max-width: 280px; background: #fff; transform: rotate(.8deg); }
+.label-back .lbl-border { border: 0; outline: 0; text-align: left; align-items: stretch; padding: 14px 10px; gap: 4px; }
+.label-back .lbl-line { justify-content: flex-start; }
+.label-back .term { font-family: var(--mono); font-size: 12px; letter-spacing: 0; }

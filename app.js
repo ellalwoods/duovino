@@ -45,17 +45,20 @@
     });
   });
   const UNIT = Object.fromEntries(UNITS.map(r => [r.u.id, r]));
-  const playable = r => !!r.u.lesson;
+  // Draft units (rules not yet checked against official regulations) are only playable with ?drafts
+  const DRAFTS = /[?&]drafts\b/.test(location.search);
+  const playable = r => !!(r.u.questions && r.u.questions.length) && (!r.u.draft || DRAFTS);
   const done = r => !!S.units[r.u.id];
   const reqMet = r => !r.req || r.req.every(x => !playable(x) || done(x));
-  const unlocked = r => (!r.prev || done(r.prev)) && reqMet(r);
+  const unlocked = r => (DRAFTS && r.u.draft) || ((!r.prev || done(r.prev)) && reqMet(r));
   const reqText = () => { const w = TOPSOIL.filter(playable); return `Topsoil (${w[0].tag}–${w[w.length - 1].tag})`; };
   const unitState = r => done(r) ? 'done' : !playable(r) ? 'soon' : unlocked(r) ? 'current' : 'locked';
   const nextUnit = (track = 'A') => { const left = UNITS.filter(r => r.track === track && !done(r)); return left.find(r => unitState(r) === 'current') || left[0]; };
   const doneCount = (track = 'A') => UNITS.filter(r => r.track === track && done(r)).length;
   const trackCount = track => UNITS.filter(r => r.track === track).length;
   const label = r => r.tag;
-  const minutes = u => Math.max(3, Math.round(u.lesson.length * 0.4 + u.questions.length * 0.5));
+  const minutes = u => Math.max(3, Math.round((u.lesson || []).length * 0.4 + u.questions.length * 0.5));
+  const draftBanner = () => P && P.r && P.r.u.draft ? '<p class="draft-banner mono">Draft · rules not yet checked against the official regulations</p>' : '';
 
   // ?demo seeds a lived-in vineyard so you can see progress and the ageing mechanic straight away
   if (/[?&]demo\b/.test(location.search) && !S.demoSeeded) {
@@ -338,7 +341,7 @@
       <span class="mono nc-eyebrow">${doneCount(r.track) ? 'Up next' : 'Start here'} · ${r.group}</span>
       <span class="nc-title"><em>${label(r)}</em> ${u.title}</span>
       <span class="nc-sub">${u.sub}</span>
-      <span class="mono nc-meta">Lesson ${u.lesson.length} cards · Tasting ${u.questions.length} questions · ~${minutes(u)} min</span>
+      <span class="mono nc-meta">${(u.lesson || []).length ? `Lesson ${u.lesson.length} cards · ` : ''}Tasting ${u.questions.length} questions · ~${minutes(u)} min</span>
       <span class="nc-cta">Start lesson <span aria-hidden="true">→</span></span>
     </button>`;
   }
@@ -420,7 +423,7 @@
     setWine(TB.wine);
     const entry = r => {
       const s = unitState(r), rec = S.units[r.u.id];
-      const status = s === 'done' ? ring(rec.best, r.wine, 34, '✓') : s === 'current' ? '<span class="wl-pour">Pour</span>' : s === 'soon' ? '<span class="mono wl-soon">soon</span>' : '<span class="mono wl-soon">—</span>';
+      const status = s === 'done' ? ring(rec.best, r.wine, 34, '✓') : s === 'current' ? '<span class="wl-pour">Pour</span>' : s === 'soon' ? `<span class="mono wl-soon">${r.u.draft ? 'draft' : 'soon'}</span>` : '<span class="mono wl-soon">—</span>';
       return `<li><button class="wl-entry ${s}" data-act="preview" data-id="${r.u.id}">
         <span class="wl-tag mono">${label(r)}</span>
         <span class="wl-name">${r.u.title}${r.u.sub ? `<small>${r.u.sub}</small>` : ''}</span>
@@ -457,15 +460,19 @@
       <p class="eyebrow">Unit ${label(r)} · ${r.group}</p>
       <h2>${u.title}</h2>
       <p class="review-q">${u.sub}</p>
-      ${playable(r) ? `<ol class="steps">
+      ${playable(r) && !(u.lesson || []).length ? `<ol class="steps"><li><span class="mono">Checkpoint</span>${u.questions.length} mixed questions, no lesson first</li></ol>` : ''}
+      ${playable(r) && (u.lesson || []).length ? `<ol class="steps">
         <li><span class="mono">1 · The Pour</span>${r.track === 'B' ? `Starts from a label, then works out to grapes, rules and taste: ${u.lesson.length} cards` : `A short lesson: ${u.lesson.length} cards`}</li>
         <li><span class="mono">2 · The Taste</span>${u.questions.length} questions on what you just learned</li>
         <li><span class="mono">3 · From your cellar</span>One bottle from an earlier unit, to keep it fresh</li>
       </ol>` : ''}
       ${rec ? `<p class="mono resting-note">Best ${rec.best}% · poured ${rec.plays}×</p>` : ''}
+      ${u.draft ? `<div class="draft-box"><p class="mono">Draft · rules not yet checked</p>${u.toCheck && u.toCheck.length ? `<p>To check against ${esc(u.sources.join(' and '))}:</p><ul>${u.toCheck.map(t => `<li>${esc(t)}</li>`).join('')}</ul>` : `<p>To check against ${esc(u.sources.join(' and '))}.</p>`}</div>`
+        : u.checked ? `<p class="mono resting-note">Rules checked ${u.checked} · ${esc(u.sources.join(', '))}</p>` : ''}
       ${s === 'current' || s === 'done' ? `<button class="primary" data-act="go" data-h="#unit-${id}">${s === 'done' ? 'Pour it again' : 'Start lesson'}</button>`
         : s === 'locked' && !reqMet(r) ? `<p class="mono resting-note">Locked · finish ${reqText()} in Track A first</p><button class="primary" data-act="go" data-h="#roots">Go to Topsoil</button>`
         : s === 'locked' ? `<p class="mono resting-note">Locked · finish ${label(prev)} ${prev.u.title} first</p>`
+        : u.draft && u.questions ? `<p class="mono resting-note">Written, waiting for the rule check before it's poured</p>`
         : `<p class="mono resting-note">${r.track === 'B' ? 'Still being poured · written once its rules are checked against the official regulations' : 'Still being poured · this unit is planned but not written yet'}</p>`}
     </div></div>`;
     overlay.querySelector('.modal').addEventListener('click', ev => { if (ev.target.classList.contains('modal')) closeModal(); });
@@ -489,9 +496,9 @@
     const qs = r.u.questions.slice();
     const rc = recallPick(new Set(qs.map(q => q.concept)));
     if (rc) qs.splice(qs.length - 1, 0, { type: 'recall', concept: rc });
-    P = { kind: 'unit', r, id, title: r.u.title, tag: `Unit ${label(r)}`, wine: r.wine, lesson: r.u.lesson, questions: qs, card: 0, i: 0, correct: 0, results: [], phase: 'lesson' };
+    P = { kind: 'unit', r, id, title: r.u.title, tag: `Unit ${label(r)}`, wine: r.wine, lesson: r.u.lesson || [], questions: qs, card: 0, i: 0, correct: 0, results: [], phase: 'lesson' };
     setWine(P.wine);
-    renderLesson();
+    if (P.lesson.length) renderLesson(); else renderQ();
   }
   function startFlight(id) {
     const f = D.flights.find(x => x.id === id);
@@ -557,7 +564,7 @@
         <div class="p-title"><span class="mono">The Pour · ${P.tag}</span><strong>${P.title}</strong></div>
         ${glassFill((P.card + 1) / n, P.wine)}
       </header>
-      <div class="lstage"><article class="lcard k-${c.kind} ${dir < 0 ? 'back' : ''}">${cardHTML(c)}</article></div>
+      ${draftBanner()}<div class="lstage"><article class="lcard k-${c.kind} ${dir < 0 ? 'back' : ''}">${cardHTML(c)}</article></div>
       <div class="lnav">
         <button class="ghost-btn" data-act="lprev" ${P.card ? '' : 'disabled'}>Back</button>
         <div class="ldots">${P.lesson.map((_, i) => `<i class="${i <= P.card ? 'on' : ''}"></i>`).join('')}</div>
@@ -609,7 +616,7 @@
         <div class="p-title"><span class="mono">${P.kind === 'unit' ? 'The Taste' : P.tag} · ${P.i + 1} of ${P.questions.length}</span><strong>${P.title}</strong></div>
         ${ring(pct, P.wine, 44)}
       </header>
-      <div class="q-body">${inner}</div>
+      ${draftBanner()}<div class="q-body">${inner}</div>
     </div>`;
   }
 
