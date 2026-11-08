@@ -495,7 +495,7 @@
     const B = UNITS.filter(r => r.track === 'B');
     const row = r => {
       const s = unitState(r), rec = S.units[r.u.id];
-      const pill = s === 'done' ? `<span class="pill done">✓ ${rec.best}%</span>` : s === 'current' ? '<span class="pill go">Start</span>' : s === 'locked' ? '<span class="pill">Locked</span>' : '<span class="pill soon">Coming soon</span>';
+      const pill = s === 'done' ? `<span class="pill done">✓ ${rec.best}%</span>` : s === 'current' ? '<span class="pill start">Start</span>' : s === 'locked' ? '<span class="pill">Locked</span>' : '<span class="pill soon">Coming soon</span>';
       return `<li><button class="wl-row ${s}" data-act="preview" data-id="${r.u.id}"><span class="wl-name">${r.u.title}${r.u.sub ? `<small>${r.u.sub}</small>` : ''}</span>${pill}</button></li>`;
     };
     const stats = rs => { const w = rs.filter(playable).length, d = rs.filter(done).length, soon = rs.length - w; return w ? `${d} of ${w} done` + (soon ? ` · ${soon} more soon` : '') : `${soon} coming soon`; };

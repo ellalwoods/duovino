@@ -51,12 +51,20 @@
           { kind: 'label', title: 'Where\'s the grape?', body: 'This label never says which grape is inside. It doesn\'t need to. Tap the highlighted words.',
             label: { style: 'loire', lines: [
               [s('Domaine des Caillottes', 'producer', { note: 'The producer. A name, not a rule.' })],
-              [s('Sancerre', 'app', { big: true, note: 'The appellation: a protected place with its own rulebook. White Sancerre must be Sauvignon Blanc.' })],
+              [s('Sancerre', 'app', { big: true, note: 'The appellation: a protected place with its own rulebook. White Sancerre must be Sauvignon Blanc, so expect a dry, crisp white with high acidity and notes of gooseberry and grass.' })],
               [s('Appellation Sancerre Contrôlée', 'aoc', { small: true, note: 'The legal line. The word between "Appellation" and "Contrôlée" is the appellation.' })],
               [s('2023', 'vintage', { note: 'The vintage: the year the grapes were picked.' })],
             ] } },
           { kind: 'text', title: 'The appellation is a recipe', big: 'Label → place → grapes → taste',
             body: 'In Europe an appellation is a protected place with its own rulebook: which grapes, what yields, how long to age. Learn the appellation and the label tells you the grapes, even when it never names them.' },
+          { kind: 'facts', title: 'Places and their grapes', body: 'A few famous names to start with. On the label you see the place; the grape is implied.', rows: [
+            { k: 'Sancerre', v: 'Sauvignon Blanc (its whites): crisp, gooseberry, grass.' },
+            { k: 'Chablis', v: 'Chardonnay: green apple, lemon, stony.' },
+            { k: 'Beaujolais', v: 'Gamay: light, juicy red.' },
+            { k: 'Barolo', v: 'Nebbiolo: pale but powerful red.' },
+            { k: 'Rioja', v: 'Mostly Tempranillo: red.' },
+            { k: 'Pomerol', v: 'Mostly Merlot: plush red.' },
+          ] },
           { kind: 'facts', title: 'Where to find the appellation', rows: [
             { k: 'France', v: 'Between "Appellation" and "Contrôlée" (or "Protégée").' },
             { k: 'Italy', v: 'Before "Denominazione di Origine Controllata" (DOC) or "…e Garantita" (DOCG).' },
@@ -127,7 +135,7 @@
             { k: 'Vino de Pago', v: 'A single estate with its own appellation.' },
           ] },
           { kind: 'facts', title: 'Germany', rows: [
-            { k: 'Prädikatswein', v: 'Top tier, labelled by ripeness at harvest: Kabinett, Spätlese, Auslese, Beerenauslese, Eiswein, Trockenbeerenauslese.' },
+            { k: 'Prädikatswein', v: 'Top tier, labelled by ripeness at harvest, from least to most ripe: Kabinett, Spätlese, Auslese, Beerenauslese, Trockenbeerenauslese, plus Eiswein (from frozen grapes).' },
             { k: 'Qualitätswein', v: 'From one of 13 specified wine regions (Anbaugebiete).' },
             { k: 'Landwein', v: 'Germany\'s PGI tier.' },
           ] },

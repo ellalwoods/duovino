@@ -71,8 +71,8 @@
           label: { style: 'champagne', lines: [
             [s('Maison Delorme-Varin', 'producer', { note: 'The house (producer) name.' })],
             [s('Champagne', 'app', { big: true, note: 'The appellation. EU rules let Champagne leave out the words "protected designation of origin" (AOP/AOC): the word Champagne is enough. It must also be printed on the cork.' })],
-            [s('Blanc de Blancs', 'style', { note: 'A style term: made only from white grapes, which in practice means Chardonnay.' }), s('Grand Cru', 'cru', { note: 'Grapes from Champagne\'s top-rated villages.' })],
-            [s('Brut', 'dosage', { note: 'The sweetness term. Brut is dry (less than 12 g/L of sugar).' }), s('2016', 'vintage', { note: 'A vintage year: all the grapes come from 2016. No year means non-vintage.' })],
+            [s('Blanc de Blancs', 'style', { note: 'A style term: made only from white grapes, which in practice means Chardonnay. Expect a linear, citrus, fine style.' }), s('Grand Cru', 'cru', { note: 'Grapes from Champagne\'s top-rated villages.' })],
+            [s('Brut', 'dosage', { note: 'The sweetness term. Brut is dry (less than 12 g/L of sugar). Extra Brut and Brut Nature are even drier; Demi-Sec is sweet. (More in "The dosage ladder".)' }), s('2016', 'vintage', { note: 'A vintage year: all the grapes come from 2016. No year means non-vintage.' })],
             [s('NM-27845-01 · Élaboré à Reims', 'matricule', { small: true, note: 'The producer code (matricule). NM means négociant-manipulant: a house.' })],
           ] } },
         { kind: 'facts', title: 'The producer code', body: 'The law requires a registration code on every label, issued by the Comité Champagne. Find it in the small print. The two letters tell you who made the wine:', rows: [
@@ -125,11 +125,11 @@
           body: 'Champagne sits near the northern limit for ripening grapes. Grapes ripen slowly and keep <b>high acidity</b>: exactly what a sparkling base wine needs. In cold years they barely ripen at all, which is why blending across years matters so much.' },
         { kind: 'text', title: 'Chalk', body: 'Much of Champagne lies on <b>chalk</b>. It drains freely yet holds water like a sponge, feeding the vines steadily through dry spells and helping keep the wines fresh. Its pale colour reflects light and heat back onto the vines. The cellars of Reims and Épernay are dug deep into it, giving cool, steady temperatures for long ageing.' },
         { kind: 'layers', title: 'The sub-regions', rows: [
-          { h: 'Montagne de Reims', t: 'Pinot Noir: structure and body.' },
-          { h: 'Vallée de la Marne', t: 'Meunier: fruity and round.' },
-          { h: 'Côte des Blancs', t: 'Chardonnay: finesse and citrus.' },
+          { h: 'Montagne de Reims', t: 'Pinot Noir: structure and body. Villages: Verzenay, Bouzy, Ambonnay.' },
+          { h: 'Vallée de la Marne', t: 'Meunier: fruity and round. Villages: Hautvillers, Cumières.' },
+          { h: 'Côte des Blancs', t: 'Chardonnay: finesse and citrus. Villages: Cramant, Avize, Le Mesnil-sur-Oger.' },
           { h: 'Côte de Sézanne', t: 'South of the Côte des Blancs, mostly Chardonnay.' },
-          { h: 'Côte des Bar', t: 'Far to the south-east: Pinot Noir on Kimmeridgian soils, like Chablis.' },
+          { h: 'Côte des Bar', t: 'Far to the south-east: Pinot Noir on Kimmeridgian soils, like Chablis. Village: Les Riceys.' },
         ] },
         { kind: 'facts', title: 'The village ladder (échelle des crus)', body: 'Champagne rates whole villages, not single vineyards.', rows: [
           { k: 'Grand Cru', v: '17 top-rated villages, all in the Marne.' },
