@@ -28,6 +28,15 @@
         <feTurbulence type="fractalNoise" baseFrequency="0.06" numOctaves="1" seed="2" result="n"/>
         <feDisplacementMap in="SourceGraphic" in2="n" scale="2.5"/>
       </filter>
+      <filter id="mapwobble" x="-5%" y="-5%" width="110%" height="110%">
+        <feTurbulence type="fractalNoise" baseFrequency="0.02" numOctaves="2" seed="4" result="n"/>
+        <feDisplacementMap in="SourceGraphic" in2="n" scale="6"/>
+      </filter>
+      <filter id="paper">
+        <feTurbulence type="fractalNoise" baseFrequency=".8" numOctaves="3" result="n"/>
+        <feColorMatrix in="n" values="0 0 0 0 .45  0 0 0 0 .35  0 0 0 0 .25  0 0 0 .07 0"/>
+        <feComposite in2="SourceGraphic" operator="in"/>
+      </filter>
       <pattern id="dust" width="6" height="6" patternUnits="userSpaceOnUse">
         <circle cx="1" cy="1" r=".7" fill="#d9d2c4"/><circle cx="4" cy="3.5" r=".5" fill="#cfc6b6"/><circle cx="2.5" cy="5" r=".4" fill="#e6dfd2"/>
       </pattern>
@@ -41,6 +50,7 @@
   <script src="wines.js"></script>
   <script src="grapes.js"></script>
   <script src="labels.js"></script>
+  <script src="scenes.js"></script>
   <script src="app.js"></script>
 </body>
 </html>
