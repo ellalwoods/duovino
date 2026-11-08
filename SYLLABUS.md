@@ -182,7 +182,29 @@ Appellation rules (permitted grapes, minimum percentages, ageing minimums, sweet
 
 ## Regions written so far
 
-Fifteen regions are fully written, so their postcards can be earned: **Champagne, Alsace, Spain (11 lessons), Portugal (7), Germany (6), Austria (3), Switzerland, Hungary (Tokaji, Eger), Greece (Santorini, Naoussa, Nemea, Crete), Georgia, Lebanon, England, Uruguay, Brazil, Japan.** Region lessons live in `regions-1.js` and `regions-2.js`.
+Twenty-nine of the 35 map regions are fully written, so their postcards can be earned. Still to write: **France** (Burgundy, Bordeaux, Rhône, Loire, Provence & Corsica, the South). Region lessons live in `regions-1.js` to `regions-4.js`.
+
+## New World & Italy: verification status
+
+**Checked 2026-11-08.** New hosts were added to the environment for the US eCFR, Australian, NZ and Chilean legislation, Argentina and Ontario VQA (NZ, Chile and Argentina texts still couldn't be read).
+
+| Claim in the app | Official text | Result |
+|---|---|---|
+| USA: variety ≥ 75%; state/county ≥ 75%; AVA ≥ 85%; vintage ≥ 95% with AVA, else ≥ 85% | 27 CFR §4.23, §4.25, §4.27 (eCFR) | ✅ |
+| Australia: GI, variety, vintage each ≥ 85% | EU–Australia wine agreement, OJ L 28, 2009 | ✅ |
+| South Africa: variety ≥ 85% | EU–South Africa wine agreement, OJ L 28, 2002 | ✅ |
+| Ontario VQA: vintage and area ≥ 85%; vinifera only except Vidal for Icewine; Niagara benches | O. Reg. 406/00 | ✅ |
+| Chile, Argentina, New Zealand | Not readable | ⚠️ no percentages stated |
+| Barbera d'Asti/d'Alba; Dogliani (Dolcetto); Gavi (Cortese); Asti (Moscato Bianco) | OJ C 60 2019, C 31 2022, PDO-IT-A1330-AM04, OJ C 470 2021, OJ C 61 2021 | ✅ |
+| Chianti: Sangiovese, white grapes ≤ 10%, six provinces | 2019/C 373/04 | ✅ |
+| Rosso di Montalcino: Sangiovese only | PDO-IT-A1456-AM03 | ✅ |
+| Vino Nobile: Sangiovese; ≥ 2 years (≥ 1 in wood); Riserva ≥ 3 years (6 months in bottle) | OJ C 227, 2020 | ✅ |
+| Bolgheri grapes; Rosso Superiore; Bolgheri Sassicaia is its own PDO | OJ C 183, 2022; EU register | ✅ |
+| Valpolicella family: Corvina/Corvinone 45–95%; appassimento for Amarone & Recioto | PDO-IT notices, 2019 | ✅ |
+| Prosecco DOC; Conegliano Valdobbiadene DOCG, Rive, Cartizze | PDO-IT-A0516-AM05; A0515-AM02 | ✅ |
+| Trento: traditional method only; ≥ 15 months on lees, Riserva ≥ 36 | PDO-IT-A0752-AM02 | ✅ |
+| Sicilia DOC: Nero d'Avola (Calabrese), Grillo | OJ C 416, 2019 | ✅ |
+| Barolo, Barbaresco, Alto Adige, Collio, Cannonau, Primitivo di Manduria, Goriška Brda, Dingač | Not downloadable | ⚠️ places and grapes only; no % or ageing stated |
 
 ## Spain, Portugal, Austria & Germany: verification status
 
