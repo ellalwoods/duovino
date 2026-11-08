@@ -81,7 +81,7 @@
               [s('Appellation Chablis Contrôlée', 'aoc', { small: true })], [s('2022', 'vintage'), s('Mis en bouteille au domaine', 'bottled', { small: true })],
             ] }, answer: 'app',
             explain: 'Chablis is the appellation: the word sitting inside "Appellation … Contrôlée", and usually the biggest word on the label.' },
-          { type: 'chain', concept: 'placenotgrape', q: 'Read this label from the outside in.',
+          { type: 'chain', concept: 'placenotgrape', wines: ['sancerre'], q: 'Read this label from the outside in.',
             label: { style: 'loire', lines: [
               [s('Domaine du Moulin Bas', 'producer')], [s('Sancerre', 'app', { big: true })],
               [s('Appellation Sancerre Contrôlée', 'aoc', { small: true })], [s('2023', 'vintage')],
@@ -211,90 +211,155 @@
     ],
   };
 
-  // The wine list. Units without `lesson` show as "being poured" until written and rule-checked.
-  const u = (id, title, sub) => ({ id: 'b-' + id, title, sub });
-  const countries = [
-    { name: 'France', wine: C.garnet, regions: [
-      { name: 'Champagne AOC', units: D.champagneUnits || [u('fr-champagne', 'Champagne AOC', 'Grapes, methods, dosage, tiers')] },
-      { name: 'Burgundy', units: [
-        u('fr-burg-rule', 'The Burgundy rule', 'Red is Pinot Noir, white is Chardonnay'),
-        u('fr-burg-tiers', 'Bourgogne to Grand Cru', 'Regional → village → Premier Cru → Grand Cru'),
-        u('fr-chablis', 'Chablis', 'The four tiers'),
-        u('fr-cote-dor', 'Côte de Nuits & Côte de Beaune', 'The key village names'),
-        u('fr-macon', 'Mâcon & Pouilly-Fuissé', 'Southern Burgundy Chardonnay'),
-        u('fr-beaujolais', 'Beaujolais', 'Gamay and the ten crus') ] },
-      { name: 'Bordeaux', units: [
-        u('fr-bdx-grapes', 'The Bordeaux grapes', 'What\'s permitted in the reds'),
-        u('fr-bdx-banks', 'Left Bank vs Right Bank', 'Cabernet-led vs Merlot-led'),
-        u('fr-medoc', 'The Médoc villages', 'Pauillac, Margaux, St-Julien, St-Estèphe'),
-        u('fr-pessac', 'Pessac-Léognan', 'Red and white in the Graves'),
-        u('fr-right', 'St-Émilion & Pomerol', 'The Right Bank names'),
-        u('fr-bdx-white', 'White Bordeaux', 'Sauvignon Blanc and Semillon'),
-        u('fr-sauternes', 'Sauternes & Barsac', 'Sweet, botrytised whites'),
-        u('fr-bdx-sup', 'Bordeaux Supérieur', 'What "Supérieur" adds') ] },
-      { name: 'Rhône', units: [
-        u('fr-n-rhone', 'Northern Rhône', 'Côte-Rôtie, Hermitage, Crozes, St-Joseph, Cornas'),
-        u('fr-condrieu', 'Condrieu', 'Viognier'),
-        u('fr-s-rhone', 'Southern Rhône', 'Châteauneuf, Gigondas, Vacqueyras, Tavel'),
-        u('fr-cdr', 'Côtes du Rhône', 'And Côtes du Rhône Villages') ] },
-      { name: 'Loire', units: [
-        u('fr-muscadet', 'Muscadet', 'Melon de Bourgogne'),
-        u('fr-sancerre', 'Sancerre & Pouilly-Fumé', 'Sauvignon Blanc'),
-        u('fr-chenin', 'Vouvray & Savennières', 'Chenin Blanc'),
-        u('fr-cabfranc', 'Chinon, Bourgueil, Saumur-Champigny', 'Cabernet Franc'),
-        u('fr-cremant-loire', 'Crémant de Loire', 'Loire sparkling') ] },
-      { name: 'Provence', units: [
-        u('fr-cdp', 'Côtes de Provence', 'And its sub-zones'),
-        u('fr-aix', 'Coteaux d\'Aix-en-Provence', ''),
-        u('fr-bandol', 'Bandol', 'Mourvèdre-led'),
-        u('fr-cassis', 'Cassis', ''),
-        u('fr-rose-grapes', 'The rosé grapes', 'Grenache, Cinsault, Syrah, Mourvèdre, Tibouren') ] },
-      { name: 'Alsace', units: [u('fr-alsace', 'Alsace', 'Grape-named labels, Grand Cru, VT/SGN, Crémant')] },
-      { name: 'South & beyond', units: [
-        u('fr-languedoc', 'Languedoc', ''), u('fr-picpoul', 'Picpoul de Pinet', ''), u('fr-roussillon', 'Roussillon', ''),
-        u('fr-cahors', 'Cahors', ''), u('fr-madiran', 'Madiran', ''), u('fr-jurancon', 'Jurançon', ''), u('fr-jura', 'Jura', 'Vin jaune') ] },
+  // ---- Track B skeleton. Units without `lesson`/`questions` show as "coming soon". ----
+  const u = (id, title, sub = '') => ({ id: 'b-' + id, title, sub });
+  const G = D.grapeLessons;
+
+  // Part 2: Meet the grapes. The first group is the foundation; the rest open once it's done.
+  const grapeGroups = [
+    { name: 'The big international grapes', core: true, blurb: 'The grapes you\'ll meet on every wine list in the world. Start here.', units: [
+      G.chardonnay, G.sauvignon, G.riesling,
+      u('g-pinotgris', 'Pinot Grigio / Pinot Gris', 'One grape, two very different styles'),
+      u('g-pinotnoir', 'Pinot Noir', 'Silky, fragrant, fussy'),
+      u('g-merlot', 'Merlot', 'Plush and plummy'),
+      u('g-cabernet', 'Cabernet Sauvignon', 'Blackcurrant, cedar, grip'),
+      u('g-syrah', 'Syrah / Shiraz', 'Pepper in the cool, spice in the heat') ] },
+    { name: 'Aromatic & classic whites', blurb: 'Perfumed, textured and long-lived whites.', units: [
+      u('g-chenin', 'Chenin Blanc', 'Dry to sweet, still to sparkling'),
+      u('g-semillon', 'Sémillon', 'Waxy, honeyed, built to age'),
+      u('g-viognier', 'Viognier', 'Apricot and blossom'),
+      u('g-gewurz', 'Gewurztraminer', 'Lychee and rose'),
+      u('g-muscat', 'Muscat / Moscato', 'The grapiest grape'),
+      u('g-gruner', 'Grüner Veltliner', 'White pepper and green bean'),
+      u('g-albarino', 'Albariño / Alvarinho', 'Saline and peachy'),
+      u('g-melon', 'Melon de Bourgogne', 'The Muscadet grape'),
+      u('g-marsanne', 'Marsanne & Roussanne', 'The Rhône\'s white pair') ] },
+    { name: 'Mediterranean & island whites', blurb: 'Sun, sea air and salty freshness.', units: [
+      u('g-vermentino', 'Vermentino', 'Sardinia, Corsica, Liguria, Provence'),
+      u('g-assyrtiko', 'Assyrtiko', 'Santorini\'s volcanic marvel'),
+      u('g-fiano', 'Fiano', 'Campania\'s nutty, honeyed white'),
+      u('g-greco', 'Greco', 'Bright and mineral'),
+      u('g-garganega', 'Garganega', 'The grape behind Soave'),
+      u('g-verdicchio', 'Verdicchio', 'Almond and lemon from the Marche'),
+      u('g-verdejo', 'Verdejo', 'Rueda\'s herbal white'),
+      u('g-godello', 'Godello', 'Spain\'s rising star'),
+      u('g-picpoul', 'Picpoul', 'The "lip-stinger" of the Languedoc'),
+      u('g-malvasia', 'Malvasia', 'An ancient family of grapes') ] },
+    { name: 'Classic reds', blurb: 'The backbone of Europe\'s great red regions.', units: [
+      u('g-grenache', 'Grenache / Garnacha', 'Strawberry, spice, warmth'),
+      u('g-tempranillo', 'Tempranillo', 'Rioja and Ribera'),
+      u('g-sangiovese', 'Sangiovese', 'Cherry, tea, Tuscany'),
+      u('g-nebbiolo', 'Nebbiolo', 'Tar and roses'),
+      u('g-cabfranc', 'Cabernet Franc', 'Raspberry and pencil shavings'),
+      u('g-gamay', 'Gamay', 'Beaujolais\' joyful red'),
+      u('g-malbec', 'Malbec', 'From Cahors to Mendoza'),
+      u('g-zinfandel', 'Zinfandel / Primitivo', 'Jammy and generous'),
+      u('g-mourvedre', 'Mourvèdre / Monastrell', 'Meaty and dark'),
+      u('g-barbera', 'Barbera', 'Juicy and bright'),
+      u('g-carignan', 'Carignan & Cinsault', 'Old vines, new respect') ] },
+    { name: 'Off the beaten track', blurb: 'Fantastic grapes beyond the usual suspects.', units: [
+      u('g-xinomavro', 'Xinomavro', 'Greece\'s answer to Nebbiolo'),
+      u('g-agiorgitiko', 'Agiorgitiko', 'Nemea\'s silky red'),
+      u('g-aglianico', 'Aglianico', 'Southern Italy\'s powerhouse'),
+      u('g-nerello', 'Nerello Mascalese', 'Etna\'s volcanic red'),
+      u('g-touriga', 'Touriga Nacional', 'Portugal\'s flagship'),
+      u('g-blaufrankisch', 'Blaufränkisch', 'Central Europe\'s spicy red'),
+      u('g-saperavi', 'Saperavi', 'Georgia\'s inky red'),
+      u('g-tannat', 'Tannat', 'Uruguay\'s grippy signature'),
+      u('g-carmenere', 'Carménère', 'Chile\'s rediscovered grape'),
+      u('g-pinotage', 'Pinotage', 'South Africa\'s own cross'),
+      u('g-mencia', 'Mencía', 'Fresh reds from Spain\'s north-west'),
+      u('g-furmint', 'Furmint', 'Tokaji\'s fiery white'),
+      u('g-torrontes', 'Torrontés', 'Argentina\'s floral white'),
+      u('g-koshu', 'Koshu', 'Japan\'s delicate white'),
+      u('g-chasselas', 'Chasselas', 'Switzerland\'s lakeside white'),
+      u('g-savagnin', 'Savagnin', 'The Jura\'s vin jaune grape'),
+      u('g-rkatsiteli', 'Rkatsiteli', 'Georgia\'s amber-wine white') ] },
+  ];
+
+  // Part 3: Travel the regions, by continent.
+  const continents = [
+    { name: 'France', countries: [
+      { name: 'France', wine: C.garnet, regions: [
+        { name: 'Champagne AOC', units: D.champagneUnits || [u('fr-champagne', 'Champagne AOC')] },
+        { name: 'Burgundy', units: [
+          u('fr-burg-rule', 'The Burgundy rule', 'Red is Pinot Noir, white is Chardonnay'),
+          u('fr-burg-tiers', 'Bourgogne to Grand Cru', 'Regional → village → Premier Cru → Grand Cru'),
+          u('fr-chablis', 'Chablis', 'The four tiers'),
+          u('fr-cote-dor', 'Côte de Nuits & Côte de Beaune', 'The key village names'),
+          u('fr-macon', 'Mâcon & Pouilly-Fuissé'),
+          u('fr-beaujolais', 'Beaujolais', 'Gamay and the ten crus') ] },
+        { name: 'Bordeaux', units: [
+          u('fr-bdx-grapes', 'The Bordeaux grapes'), u('fr-bdx-banks', 'Left Bank vs Right Bank'),
+          u('fr-medoc', 'The Médoc villages', 'Pauillac, Margaux, St-Julien, St-Estèphe'), u('fr-pessac', 'Pessac-Léognan'),
+          u('fr-right', 'St-Émilion & Pomerol'), u('fr-bdx-white', 'White Bordeaux'), u('fr-sauternes', 'Sauternes & Barsac'), u('fr-bdx-sup', 'Bordeaux Supérieur') ] },
+        { name: 'Rhône', units: [
+          u('fr-n-rhone', 'Northern Rhône', 'Côte-Rôtie, Hermitage, Crozes, St-Joseph, Cornas'), u('fr-condrieu', 'Condrieu', 'Viognier'),
+          u('fr-s-rhone', 'Southern Rhône', 'Châteauneuf, Gigondas, Vacqueyras, Tavel'), u('fr-cdr', 'Côtes du Rhône & Villages') ] },
+        { name: 'Loire', units: [
+          u('fr-muscadet', 'Muscadet'), u('fr-sancerre', 'Sancerre & Pouilly-Fumé'), u('fr-chenin', 'Vouvray & Savennières'),
+          u('fr-cabfranc', 'Chinon, Bourgueil, Saumur-Champigny'), u('fr-cremant-loire', 'Crémant de Loire') ] },
+        { name: 'Alsace', units: [u('fr-alsace', 'Alsace', 'Grape-named labels, Grand Cru, VT/SGN, Crémant')] },
+        { name: 'Provence & Corsica', units: [
+          u('fr-cdp', 'Côtes de Provence'), u('fr-aix', 'Coteaux d\'Aix-en-Provence'), u('fr-bandol', 'Bandol', 'Mourvèdre-led'),
+          u('fr-cassis', 'Cassis'), u('fr-rose-grapes', 'The rosé grapes'), u('fr-corsica', 'Corsica', 'Vermentinu, Niellucciu, Sciaccarellu') ] },
+        { name: 'South, South-West & mountains', units: [
+          u('fr-languedoc', 'Languedoc'), u('fr-picpoul', 'Picpoul de Pinet'), u('fr-roussillon', 'Roussillon'),
+          u('fr-cahors', 'Cahors', 'The original Malbec'), u('fr-madiran', 'Madiran', 'Tannat'), u('fr-jurancon', 'Jurançon'),
+          u('fr-jura', 'Jura', 'Vin jaune'), u('fr-savoie', 'Savoie', 'Alpine whites') ] },
+      ] },
     ] },
-    { name: 'Italy', wine: C.ruby, regions: [
-      { name: 'Piedmont', units: [
-        u('it-barolo', 'Barolo & Barbaresco', 'Nebbiolo'), u('it-barbera', 'Barbera d\'Asti & d\'Alba', ''),
-        u('it-dolcetto', 'Dolcetto', ''), u('it-gavi', 'Gavi', 'Cortese'), u('it-moscato', 'Moscato d\'Asti', '') ] },
-      { name: 'Tuscany', units: [
-        u('it-chianti', 'Chianti vs Chianti Classico', ''), u('it-montalcino', 'Brunello & Rosso di Montalcino', ''),
-        u('it-nobile', 'Vino Nobile di Montepulciano', ''), u('it-bolgheri', 'Bolgheri', ''), u('it-toscana', 'Toscana IGT', 'What the label tells you') ] },
-      { name: 'Veneto', units: [
-        u('it-valpol', 'Valpolicella', 'Ripasso, Amarone, Recioto'), u('it-soave', 'Soave', 'Garganega'), u('it-prosecco', 'Prosecco', 'DOC vs DOCG') ] },
-      { name: 'Northern sparkling & whites', units: [
-        u('it-franciacorta', 'Franciacorta', ''), u('it-trento', 'Trento', ''), u('it-altoadige', 'Alto Adige', ''), u('it-collio', 'Friuli Collio', '') ] },
-      { name: 'South & islands', units: [
-        u('it-etna', 'Etna', ''), u('it-taurasi', 'Taurasi', ''), u('it-fiano', 'Fiano di Avellino', ''), u('it-greco', 'Greco di Tufo', ''),
-        u('it-montepulciano', 'Montepulciano d\'Abruzzo', 'Not to be confused with Vino Nobile'), u('it-primitivo', 'Primitivo di Manduria', ''), u('it-cannonau', 'Cannonau di Sardegna', '') ] },
+    { name: 'Italy', countries: [
+      { name: 'Italy', wine: C.ruby, regions: [
+        { name: 'Piedmont', units: [u('it-barolo', 'Barolo & Barbaresco'), u('it-barbera', 'Barbera d\'Asti & d\'Alba'), u('it-dolcetto', 'Dolcetto'), u('it-gavi', 'Gavi', 'Cortese'), u('it-moscato', 'Moscato d\'Asti')] },
+        { name: 'Tuscany', units: [u('it-chianti', 'Chianti vs Chianti Classico'), u('it-montalcino', 'Brunello & Rosso di Montalcino'), u('it-nobile', 'Vino Nobile di Montepulciano'), u('it-bolgheri', 'Bolgheri'), u('it-toscana', 'Toscana IGT')] },
+        { name: 'Veneto', units: [u('it-valpol', 'Valpolicella', 'Ripasso, Amarone, Recioto'), u('it-soave', 'Soave'), u('it-prosecco', 'Prosecco', 'DOC vs DOCG')] },
+        { name: 'The north', units: [u('it-franciacorta', 'Franciacorta'), u('it-trento', 'Trento'), u('it-altoadige', 'Alto Adige'), u('it-collio', 'Friuli Collio'), u('it-liguria', 'Liguria', 'Vermentino & Pigato')] },
+        { name: 'Centre, south & islands', units: [u('it-verdicchio', 'Verdicchio dei Castelli di Jesi'), u('it-sardinia', 'Sardinia', 'Vermentino di Gallura, Cannonau'), u('it-etna', 'Etna'), u('it-sicily', 'Sicily beyond Etna', 'Nero d\'Avola, Grillo'), u('it-taurasi', 'Taurasi'), u('it-fiano', 'Fiano di Avellino'), u('it-greco', 'Greco di Tufo'), u('it-montepulciano', 'Montepulciano d\'Abruzzo'), u('it-primitivo', 'Primitivo di Manduria')] },
+      ] },
     ] },
-    { name: 'Spain & Portugal', wine: C.garnet, regions: [
-      { name: 'Spain', units: [
-        u('es-rioja', 'Rioja', 'Grapes, ageing tiers, sub-zones'), u('es-ribera', 'Ribera del Duero', ''), u('es-priorat', 'Priorat', ''),
-        u('es-toro', 'Toro', ''), u('es-riasbaixas', 'Rías Baixas', 'Albariño'), u('es-rueda', 'Rueda', 'Verdejo'), u('es-cava', 'Cava', ''),
-        u('es-jerez', 'Jerez / Sherry', 'The style names are the key to the label') ] },
-      { name: 'Portugal', units: [
-        u('pt-port', 'Port', 'Style names and age statements'), u('pt-vinhoverde', 'Vinho Verde', ''), u('pt-douro', 'Douro', ''),
-        u('pt-dao', 'Dão', ''), u('pt-bairrada', 'Bairrada', ''), u('pt-madeira', 'Madeira', 'Grape names indicate sweetness') ] },
+    { name: 'Spain & Portugal', countries: [
+      { name: 'Spain', wine: C.garnet, regions: [
+        { name: 'Spain', units: [u('es-rioja', 'Rioja', 'Grapes, ageing tiers, sub-zones'), u('es-ribera', 'Ribera del Duero'), u('es-priorat', 'Priorat'), u('es-toro', 'Toro'), u('es-bierzo', 'Bierzo', 'Mencía'), u('es-valdeorras', 'Valdeorras', 'Godello'), u('es-riasbaixas', 'Rías Baixas', 'Albariño'), u('es-rueda', 'Rueda', 'Verdejo'), u('es-jumilla', 'Jumilla', 'Monastrell'), u('es-penedes', 'Penedès & Cava'), u('es-jerez', 'Jerez / Sherry', 'The style names are the label key')] },
+      ] },
+      { name: 'Portugal', wine: C.ruby, regions: [
+        { name: 'Portugal', units: [u('pt-port', 'Port'), u('pt-douro', 'Douro'), u('pt-vinhoverde', 'Vinho Verde'), u('pt-dao', 'Dão'), u('pt-bairrada', 'Bairrada'), u('pt-alentejo', 'Alentejo'), u('pt-madeira', 'Madeira')] },
+      ] },
     ] },
-    { name: 'Germany, Austria & Hungary', wine: C.lemonGreen, regions: [
-      { name: 'Germany', units: [
-        u('de-label', 'Reading a German label', 'Region → village → vineyard → grape → Prädikat'),
-        u('de-trocken', 'Trocken & feinherb', ''), u('de-vdp', 'VDP tiers', 'Including Grosses Gewächs (GG)') ] },
-      { name: 'Austria', units: [u('at-dac', 'Austrian DACs', 'Wachau terms, Kamptal, Kremstal')] },
-      { name: 'Hungary', units: [u('hu-tokaji', 'Tokaji', 'Aszú, puttonyos, Szamorodni')] },
+    { name: 'Central & Eastern Europe', countries: [
+      { name: 'Germany', wine: C.lemonGreen, regions: [{ name: 'Germany', units: [u('de-label', 'Reading a German label'), u('de-mosel', 'Mosel'), u('de-rheingau', 'Rheingau & Pfalz'), u('de-trocken', 'Trocken & feinherb'), u('de-vdp', 'VDP tiers & GG'), u('de-spatburgunder', 'Spätburgunder', 'German Pinot Noir')] }] },
+      { name: 'Austria', wine: C.lemonGreen, regions: [{ name: 'Austria', units: [u('at-wachau', 'Wachau', 'Steinfeder, Federspiel, Smaragd'), u('at-kamptal', 'Kamptal & Kremstal'), u('at-burgenland', 'Burgenland', 'Blaufränkisch & sweet wines')] }] },
+      { name: 'Switzerland', wine: C.lemon, regions: [{ name: 'Switzerland', units: [u('ch-vaud', 'Vaud & Valais', 'Chasselas')] }] },
+      { name: 'Hungary', wine: C.gold, regions: [{ name: 'Hungary', units: [u('hu-tokaji', 'Tokaji', 'Aszú, puttonyos, Szamorodni'), u('hu-eger', 'Eger', 'Bull\'s Blood')] }] },
+      { name: 'Slovenia & Croatia', wine: C.amber, regions: [{ name: 'Slovenia & Croatia', units: [u('si-brda', 'Goriška Brda & orange wine'), u('hr-dalmatia', 'Dalmatia', 'Plavac Mali')] }] },
     ] },
-    { name: 'New World', wine: C.purple, regions: [
-      { name: 'How these labels differ', units: [u('nw-rules', 'Grape first, place second', 'Percentage rules for variety, vintage and region')] },
-      { name: 'Australia', units: [u('au-gi', 'The GI system', 'Zone → region → subregion'), u('au-regions', 'Key Australian regions', 'And what each is known for')] },
-      { name: 'New Zealand', units: [u('nz', 'New Zealand', '')] },
-      { name: 'USA', units: [u('us-ava', 'AVAs', 'American Viticultural Areas')] },
-      { name: 'Chile', units: [u('cl', 'Chile', '')] },
-      { name: 'Argentina', units: [u('ar', 'Argentina', '')] },
-      { name: 'South Africa', units: [u('za', 'Wine of Origin', '')] },
+    { name: 'Greece & the Eastern Mediterranean', countries: [
+      { name: 'Greece', wine: C.lemonGreen, regions: [{ name: 'Greece', units: [u('gr-santorini', 'Santorini', 'Assyrtiko'), u('gr-naoussa', 'Naoussa', 'Xinomavro'), u('gr-nemea', 'Nemea', 'Agiorgitiko'), u('gr-crete', 'Crete & the islands')] }] },
+      { name: 'Georgia', wine: C.amber, regions: [{ name: 'Georgia', units: [u('ge-qvevri', 'Qvevri & amber wine', 'Rkatsiteli, Saperavi')] }] },
+      { name: 'Lebanon', wine: C.garnet, regions: [{ name: 'Lebanon', units: [u('lb-bekaa', 'Bekaa Valley')] }] },
+    ] },
+    { name: 'Britain', countries: [
+      { name: 'England', wine: C.lemon, regions: [{ name: 'England', units: [u('uk-sparkling', 'English sparkling wine')] }] },
+    ] },
+    { name: 'The Americas', countries: [
+      { name: 'New World labels', wine: C.purple, regions: [{ name: 'Before you go', units: [u('nw-rules', 'Grape first, place second', 'Percentage rules for variety, vintage and region')] }] },
+      { name: 'USA', wine: C.ruby, regions: [
+        { name: 'California', units: [u('us-napa', 'Napa Valley'), u('us-sonoma', 'Sonoma'), u('us-central', 'Central Coast & Paso Robles'), u('us-santabarbara', 'Santa Barbara & Sta. Rita Hills'), u('us-lodi', 'Lodi', 'Old-vine Zinfandel')] },
+        { name: 'Pacific Northwest & East', units: [u('us-oregon', 'Oregon', 'Willamette Valley Pinot Noir'), u('us-washington', 'Washington', 'Columbia Valley, Walla Walla'), u('us-fingerlakes', 'New York', 'Finger Lakes Riesling')] },
+      ] },
+      { name: 'Canada', wine: C.gold, regions: [{ name: 'Canada', units: [u('ca-niagara', 'Niagara', 'Icewine'), u('ca-okanagan', 'Okanagan Valley')] }] },
+      { name: 'Chile', wine: C.purple, regions: [{ name: 'Chile', units: [u('cl-maipo', 'Maipo'), u('cl-colchagua', 'Colchagua'), u('cl-casablanca', 'Casablanca & San Antonio'), u('cl-itata', 'Itata & Maule', 'Old vines, País & Cinsault'), u('cl-elqui', 'Elqui & Limarí')] }] },
+      { name: 'Argentina', wine: C.purple, regions: [{ name: 'Argentina', units: [u('ar-mendoza', 'Mendoza & Luján de Cuyo'), u('ar-uco', 'Uco Valley'), u('ar-salta', 'Salta', 'High-altitude Torrontés'), u('ar-patagonia', 'Patagonia')] }] },
+      { name: 'Uruguay', wine: C.purple, regions: [{ name: 'Uruguay', units: [u('uy-canelones', 'Canelones & the coast', 'Tannat')] }] },
+      { name: 'Brazil', wine: C.lemon, regions: [{ name: 'Brazil', units: [u('br-serra', 'Serra Gaúcha', 'Sparkling wine')] }] },
+    ] },
+    { name: 'Southern Hemisphere & Asia', countries: [
+      { name: 'Australia', wine: C.ruby, regions: [{ name: 'Australia', units: [u('au-gi', 'The GI system'), u('au-barossa', 'Barossa & Eden Valley'), u('au-mclaren', 'McLaren Vale'), u('au-clare', 'Clare Valley'), u('au-coonawarra', 'Coonawarra'), u('au-margaret', 'Margaret River'), u('au-hunter', 'Hunter Valley', 'Semillon'), u('au-yarra', 'Yarra Valley'), u('au-tasmania', 'Tasmania')] }] },
+      { name: 'New Zealand', wine: C.lemonGreen, regions: [{ name: 'New Zealand', units: [u('nz-marlborough', 'Marlborough'), u('nz-otago', 'Central Otago'), u('nz-hawkes', 'Hawke\'s Bay'), u('nz-martinborough', 'Martinborough')] }] },
+      { name: 'South Africa', wine: C.gold, regions: [{ name: 'South Africa', units: [u('za-wo', 'Wine of Origin'), u('za-stellenbosch', 'Stellenbosch'), u('za-swartland', 'Swartland'), u('za-constantia', 'Constantia'), u('za-hemel', 'Hemel-en-Aarde')] }] },
+      { name: 'Japan', wine: C.lemonGreen, regions: [{ name: 'Japan', units: [u('jp-yamanashi', 'Yamanashi', 'Koshu')] }] },
     ] },
   ];
 
-  D.trackB = { wine: C.amber, intro, countries };
+  D.trackB = { wine: C.amber, intro, grapeGroups, continents };
 })();

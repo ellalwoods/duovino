@@ -1,6 +1,6 @@
 // Network-first service worker: works offline, always picks up new versions when online.
-const CACHE = 'duovino-v4';
-const ASSETS = ['./', 'index.html', 'styles.css', 'data.js', 'syllabus.js', 'champagne.js', 'labels.js', 'app.js', 'icon.svg', 'manifest.webmanifest'];
+const CACHE = 'duovino-v5';
+const ASSETS = ['./', 'index.html', 'styles.css', 'data.js', 'syllabus.js', 'champagne.js', 'wines.js', 'grapes.js', 'labels.js', 'app.js', 'icon.svg', 'manifest.webmanifest'];
 self.addEventListener('install', e => { e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS))); self.skipWaiting(); });
 self.addEventListener('activate', e => e.waitUntil(self.clients.claim()));
 self.addEventListener('fetch', e => {
