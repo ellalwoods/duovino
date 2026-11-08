@@ -5,12 +5,13 @@ See [`CONCEPT.md`](CONCEPT.md) for the full product concept.
 
 ## What's in this build
 
-Four tabs:
+Five tabs (icons only):
 
-- **Today:** what to learn next in each track, your cellar, your week, and what's happening in the vineyard this month.
-- **Roots:** Track A, *How wine works*, drawn as soil layers (six chapters, Topsoil → Granite).
-- **Wine list:** Track B, *Grapes & places*, in three parts: read a label → meet the grapes (the big international grapes first) → travel the regions (Europe in depth, plus Greece, Georgia, Lebanon, England, the Americas, Australia, New Zealand, South Africa, Japan). See [`SYLLABUS.md`](SYLLABUS.md).
-- **Cellar:** real wines you've learned (grapes, appellations, styles), each with a tasting profile. Taste them from memory to age them.
+- **Home:** one living scene (the vineyard by season and time of day: dawn, day, sunset, blue hour, or a postcard you've earned) and one **Continue** button.
+- **Learn:** *Roots* (how wine works, drawn as soil layers) and *Grapes & places* (read a label → meet the grapes → travel the regions), behind one switch. See [`SYLLABUS.md`](SYLLABUS.md).
+- **Today's glass:** one wine from your cellar a day. Swirl the glass, picture the wine, pour to see its tasting note, and say whether you knew it.
+- **Cellar:** the real wines you've learned, racked by style, each with a tasting profile.
+- **Journey:** a stain map of the regions you've explored (Europe / World), your days, wines and regions as ring stains, and your postcards. Finishing a region unlocks its postcard, which you can set as your home view.
 
 Each unit is a short lesson, then a tasting: sort, place on a scale, order, label decoder, label → grape → taste chain, blind deduction (swirl the glass), odd one out, multiple choice, and a wine from your cellar to recall.
 
@@ -47,6 +48,7 @@ Progress is stored only in the browser on that device. Use **Settings → Backup
 | `labels.js` | Track B: B0 units and the full grapes & regions list |
 | `grapes.js` | Track B: grape lessons (Chardonnay, Sauvignon Blanc, Riesling) |
 | `wines.js` | The cellar's wines and their tasting profiles |
+| `scenes.js` | Artwork: the living sky, region postcards, Journey maps |
 | `champagne.js` | Track B: Champagne AOC (10 lessons + checkpoint; 1–9 and checkpoint checked against the 2025 cahier des charges, lesson 10 still a draft) |
 | `app.js` | Screens, games, swirl gesture, spaced-repetition cellar, sounds |
 | `sw.js`, `manifest.webmanifest`, `icon.svg` | Offline support and home-screen install |
