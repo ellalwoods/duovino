@@ -67,13 +67,13 @@ Each chapter ends with a **Checkpoint Tasting**: a longer mixed test with a blin
 
 ### 4 · SCHIST: The great grapes
 *Each unit = one grape + 2–3 contrasting homes, applying Clay and Limestone.*
-1. **Chardonnay:** Chablis → Côte de Beaune → Napa
-2. **Sauvignon Blanc:** Sancerre → Marlborough → Bordeaux Blanc
-3. **Riesling:** Mosel → Alsace → Clare Valley
-4. **Pinot Noir:** Burgundy → Central Otago → Sonoma
-5. **Cabernet Sauvignon & Merlot:** Left Bank, Right Bank, Napa
-6. **Syrah / Shiraz:** Northern Rhône → Barossa
-7. **The supporting cast:** Pinot Grigio, Chenin Blanc, Grenache, Malbec, Tempranillo…
+1. **Chardonnay:** Chablis → Côte de Beaune → Napa ✅ *built*
+2. **Sauvignon Blanc:** Sancerre → Marlborough ✅ *built*
+3. **Riesling:** Mosel → Alsace → Clare Valley ✅ *built*
+4. **Pinot Noir:** Burgundy → Central Otago ✅ *built*
+5. **Cabernet Sauvignon & Merlot:** Left Bank, Right Bank, Napa ✅ *built*
+6. **Syrah / Shiraz:** Northern Rhône → Barossa ✅ *built*
+7. **The supporting cast:** decoding Grenache, Malbec, Tempranillo and Nebbiolo by grape, climate and winemaking ✅ *built*
 - ✦ *Checkpoint*
 
 ### 5 · CHALK: Reading the Old World
@@ -182,7 +182,29 @@ Appellation rules (permitted grapes, minimum percentages, ageing minimums, sweet
 
 ## Regions written so far
 
-Eleven regions are fully written, so their postcards can be earned: **Champagne, Alsace, Switzerland, Hungary (Tokaji, Eger), Greece (Santorini, Naoussa, Nemea, Crete), Georgia, Lebanon, England, Uruguay, Brazil, Japan.** Region lessons live in `regions-1.js`.
+Fifteen regions are fully written, so their postcards can be earned: **Champagne, Alsace, Spain (11 lessons), Portugal (7), Germany (6), Austria (3), Switzerland, Hungary (Tokaji, Eger), Greece (Santorini, Naoussa, Nemea, Crete), Georgia, Lebanon, England, Uruguay, Brazil, Japan.** Region lessons live in `regions-1.js` and `regions-2.js`.
+
+## Spain, Portugal, Austria & Germany: verification status
+
+**Checked 2026-11-08** against EU-published texts (EUR-Lex and eAmbrosia attachments).
+
+| Claim in the app | Official text | Result |
+|---|---|---|
+| Rioja: Alta (Atlantic), Alavesa (Sierra de Cantabria), Oriental (Mediterranean); "Viñedo Singular"; grape list | OJ C 168, 2021 | ✅ |
+| Ribera del Duero: reds ≥ 75% Tempranillo (Tinto Fino / Tinta del País); whites ≥ 75% Albillo Mayor | OJ C 268, 2023 | ✅ |
+| Priorat: DOCa/DOQ; llicorella slate | OJ C 316, 2019 | ✅ |
+| Toro: reds ≥ 75% Tinta de Toro | OJ C 118, 2021 | ✅ |
+| Bierzo: ~75-year-old vines on average; reds ≥ 85% Mencía & partners; Villa → Paraje → Viña Clasificada | OJ C 148, 2020 | ✅ |
+| Cava: Guarda ≥ 9 months; Reserva ≥ 18; Guarda Superior from organic vines ≥ 10 years old; Paraje Calificado | OJ C 369, 2021; C/2026/241 | ✅ (no Gran Reserva months stated) |
+| Rueda: Dorado & Pálido traditional wines | OJ C 69, 2020 | ✅ |
+| Port: 19–22%; spirit ~77%; Vintage, LBV, Colheita (≥ 7 years in wood), aged tawnies; Gaia | Technical file PDO-PT-A1540-AM01 | ✅ |
+| Vinho Verde: granite, Atlantic, "Origem do Alvarinho" for Monção e Melgaço | C/2024/3412 | ✅ |
+| Dão grapes; Bairrada (Baga, sparkling, "Clássico"); Alentejo sub-regions | PDO-PT-A1534/A1542-AM01; OJ C 224, 2023 | ✅ |
+| Wachau, Kamptal, Kremstal: Grüner Veltliner & Riesling | OJ C 68, 2023; C 295 & C 298, 2020 | ✅ (Steinfeder/Federspiel/Smaragd are Vinea Wachau's, described as such) |
+| Neusiedlersee: Zweigelt; 300 km² lake, fog; sweet wines mainly Welschriesling | OJ C 68, 2023 | ✅ |
+| Mosel helicopter spraying; Pfalz geography | OJ C 252 & C 272, 2022 | ✅ |
+| Trocken ≤ 4 g/l or ≤ 9 g/l with enough acidity; feinherb undefined | EU Reg. 2019/33 Annex III B | ✅ |
+| Madeira | Text not reachable | ⚠️ traditions and grapes only; no legal rules stated |
 
 ## Off the beaten track & first regions: verification status
 
