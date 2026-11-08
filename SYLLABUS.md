@@ -109,7 +109,7 @@ The four early "Tasting specials" (Winter, Loire, Barolo, Cool vs Warm) have bee
 Every Track B lesson **starts from a label** and works outwards: label → appellation → grapes → rules → taste. The Wine List tab shows it in three parts:
 
 1. **Read a label (B0):** three lessons on how labels work. Opens after Topsoil (Track A, chapter 1).
-2. **Meet the grapes:** the **big international grapes first**, in order (Chardonnay, Sauvignon Blanc, Riesling, Pinot Grigio/Gris, Pinot Noir, Merlot, Cabernet Sauvignon, Syrah/Shiraz). Once the written ones are done, four more groups open: aromatic & classic whites (all nine written: Chenin, Sémillon, Viognier, Gewurztraminer, Muscat, Grüner, Albariño, Melon, Marsanne & Roussanne), Mediterranean & island whites (all ten written), classic reds (all eleven written: Grenache, Tempranillo, Sangiovese, Nebbiolo, Cabernet Franc, Gamay, Malbec, Zinfandel, Mourvèdre, Barbera, Carignan & Cinsault), and off the beaten track (Xinomavro, Agiorgitiko, Saperavi, Tannat, Furmint, Koshu…).
+2. **Meet the grapes:** the **big international grapes first**, in order (Chardonnay, Sauvignon Blanc, Riesling, Pinot Grigio/Gris, Pinot Noir, Merlot, Cabernet Sauvignon, Syrah/Shiraz). Once the written ones are done, four more groups open: aromatic & classic whites (all nine written: Chenin, Sémillon, Viognier, Gewurztraminer, Muscat, Grüner, Albariño, Melon, Marsanne & Roussanne), Mediterranean & island whites (all ten written), classic reds (all eleven written: Grenache, Tempranillo, Sangiovese, Nebbiolo, Cabernet Franc, Gamay, Malbec, Zinfandel, Mourvèdre, Barbera, Carignan & Cinsault), and off the beaten track (all seventeen written: Xinomavro, Agiorgitiko, Aglianico, Nerello Mascalese, Touriga Nacional, Blaufränkisch, Saperavi, Tannat, Carménère, Pinotage, Mencía, Furmint, Torrontés, Koshu, Chasselas, Savagnin, Rkatsiteli). **All 55 grape lessons are written.**
 3. **Travel the regions:** opens at the same point. Grouped by France · Italy · Spain & Portugal · Central & Eastern Europe · Greece & the Eastern Mediterranean · Britain · the Americas (USA in depth, Canada, Chile, Argentina, Uruguay, Brazil) · Southern Hemisphere & Asia (Australia, New Zealand, South Africa, Japan).
 
 The full list (about 70 grape lessons and 140 region lessons) lives in `labels.js`. Written so far: B0 (3), all eight big international grapes (Chardonnay, Sauvignon Blanc, Riesling, Pinot Grigio/Gris, Pinot Noir, Merlot, Cabernet Sauvignon, Syrah/Shiraz), and Champagne AOC (11). Everything else shows as "Coming soon".
@@ -179,6 +179,26 @@ Appellation rules (permitted grapes, minimum percentages, ageing minimums, sweet
 | Chablis tiers; Grand Cru "seven top vineyards on one slope" | Chablis (arrêté 11 Dec 2023), Chablis Grand Cru (arrêté 24 Oct 2024): Chardonnay only; 7 named climats | **reworded** to "seven named climats" |
 | Icewine "about −7 to −8 °C" | German Weingesetz § 20(4) no. 5: grapes frozen at picking and pressing; **no statutory temperature** | **reworded**: −7 °C described as practice, not law |
 | Barolo ≥38 months (18 in wood); Riserva ≥62 months | Full disciplinare not reachable (EU register only holds temporary amendments; the Italian ministry lists documents dynamically) | ⚠️ **still unchecked** |
+
+## Regions written so far
+
+Eleven regions are fully written, so their postcards can be earned: **Champagne, Alsace, Switzerland, Hungary (Tokaji, Eger), Greece (Santorini, Naoussa, Nemea, Crete), Georgia, Lebanon, England, Uruguay, Brazil, Japan.** Region lessons live in `regions-1.js`.
+
+## Off the beaten track & first regions: verification status
+
+**Checked 2026-11-08** against EU-published texts.
+
+| Claim in the app | Official text | Result |
+|---|---|---|
+| Etna: Nerello Mascalese & Carricante; volcanic, high, dry-stone terraces; Sicily's first DOC; latest Sicilian harvest | OJ C 240, 2022 | ✅ |
+| Taurasi: Aglianico; ≥ 3 years (≥ 1 in wood); Riserva ≥ 4 years (≥ 18 months in wood) | OJ C 64, 2021 | ✅ |
+| Mittelburgenland: Blaufränkisch only | OJ C 286, 2020 | ✅ |
+| Vin jaune: Savagnin, years under a yeast film (voile); 62 cl clavelin | Côtes du Jura, OJ C 49, 2023 | ✅ (no ageing months stated) |
+| Alsace: flûte bottle, bottled in Alsace; 51 grands crus; grand cru grapes; VT & SGN | C/2025/4116; 51 PDOs in eAmbrosia; Schlossberg OJ C 390, 2022 | ✅ |
+| Tokaji: grapes, volcanic soils; Eszencia free-run; Dry & Sweet Szamorodni; Aszú 3–6 puttonyos, 6 = ≥ 150 g/l | C/2026/1380 | ✅ (note: the 2026 rules re-allow 3 and 4 puttonyos) |
+| Egri Bikavér: Kékfrankos-based blend; "Bull's blood" in print by 1851; Egri Csillag | OJ C 330, 2020 | ✅ |
+| Naoussa = Xinomavro, Nemea = Agiorgitiko | Greek summary sheets not downloadable | ⚠️ named as homes only; no % stated |
+| Switzerland, Georgia, Lebanon, England, Brazil, Uruguay, Japan, Chile, Argentina, South Africa | Outside the EU register | Place and grape facts only; no legal rules stated |
 
 ## Classic reds & more Mediterranean whites: verification status
 

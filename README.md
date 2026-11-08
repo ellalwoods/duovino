@@ -50,6 +50,8 @@ Progress is stored only in the browser on that device. Use **Settings → Backup
 | `grapes-aromatic.js` | Track B: the nine aromatic & classic whites |
 | `grapes-med.js` | Track B: the ten Mediterranean & island whites |
 | `grapes-reds.js` | Track B: the eleven classic reds |
+| `grapes-beaten.js` | Track B: seventeen grapes off the beaten track |
+| `regions-1.js` | Track B: region lessons (Alsace, Switzerland, Hungary, Greece, Georgia, Lebanon, England, Uruguay, Brazil, Japan) |
 | `wines.js` | The cellar's wines and their tasting profiles |
 | `scenes.js` | Artwork: the living sky, region postcards, Journey maps |
 | `champagne.js` | Track B: Champagne AOC (10 lessons + checkpoint; 1–9 and checkpoint checked against the 2025 cahier des charges, lesson 10 still a draft) |

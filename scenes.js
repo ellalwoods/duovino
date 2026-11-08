@@ -157,7 +157,7 @@
     const sk = PAL[sp.sky] || PAL.sunny, H = HUE[sp.hue] || HUE.green, hz = sp.water === 'sea' ? 410 : 400;
     let o = `<defs><linearGradient id="k${id}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${sk[0]}"/><stop offset=".6" stop-color="${sk[1]}"/><stop offset="1" stop-color="${sk[2]}"/></linearGradient>
       <linearGradient id="w${id}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#b8d0dc"/><stop offset="1" stop-color="#8fb3c8"/></linearGradient></defs>
-      <rect width="390" height="780" fill="url(#k${id})"/><g filter="url(#wobble)">`;
+      <rect width="390" height="780" fill="url(#k${id})"/><rect y="560" width="390" height="220" fill="${(HUE[sp.hue] || HUE.green)[2]}"/><g filter="url(#wobble)">`;
     const sun = sp.sun || [300, 200];
     o += `<circle cx="${sun[0]}" cy="${sun[1]}" r="70" fill="#fff4dc" opacity=".55"/><circle cx="${sun[0]}" cy="${sun[1]}" r="22" fill="#fff8e8"/>`;
     if (sp.clouds) o += [[80, 150], [250, 110], [320, 190]].map(([x, y]) => `<ellipse cx="${x}" cy="${y}" rx="46" ry="14" fill="#fffaf4" opacity=".85"/><ellipse cx="${x + 20}" cy="${y - 8}" rx="26" ry="12" fill="#fffaf4" opacity=".85"/>`).join('');
