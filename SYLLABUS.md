@@ -77,21 +77,21 @@ Each chapter ends with a **Checkpoint Tasting**: a longer mixed test with a blin
 - ✦ *Checkpoint*
 
 ### 5 · CHALK: Reading the Old World
-1. **How wine law works:** PDO/PGI, AOC/DOC/DO, the quality pyramid
-2. **France beyond the big names:** Loire, Rhône, Alsace, Beaujolais
-3. **Champagne**
-4. **Italy:** Piedmont, Tuscany, Veneto
-5. **Spain:** Rioja, Ribera del Duero, Sherry country
-6. **Germany:** the Prädikat ladder
-7. **Portugal:** Douro, Port, Vinho Verde
+1. **How wine law works:** PDO/PGI, AOC/DOC/DO, the quality pyramid ✅ *built*
+2. **France beyond the big names:** Loire, Rhône, Alsace, Beaujolais ✅ *built*
+3. **Champagne** ✅ *built*
+4. **Italy:** Piedmont, Tuscany, Veneto ✅ *built*
+5. **Spain:** Rioja, Ribera del Duero, Sherry country ✅ *built*
+6. **Germany:** the Prädikat ladder ✅ *built*
+7. **Portugal:** Douro, Port, Vinho Verde ✅ *built*
 - ✦ *Checkpoint*
 
 ### 6 · GRANITE: Thinking like a sommelier
-1. **Judging quality:** BLIC in practice
-2. **Deductive blind tasting:** from clues to conclusion
-3. **Faults:** corked, oxidised, reduced, Brett
-4. **Vintage variation:** why the year matters (and when it doesn't)
-5. **Wine lists & buying smart**
+1. **Judging quality:** BLIC in practice ✅ *built*
+2. **Deductive blind tasting:** from clues to conclusion ✅ *built*
+3. **Faults:** corked, oxidised, reduced, Brett ✅ *built*
+4. **Vintage variation:** why the year matters (and when it doesn't) ✅ *built*
+5. **Wine lists & buying smart** ✅ *built*
 - ✦ *Final checkpoint: The Grand Cru Tasting*
 
 ## The original four flights
@@ -108,9 +108,9 @@ The four early "Tasting specials" (Winter, Loire, Barolo, Cool vs Warm) have bee
 
 Every Track B lesson **starts from a label** and works outwards: label → appellation → grapes → rules → taste. The Wine List tab shows it in three parts:
 
-1. **Read a label (B0):** three lessons on how labels work. Opens after Topsoil (Track A, chapter 1).
-2. **Meet the grapes:** the **big international grapes first**, in order (Chardonnay, Sauvignon Blanc, Riesling, Pinot Grigio/Gris, Pinot Noir, Merlot, Cabernet Sauvignon, Syrah/Shiraz). Once the written ones are done, four more groups open: aromatic & classic whites (all nine written: Chenin, Sémillon, Viognier, Gewurztraminer, Muscat, Grüner, Albariño, Melon, Marsanne & Roussanne), Mediterranean & island whites (all ten written), classic reds (all eleven written: Grenache, Tempranillo, Sangiovese, Nebbiolo, Cabernet Franc, Gamay, Malbec, Zinfandel, Mourvèdre, Barbera, Carignan & Cinsault), and off the beaten track (all seventeen written: Xinomavro, Agiorgitiko, Aglianico, Nerello Mascalese, Touriga Nacional, Blaufränkisch, Saperavi, Tannat, Carménère, Pinotage, Mencía, Furmint, Torrontés, Koshu, Chasselas, Savagnin, Rkatsiteli). **All 55 grape lessons are written.**
-3. **Travel the regions:** opens at the same point. Grouped by France · Italy · Spain & Portugal · Central & Eastern Europe · Greece & the Eastern Mediterranean · Britain · the Americas (USA in depth, Canada, Chile, Argentina, Uruguay, Brazil) · Southern Hemisphere & Asia (Australia, New Zealand, South Africa, Japan).
+1. **Read a label (B0):** three lessons on how labels work. Opens after Topsoil (Track A, chapter 1). ✅ *built*
+2. **Meet the grapes:** the **big international grapes first**, in order (Chardonnay, Sauvignon Blanc, Riesling, Pinot Grigio/Gris, Pinot Noir, Merlot, Cabernet Sauvignon, Syrah/Shiraz). Once the written ones are done, four more groups open: aromatic & classic whites (all nine written: Chenin, Sémillon, Viognier, Gewurztraminer, Muscat, Grüner, Albariño, Melon, Marsanne & Roussanne), Mediterranean & island whites (all ten written), classic reds (all eleven written: Grenache, Tempranillo, Sangiovese, Nebbiolo, Cabernet Franc, Gamay, Malbec, Zinfandel, Mourvèdre, Barbera, Carignan & Cinsault), and off the beaten track (all seventeen written: Xinomavro, Agiorgitiko, Aglianico, Nerello Mascalese, Touriga Nacional, Blaufränkisch, Saperavi, Tannat, Carménère, Pinotage, Mencía, Furmint, Torrontés, Koshu, Chasselas, Savagnin, Rkatsiteli). **All 55 grape lessons are written.** ✅ *built*
+3. **Travel the regions:** opens at the same point. Grouped by France · Italy · Spain & Portugal · Central & Eastern Europe · Greece & the Eastern Mediterranean · Britain · the Americas (USA in depth, Canada, Chile, Argentina, Uruguay, Brazil) · Southern Hemisphere & Asia (Australia, New Zealand, South Africa, Japan). ✅ *built*
 
 The full list (about 70 grape lessons and 140 region lessons) lives in `labels.js`. Written so far: B0 (3), all eight big international grapes (Chardonnay, Sauvignon Blanc, Riesling, Pinot Grigio/Gris, Pinot Noir, Merlot, Cabernet Sauvignon, Syrah/Shiraz), and Champagne AOC (11). Everything else shows as "Coming soon".
 
@@ -159,14 +159,14 @@ Lesson cards, in this order:
 
 Appellation rules (permitted grapes, minimum percentages, ageing minimums, sweetness terms) change from time to time, and the app's credibility depends on getting them right. So:
 
-1. **Source first.** Before writing an appellation unit, check every rule it states against the official text:
+1. **Source first.** Before writing an appellation unit, check every rule it states against the official text: ✅ *built*
    - France: the appellation's *cahier des charges* (INAO)
    - Italy: the *disciplinare di produzione*
    - Spain: the *pliego de condiciones*
    - Portugal, Germany, Austria and Hungary: the equivalent official specification
    - New World: the national labelling law (e.g. the US TTB for AVAs and percentage rules, Wine Australia for GIs)
-2. **Record it in the data.** Each unit gets `sources` (official document and version/date) and `checked` (the date of the check). A unit gets `lesson` and `questions` only once both are filled in. Until then it shows as *"Still being poured"* on the Wine List.
-3. **Re-check on a schedule,** e.g. yearly, or whenever a region announces changes.
+2. **Record it in the data.** Each unit gets `sources` (official document and version/date) and `checked` (the date of the check). A unit gets `lesson` and `questions` only once both are filled in. Until then it shows as *"Still being poured"* on the Wine List. ✅ *built*
+3. **Re-check on a schedule,** e.g. yearly, or whenever a region announces changes. ✅ *built*
 
 **Retired Tasting specials (checked 2026-11-08, for reference):**
 
@@ -182,7 +182,25 @@ Appellation rules (permitted grapes, minimum percentages, ageing minimums, sweet
 
 ## Regions written so far
 
-Twenty-nine of the 35 map regions are fully written, so their postcards can be earned. Still to write: **France** (Burgundy, Bordeaux, Rhône, Loire, Provence & Corsica, the South). Region lessons live in `regions-1.js` to `regions-4.js`.
+**All 35 map regions are fully written**, so every postcard can be earned. Region lessons live in `regions-1.js` to `regions-5.js`. **Every planned unit in both tracks (251) is now written.**
+
+## France & Roots chapters 5–6: verification status
+
+**Checked 2026-11-08** against EU-published texts (EUR-Lex notices and eAmbrosia attachments) and EU Reg. 1308/2013.
+
+| Claim in the app | Official text | Result |
+|---|---|---|
+| PDO: grapes exclusively from the area, Vitis vinifera only; PGI: ≥ 85% from the area | Reg. (EU) 1308/2013, Art. 93 | ✅ |
+| Bourgogne, Chablis, Petit Chablis, Mâcon, Pouilly-Fuissé (Premier Cru climats) grape lists | C/2024/2984, C/2025/2447, C/2024/4131, C/2026/1751, OJ C 258 2021 | ✅ |
+| Bordeaux grapes; Médoc gravel terraces; Pessac-Léognan inside Bordeaux city; Margaux, Pauillac, Saint-Estèphe, Pomerol lists | EU notices 2019–2023 | ✅ |
+| Sauternes: five communes; hand-picked in successive passes; grapes | OJ C 520, 2021 + technical sheet | ✅ |
+| Cornas: red only, the only northern Rhône PDO exclusively Syrah; Crozes & Saint-Joseph grapes | OJ C 73 2020, C 83 2021, C/2024/5920 | ✅ |
+| Gigondas grapes; Tavel rosé only; CdR Villages reds ≥ 40% Grenache with ≥ 25% Syrah/Mourvèdre | OJ C 83 2021; PDO-FR-A0328-AM01; OJ C 21 2021 | ✅ |
+| Pouilly-Fumé = Sauvignon Blanc; Savennières = Chenin, right bank near Angers | OJ C 466 2022; OJ C 88 2020 | ✅ |
+| Bandol rosé ≥ 20% Mourvèdre; rosé methods (direct press, short maceration, saignée) | C/2025/4233 | ✅ |
+| Patrimonio reds ≥ 90% Nielluccio; Vin de Corse grapes; Cassis whites (Marsanne, Clairette) | OJ C 401 2022; PDO notice; C/2026/2476 | ✅ |
+| Languedoc grapes & climate; Banyuls = vin doux naturel; Madiran & Jurançon grapes; vin de paille ≥ 6 weeks drying | OJ C 98 2020; C/2024/6184; C/2025/321; C/2025/5378; OJ C 49 2023 | ✅ |
+| Châteauneuf-du-Pape, Côte-Rôtie, Saint-Émilion, Saint-Julien, Cahors, Maury | Not reachable | ⚠️ places, history and grapes only; no % stated |
 
 ## New World & Italy: verification status
 

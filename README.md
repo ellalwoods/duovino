@@ -51,6 +51,7 @@ Progress is stored only in the browser on that device. Use **Settings → Backup
 | `grapes-med.js` | Track B: the ten Mediterranean & island whites |
 | `grapes-reds.js` | Track B: the eleven classic reds |
 | `grapes-beaten.js` | Track B: seventeen grapes off the beaten track |
+| `regions-5.js` | Track B: France (Burgundy, Bordeaux, Rhône, Loire, Provence & Corsica, the South) |
 | `regions-3.js` | Track B: the New World (USA, Canada, Chile, Argentina, Australia, New Zealand, South Africa) |
 | `regions-4.js` | Track B: Italy, Slovenia & Croatia |
 | `regions-2.js` | Track B: Spain, Portugal, Austria and Germany |
