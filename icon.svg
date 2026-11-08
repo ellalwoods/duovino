@@ -1,8 +1,32 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
-  <rect width="512" height="512" rx="112" fill="#2a1a1f"/>
-  <circle cx="256" cy="256" r="150" fill="none" stroke="#7b2a2a" stroke-width="34" opacity=".9"/>
-  <circle cx="256" cy="256" r="172" fill="none" stroke="#a83a46" stroke-width="5" opacity=".7"/>
-  <path d="M196 170c-4 70 10 118 60 124 50-6 64-54 60-124z" fill="#f5eee2"/>
-  <path d="M199 222c10 4 22 6 57 6s47-2 57-6c-3 44-20 68-57 72-37-4-54-28-57-72z" fill="#8b1a2b"/>
-  <path d="M256 294v62M222 362h68" stroke="#f5eee2" stroke-width="10" stroke-linecap="round"/>
+  <defs>
+    <radialGradient id="bg" cx=".42" cy=".38" r=".8">
+      <stop offset="0" stop-color="#fffdf6"/>
+      <stop offset="1" stop-color="#f6ecd4"/>
+    </radialGradient>
+    <linearGradient id="wine" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#f6e7a6"/>
+      <stop offset="1" stop-color="#e2bf5c"/>
+    </linearGradient>
+    <clipPath id="bowl"><circle cx="214" cy="306" r="118"/></clipPath>
+  </defs>
+  <rect width="512" height="512" rx="116" fill="url(#bg)"/>
+  <!-- a soft ring stain behind, like the mark a glass leaves -->
+  <circle cx="262" cy="262" r="186" fill="none" stroke="#ead8a6" stroke-width="10" opacity=".55"/>
+  <!-- the bowl of the d: a glass of white wine -->
+  <g clip-path="url(#bowl)">
+    <rect x="80" y="180" width="280" height="260" fill="#fffaf0"/>
+    <path d="M90 290 C140 270 180 300 220 288 C262 276 300 296 340 284 L340 440 L90 440 Z" fill="url(#wine)"/>
+    <circle cx="176" cy="352" r="5" fill="#fff8e0" opacity=".9"/>
+    <circle cx="232" cy="334" r="4" fill="#fff8e0" opacity=".9"/>
+    <circle cx="206" cy="384" r="3.5" fill="#fff8e0" opacity=".9"/>
+    <path d="M128 236 C150 206 182 194 210 192" fill="none" stroke="#ffffff" stroke-width="10" stroke-linecap="round" opacity=".8"/>
+  </g>
+  <circle cx="214" cy="306" r="118" fill="none" stroke="#c99a3a" stroke-width="14"/>
+  <!-- the ascender of the d, a vine cane -->
+  <path d="M332 424 V150" stroke="#c99a3a" stroke-width="14" stroke-linecap="round"/>
+  <!-- tendril and leaf -->
+  <path d="M332 158 C332 118 368 98 392 112 C414 126 404 156 382 152 C366 149 368 130 382 130" fill="none" stroke="#8fa458" stroke-width="9" stroke-linecap="round"/>
+  <path d="M332 196 C356 176 396 180 404 206 C380 222 348 220 332 196 Z" fill="#a9bf6c"/>
+  <path d="M334 197 C356 199 378 203 398 207" stroke="#8fa458" stroke-width="3" fill="none" stroke-linecap="round"/>
 </svg>

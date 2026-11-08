@@ -3,7 +3,7 @@
 Two tracks:
 
 - **Track A: How wine works.** The six soil chapters below, shown on the **Roots** tab. Unchanged.
-- **Track B: Reading the label.** Every lesson starts from a label and works out to grapes, rules and taste. Shown on the **Wine List** tab. [Jump to Track B](#track-b-reading-the-label).
+- **Track B: Grapes & places.** Every lesson starts from a label and works out to grapes, rules and taste. Shown on the **Wine List** tab in three parts: read a label → meet the grapes → travel the regions. [Jump to Track B](#track-b-reading-the-label).
 
 ---
 
@@ -94,8 +94,8 @@ Each chapter ends with a **Checkpoint Tasting**: a longer mixed test with a blin
 5. **Wine lists & buying smart**
 - ✦ *Final checkpoint: The Grand Cru Tasting*
 
-## What happens to the original four flights
-They become **Tasting Specials** on the Today tab: optional bonus flights, with the seasonal one highlighted. Their content will later be folded into the units they belong to (Winter → Clay 1 and 4, Cool vs Warm → Clay 2 and Schist 1, Loire → Chalk 2, Barolo → Chalk 4).
+## The original four flights
+The four early "Tasting specials" (Winter, Loire, Barolo, Cool vs Warm) have been **retired** from the app to keep Today simple. Their topics are covered by Track A and Track B lessons as those are written.
 
 ## Open questions (Track A)
 1. Does the **order** feel right? An alternative is to teach grapes (Schist) *before* the winery (Limestone), so you meet the fun stuff sooner.
@@ -104,11 +104,21 @@ They become **Tasting Specials** on the Today tab: optional bonus flights, with 
 
 ---
 
-# Track B: Reading the label
+# Track B: Grapes & places
 
-Every Track B lesson **starts from a label** and works outwards: label → appellation → grapes → rules → taste. On the Wine List tab it's laid out like a restaurant wine list, with countries as sections, regions as headings and each appellation unit as an entry.
+Every Track B lesson **starts from a label** and works outwards: label → appellation → grapes → rules → taste. The Wine List tab shows it in three parts:
 
-**Unlocking:** Track B requires **Topsoil** (Track A, chapter 1) first, so tasting vocabulary like "high acidity" and "full body" is already familiar. The gate counts only the Topsoil units that are written (currently 1.1–1.3), so it grows as 1.4–1.6 are added. After that, the three B0 units come in order. Finishing B0 opens every region, and units within a region unlock in order.
+1. **Read a label (B0):** three lessons on how labels work. Opens after Topsoil (Track A, chapter 1).
+2. **Meet the grapes:** the **big international grapes first**, in order (Chardonnay, Sauvignon Blanc, Riesling, Pinot Grigio/Gris, Pinot Noir, Merlot, Cabernet Sauvignon, Syrah/Shiraz). Once the written ones are done, four more groups open: aromatic & classic whites, Mediterranean & island whites (Vermentino, Assyrtiko, Fiano, Greco…), classic reds, and off the beaten track (Xinomavro, Agiorgitiko, Saperavi, Tannat, Furmint, Koshu…).
+3. **Travel the regions:** opens at the same point. Grouped by France · Italy · Spain & Portugal · Central & Eastern Europe · Greece & the Eastern Mediterranean · Britain · the Americas (USA in depth, Canada, Chile, Argentina, Uruguay, Brazil) · Southern Hemisphere & Asia (Australia, New Zealand, South Africa, Japan).
+
+The full list (about 70 grape lessons and 140 region lessons) lives in `labels.js`. Written so far: B0 (3), Chardonnay, Sauvignon Blanc, Riesling, and Champagne AOC (11). Everything else shows as "Coming soon".
+
+There is no test-out: Track B requires Topsoil.
+
+## The cellar
+
+The cellar holds **real wines only**: grapes, appellations and styles (e.g. Chardonnay, Chablis, Marlborough Sauvignon Blanc, Champagne Blanc de Blancs). Each has a tasting profile in `wines.js`: grapes, origin, sweetness, acidity, tannin, body, alcohol (1–5), aromas, and how it ages. A lesson question lays a bottle down when it names that wine in `wines`. Abstract ideas (tannin, PDO, autolysis…) are taught in lessons but are not bottles. Bottles are racked by Sparkling · White · Rosé · Red · Sweet.
 
 ## B0. How labels work ✅ *built*
 
@@ -145,35 +155,6 @@ Lesson cards, in this order:
 | Pick the odd one out | `odd` |
 | Lookalike names (Montepulciano d'Abruzzo vs Vino Nobile di Montepulciano, Pouilly-Fumé vs Pouilly-Fuissé) | `sort` with the two names as the groups |
 
-## The list (91 units)
-
-**France**
-- Champagne AOC: 10 lessons + checkpoint, **written as drafts** (see below): 1 Reading a Champagne label · 2 The place · 3 The grapes · 4 How it's made · 5 The dosage ladder · 6 The styles · 7 Who makes it · 8 How it tastes & ages · 9 The region's other wines · 10 Champagne vs other sparkling · Checkpoint
-- Burgundy: the Burgundy rule (red = Pinot Noir, white = Chardonnay) · Bourgogne → village → Premier Cru → Grand Cru · Chablis (four tiers) · Côte de Nuits & Côte de Beaune villages · Mâcon & Pouilly-Fuissé · Beaujolais (Gamay, ten crus)
-- Bordeaux: permitted red grapes · Left Bank vs Right Bank · Médoc villages (Pauillac, Margaux, St-Julien, St-Estèphe) · Pessac-Léognan · St-Émilion & Pomerol · White Bordeaux · Sauternes & Barsac · Bordeaux Supérieur
-- Rhône: Northern Syrah appellations (Côte-Rôtie, Hermitage, Crozes-Hermitage, St-Joseph, Cornas) · Condrieu · Southern Grenache appellations (Châteauneuf-du-Pape, Gigondas, Vacqueyras, Tavel) · Côtes du Rhône & Villages
-- Loire: Muscadet · Sancerre & Pouilly-Fumé · Vouvray & Savennières · Chinon, Bourgueil, Saumur-Champigny · Crémant de Loire
-- Provence: Côtes de Provence & sub-zones · Coteaux d'Aix · Bandol · Cassis · the rosé grapes
-- Alsace: grape-named labels, Grand Cru, VT/SGN, Crémant d'Alsace
-- South & beyond: Languedoc · Picpoul de Pinet · Roussillon · Cahors · Madiran · Jurançon · Jura (vin jaune)
-
-**Italy**
-- Piedmont: Barolo & Barbaresco · Barbera d'Asti & d'Alba · Dolcetto · Gavi · Moscato d'Asti
-- Tuscany: Chianti vs Chianti Classico · Brunello & Rosso di Montalcino · Vino Nobile di Montepulciano · Bolgheri · Toscana IGT
-- Veneto: Valpolicella, Ripasso, Amarone, Recioto · Soave · Prosecco DOC vs DOCG
-- Northern sparkling & whites: Franciacorta · Trento · Alto Adige · Friuli Collio
-- South & islands: Etna · Taurasi · Fiano di Avellino · Greco di Tufo · Montepulciano d'Abruzzo · Primitivo di Manduria · Cannonau di Sardegna
-
-**Spain & Portugal**
-- Spain: Rioja · Ribera del Duero · Priorat · Toro · Rías Baixas · Rueda · Cava · Jerez/Sherry
-- Portugal: Port · Vinho Verde · Douro · Dão · Bairrada · Madeira
-
-**Germany, Austria & Hungary**
-- Reading a German label · Trocken & feinherb · VDP tiers incl. GG · Austrian DACs (Wachau terms, Kamptal, Kremstal) · Tokaji (Aszú, puttonyos, Szamorodni)
-
-**New World**
-- How these labels differ (grape-named, the place doesn't fix the grape, percentage rules) · Australia: GI system, key regions · New Zealand · USA AVAs · Chile · Argentina · South Africa Wine of Origin
-
 ## Rule-checking before a unit is written
 
 Appellation rules (permitted grapes, minimum percentages, ageing minimums, sweetness terms) change from time to time, and the app's credibility depends on getting them right. So:
@@ -187,7 +168,7 @@ Appellation rules (permitted grapes, minimum percentages, ageing minimums, sweet
 2. **Record it in the data.** Each unit gets `sources` (official document and version/date) and `checked` (the date of the check). A unit gets `lesson` and `questions` only once both are filled in. Until then it shows as *"Still being poured"* on the Wine List.
 3. **Re-check on a schedule,** e.g. yearly, or whenever a region announces changes.
 
-**Tasting specials (checked 2026-11-08):**
+**Retired Tasting specials (checked 2026-11-08, for reference):**
 
 | Claim | Official text | Result |
 |---|---|---|

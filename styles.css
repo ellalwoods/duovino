@@ -533,15 +533,158 @@ em { font-style: italic; }
 .checked-box .mono { font-size: 10px; }
 .checked-box .note { font-style: italic; margin-top: 6px; }
 
-/* test-out & backup */
-.testout-link { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; width: 100%; margin-top: 12px; padding: 12px 14px; border-radius: 16px; text-align: left; font-size: 15px; background: color-mix(in srgb, var(--wine) 10%, #fffaf2); border: 1.5px dashed color-mix(in srgb, var(--wine) 55%, transparent); color: var(--ink); }
-.testout-link .mono { font-size: 10px; color: var(--wine); }
-.testout-link.on-soil { justify-content: center; margin: 14px auto 4px; max-width: 320px; background: rgba(255,248,236,.14); border-color: rgba(255,248,236,.6); color: inherit; }
-.testout-link.on-soil .mono { color: inherit; opacity: .85; }
-.testout-link.in-list { margin: 10px 0 0; justify-content: center; text-align: center; font-style: normal; }
+/* backup */
 .backup-text { width: 100%; min-height: 140px; margin: 12px 0; padding: 10px; border-radius: 12px; border: 1.5px solid #dccdb5; background: #fffaf2; font-family: var(--mono); font-size: 11px; color: var(--ink); resize: vertical; }
 .backup-file { display: block; margin: 0 0 14px; font-size: 14px; }
 .backup .judge { margin-top: 2px; }
 .primary.dl { text-align: center; text-decoration: none; }
 .copy-note, .import-error { margin: 10px 0 0; color: var(--ink-soft); }
 .import-error { color: #9a2a2a; }
+
+/* =====================================================================
+   v3: light, clear layout (Today, Wine List, Cellar), tasting profiles
+   ===================================================================== */
+:root { --btn: #a8434e; --cream: #fbf6ea; --line: #e6d9c3; }
+.primary { background: var(--btn); color: #fff; box-shadow: 0 3px 0 #86323c; }
+.primary:active { box-shadow: 0 1px 0 #86323c; }
+.reveal-btn { background: var(--btn); color: #fff; }
+.seg button.on { background: var(--btn); color: #fff; }
+
+/* ---------- Today ---------- */
+.today-top { display: flex; justify-content: space-between; align-items: center; padding: calc(16px + var(--safe-top)) 18px 4px; }
+.today-top .wordmark { color: var(--ink); }
+.today-top .wordmark em { color: var(--btn); }
+.sec-h { font-family: var(--mono); font-size: 11px; font-weight: 500; letter-spacing: .12em; text-transform: uppercase; color: var(--ink-soft); margin: 22px 2px 10px; }
+.today-body .sec-h:first-child { margin-top: 10px; }
+.track-card { display: flex; flex-direction: column; gap: 6px; width: 100%; text-align: left; margin-bottom: 12px; padding: 16px 18px; border-radius: 20px; background: #fffaf2; border: 1.5px solid var(--line); box-shadow: 0 2px 0 var(--line); }
+.track-card.ready { border-color: color-mix(in srgb, var(--btn) 45%, var(--line)); box-shadow: 0 3px 0 color-mix(in srgb, var(--btn) 35%, var(--line)), 0 14px 30px -20px var(--btn); }
+.track-card.tB.ready { border-color: #d8b86a; box-shadow: 0 3px 0 #e6cc8a, 0 14px 30px -20px #c4842c; }
+.tc-head { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; }
+.tc-head .mono { font-size: 10.5px; color: var(--btn); font-weight: 500; }
+.tB .tc-head .mono:first-child { color: #9a6a1e; }
+.tc-count { color: var(--ink-soft) !important; font-weight: 400 !important; }
+.tc-what { font-size: 14px; color: var(--ink-soft); }
+.tc-next { display: flex; flex-direction: column; gap: 2px; margin-top: 6px; }
+.tc-next .mono { font-size: 10px; color: var(--ink-soft); }
+.tc-next strong { font-size: 23px; font-weight: 500; line-height: 1.15; }
+.tc-next > span:last-child { font-size: 15px; color: var(--ink-soft); }
+.tc-cta { align-self: flex-start; margin-top: 8px; padding: 10px 16px; border-radius: 99px; background: var(--btn); color: #fff; font-weight: 600; font-size: 15px; }
+.tB .tc-cta { background: #c4842c; }
+.tc-msg { font-size: 15px; color: var(--ink-soft); font-style: italic; margin-top: 4px; }
+.cellar-card { display: flex; align-items: center; gap: 14px; width: 100%; text-align: left; padding: 14px 16px; border-radius: 20px; background: #fffaf2; border: 1.5px solid var(--line); color: var(--ink); }
+.cellar-card.empty { display: block; }
+.cellar-card .cn-text strong { font-size: 17px; }
+.cellar-card .cn-text span { color: var(--ink-soft); font-size: 14px; line-height: 1.35; }
+.cellar-card .cn-bottles .bottle { width: 18px; }
+.cellar-card .pill { margin-left: auto; flex: none; }
+.week-card { padding: 14px 16px; border-radius: 20px; background: #fffaf2; border: 1.5px solid var(--line); }
+.week-card .week { display: flex; justify-content: space-between; gap: 6px; margin: 0 0 10px; }
+.week-card .day { flex: 1; height: auto; background: none; display: flex; flex-direction: column; align-items: center; gap: 4px; box-shadow: none; border: 0; outline: 0; }
+.week-card .day i { width: 32px; height: 32px; border-radius: 50%; border: 1.5px solid var(--line); display: grid; place-items: center; font-style: normal; font-size: 14px; color: #fff; }
+.week-card .day.on i { background: var(--btn); border-color: var(--btn); }
+.week-card .day.today i { border-color: var(--btn); border-width: 2px; }
+.week-card .day.future i { border-style: dashed; }
+.week-card .day b { font-family: var(--mono); font-size: 10px; font-weight: 400; color: var(--ink-soft); }
+.week-card p { margin: 0; font-size: 15px; color: var(--ink-soft); }
+.season-card { position: relative; border-radius: 20px; padding: 16px 18px 0; overflow: hidden; color: var(--ink); border: 1.5px solid var(--line); }
+.season-card.sky-dormant { background: linear-gradient(180deg, #e8edf1, #f5efe4); }
+.season-card.sky-bud, .season-card.sky-leaf, .season-card.sky-flower { background: linear-gradient(180deg, #e3f0f4, #f6f1df); }
+.season-card.sky-fruit, .season-card.sky-veraison { background: linear-gradient(180deg, #e4f0f7, #f8ecd0); }
+.season-card.sky-harvest, .season-card.sky-fall { background: linear-gradient(180deg, #f6ece2, #f7e3c4); }
+.season-card .eyebrow { color: var(--ink-soft); }
+.season-card h3 { font-size: 26px; font-weight: 500; font-style: italic; font-variation-settings: 'SOFT' 100, 'WONK' 1; }
+.season-card p:not(.eyebrow) { font-size: 15px; line-height: 1.45; margin: 6px 0 0; }
+.season-card .vine-svg { display: block; width: calc(100% + 36px); margin: 4px -18px 0; }
+.pill { display: inline-block; flex: none; font-family: var(--mono); font-size: 10px; letter-spacing: .08em; text-transform: uppercase; padding: 5px 10px; border-radius: 99px; background: #efe6d6; color: var(--ink-soft); white-space: nowrap; }
+.pill.go { background: var(--btn); color: #fff; }
+.pill.done { background: #e3eccf; color: #4d6420; }
+.pill.soon { background: transparent; border: 1px dashed #cdbca2; color: #a8977e; }
+
+/* ---------- Wine List (Track B) ---------- */
+.winelist { background: var(--paper) var(--grain); }
+.wl-head { color: var(--ink); padding-bottom: 6px; }
+.wl-head .eyebrow { color: #9a6a1e; }
+.wl-head h1 { font-size: 36px; }
+.wl-head p { color: var(--ink-soft); }
+.steps-row { list-style: none; display: flex; gap: 6px; padding: 0; margin: 16px 0 4px; }
+.step { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 6px; text-align: center; font-size: 13px; line-height: 1.2; color: var(--ink-soft); }
+.step-n { width: 34px; height: 34px; border-radius: 50%; display: grid; place-items: center; font-family: var(--mono); font-size: 13px; border: 1.5px solid var(--line); background: #fffaf2; }
+.step.now { color: var(--ink); font-weight: 600; }
+.step.now .step-n { background: #c4842c; border-color: #c4842c; color: #fff; }
+.step.done .step-n { background: #e3eccf; border-color: #b5c98a; color: #4d6420; }
+.wl-part { margin: 18px 12px 0; padding: 18px 16px 10px; border-radius: 22px; background: #fffaf2; border: 1.5px solid var(--line); }
+.wl-part h2 { font-size: 24px; font-weight: 500; display: flex; flex-direction: column; gap: 2px; }
+.wl-part h2 .mono { font-size: 10px; color: #9a6a1e; }
+.wl-part-sub { font-size: 14.5px; color: var(--ink-soft); line-height: 1.45; margin: 6px 0 10px; }
+.wl-rows { list-style: none; margin: 0 0 6px; padding: 0; }
+.wl-row { display: flex; align-items: center; gap: 10px; width: 100%; padding: 11px 4px; text-align: left; border-bottom: 1px solid #f0e6d6; }
+.wl-row:active { background: #f7efe2; }
+.wl-name { flex: 1; font-size: 16px; font-weight: 500; line-height: 1.2; }
+.wl-name small { display: block; margin-top: 2px; font-size: 13px; font-weight: 400; font-style: italic; color: var(--ink-soft); }
+.wl-row.soon .wl-name, .wl-row.locked .wl-name { color: #8f7f78; font-weight: 400; }
+.wl-row.current .wl-name { font-weight: 650; }
+.wl-group { border-top: 1px solid var(--line); }
+.wl-group summary { list-style: none; display: flex; align-items: center; gap: 10px; padding: 12px 2px; cursor: pointer; }
+.wl-group summary::-webkit-details-marker { display: none; }
+.wl-group summary::after { content: '+'; font-family: var(--mono); font-size: 18px; color: var(--ink-soft); width: 18px; text-align: center; }
+.wl-group[open] summary::after { content: '−'; }
+.wl-gname { flex: 1; font-size: 18px; font-weight: 500; }
+.wl-gname small { display: block; font-size: 13px; font-weight: 400; color: var(--ink-soft); font-style: italic; margin-top: 2px; }
+.wl-count { font-size: 10px; color: var(--ink-soft); text-align: right; max-width: 120px; }
+.wl-continent { font-family: var(--mono); font-size: 11px; font-weight: 500; letter-spacing: .12em; text-transform: uppercase; color: #9a6a1e; margin: 18px 0 2px; }
+.wl-region { text-align: left; font-size: 15px; margin: 8px 0 0; color: var(--ink-soft); }
+.winelist .foot { color: var(--ink-soft); padding: 16px 24px 24px; }
+
+/* ---------- Cellar (a light chalk cellar) ---------- */
+.cellar { background: #f1ebdf var(--grain); color: var(--ink); }
+.cellar .tab-head .eyebrow { color: var(--ink-soft); }
+.cellar-intro { color: var(--ink-soft); }
+.cellar-intro em { color: #9a6a1e; }
+.legend { color: var(--ink-soft); }
+.lg.resting::before { background: #c9b48e; }
+.rack-section { margin-bottom: 8px; }
+.rack-plate { display: inline-block; margin: 8px 4px 0; padding: 4px 12px; border-radius: 4px; background: #fbf6ea; border: 1px solid #d9c9ad; font-family: var(--mono); font-size: 11px; font-weight: 500; letter-spacing: .14em; text-transform: uppercase; color: var(--ink-soft); }
+.cellar .shelf { border-bottom: 8px solid #d4b98f; box-shadow: 0 8px 0 #bfa077, 0 18px 24px -14px rgba(90,60,30,.35); background: linear-gradient(transparent 55%, rgba(120,90,50,.08)); }
+.slot-name { font-size: 11.5px; line-height: 1.15; text-align: center; color: var(--ink); max-width: 80px; }
+.cellar .slot-b .mono { color: var(--ink-soft); }
+.empty-cellar p { color: var(--ink-soft); }
+.bottle.corked { filter: saturate(.3) brightness(.95); }
+
+/* ---------- light result boxes ---------- */
+.unlock { background: #fbf1dd; color: var(--ink); border: 1.5px solid #ecd9ae; }
+.laid { background: #f1ebdf; color: var(--ink); border: 1.5px solid var(--line); }
+.laid .mono { color: var(--ink-soft); }
+.laid .rack { border-bottom-color: #d4b98f; box-shadow: 0 6px 0 #bfa077; }
+.laid-names { margin: 14px 0 0; font-size: 14px; color: var(--ink-soft); }
+
+/* ---------- tasting profile ---------- */
+.profile { text-align: left; }
+.facts.compact { margin-top: 0; }
+.facts.compact div { grid-template-columns: 70px 1fr; padding: 8px 0; }
+.bars { display: flex; flex-direction: column; gap: 8px; margin: 14px 0 4px; }
+.bar-row { display: grid; grid-template-columns: 78px 1fr 92px; align-items: center; gap: 10px; }
+.bar-row .mono { font-size: 10px; color: var(--ink-soft); }
+.bar { position: relative; height: 8px; border-radius: 4px; background: #efe5d3; }
+.bar i { position: absolute; top: 0; bottom: 0; border-radius: 4px; background: color-mix(in srgb, var(--fw) 80%, #a8434e); }
+.lv { font-size: 13px; text-align: right; }
+.notes-h { margin: 14px 0 6px; font-size: 10px; color: var(--ink-soft); }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.chips span { padding: 5px 10px; border-radius: 99px; background: color-mix(in srgb, var(--fw) 22%, #fffaf2); border: 1px solid color-mix(in srgb, var(--fw) 40%, transparent); font-size: 13.5px; }
+.ages { margin: 14px 0 0; font-size: 14.5px; line-height: 1.45; }
+.ages .mono { display: block; font-size: 10px; color: var(--ink-soft); margin-bottom: 2px; }
+.bottle-card .review-a, .recall .review-a { background: #fffaf2; border-left: 0; border: 1.5px solid var(--line); }
+
+/* ---------- label styles ---------- */
+.label-generic { background: #fffdf8; }
+.label-generic .lbl-border { border: 0; outline: 0; border-top: 2px solid var(--ink); border-bottom: 2px solid var(--ink); border-radius: 0; }
+.label-generic .term.big { font-style: normal; font-weight: 300; letter-spacing: .04em; font-size: 32px; }
+.label-germany { background: #f9f6ee; }
+.label-germany .lbl-border { border: 1px solid #6b5a3c; outline: 1px solid #6b5a3c; outline-offset: 5px; }
+.label-germany .term.big { font-size: 26px; font-style: normal; font-weight: 600; letter-spacing: .02em; }
+.today-top .wordmark { display: flex; align-items: center; gap: 10px; }
+.today-top .logo { width: 40px; height: 40px; border-radius: 11px; box-shadow: 0 1px 0 var(--line); }
+.bar i { background: color-mix(in srgb, var(--fw) 30%, #b0733a); }
+.review-a .notes-h, .review-a .ages .mono, .review-a .bar-row .mono, .review-a dt { font-size: 10px; }
+.review-a .ages { font-size: 14.5px; }
+.review-a .chips span { font-size: 13.5px; }
+.review-a .lv { font-size: 13px; }
