@@ -48,50 +48,50 @@ Each chapter ends with a **Checkpoint Tasting**: a longer mixed test with a blin
 - ✦ *Checkpoint: The Topsoil Tasting*
 
 ### 2 · CLAY: The vine & its place
-1. **A vine's year:** anatomy and the growing cycle, budburst to dormancy
-2. **Climate:** cool vs warm, continental vs maritime vs Mediterranean
-3. **Terroir:** latitude, altitude, slope and aspect, water bodies, soil
-4. **In the vineyard:** yields, pruning, canopy, harvest timing
-5. **Threats & friends:** frost, hail, drought, rot, and the *noble* rot
+1. **A vine's year:** how a vine makes sugar, the growing cycle, the two hemispheres ✅ *built*
+2. **Climate:** climate vs weather, cool vs hot, continental vs maritime vs Mediterranean, diurnal range ✅ *built*
+3. **Terroir:** latitude, altitude, slope and aspect, water, wind and fog, soil ✅ *built*
+4. **In the vineyard:** yields, spur vs cane pruning, bush vs trellis, canopy, hand vs machine, when to pick ✅ *built*
+5. **Threats & friends:** frost, hail, drought, mildews, grey rot, phylloxera and grafting, and the *noble* rot (Sauternes, Tokaji) ✅ *built*
 - ✦ *Checkpoint*
 
 ### 3 · LIMESTONE: The winery
-1. **Making white wine**
-2. **Making red & rosé**
-3. **The spice rack:** oak, lees, malolactic conversion
-4. **Making it sweet:** stopping fermentation, dried grapes, noble rot, ice
-5. **Making it sparkle:** traditional method vs tank method
-6. **Making it stronger:** Sherry & Port
-7. **Time in the bottle:** what ageing does, and which wines deserve it
+1. **Making white wine:** press first, settle, ferment cool, steel vs oak ✅ *built*
+2. **Making red & rosé:** fermenting on skins, the cap, rosé, carbonic maceration ✅ *built*
+3. **The spice rack:** new vs old oak, French vs American, lees, malolactic conversion ✅ *built*
+4. **Making it sweet:** stopping fermentation, dried grapes, noble rot, ice ✅ *built*
+5. **Making it sparkle:** traditional method (riddling, disgorging, dosage) vs tank method ✅ *built*
+6. **Making it stronger:** Sherry (flor, Fino vs Oloroso, solera) & Port (ruby vs tawny) ✅ *built*
+7. **Time in the bottle:** what ageing does, and which wines deserve it ✅ *built*
 - ✦ *Checkpoint*
 
 ### 4 · SCHIST: The great grapes
 *Each unit = one grape + 2–3 contrasting homes, applying Clay and Limestone.*
-1. **Chardonnay:** Chablis → Côte de Beaune → Napa
-2. **Sauvignon Blanc:** Sancerre → Marlborough → Bordeaux Blanc
-3. **Riesling:** Mosel → Alsace → Clare Valley
-4. **Pinot Noir:** Burgundy → Central Otago → Sonoma
-5. **Cabernet Sauvignon & Merlot:** Left Bank, Right Bank, Napa
-6. **Syrah / Shiraz:** Northern Rhône → Barossa
-7. **The supporting cast:** Pinot Grigio, Chenin Blanc, Grenache, Malbec, Tempranillo…
+1. **Chardonnay:** Chablis → Côte de Beaune → Napa ✅ *built*
+2. **Sauvignon Blanc:** Sancerre → Marlborough ✅ *built*
+3. **Riesling:** Mosel → Alsace → Clare Valley ✅ *built*
+4. **Pinot Noir:** Burgundy → Central Otago ✅ *built*
+5. **Cabernet Sauvignon & Merlot:** Left Bank, Right Bank, Napa ✅ *built*
+6. **Syrah / Shiraz:** Northern Rhône → Barossa ✅ *built*
+7. **The supporting cast:** decoding Grenache, Malbec, Tempranillo and Nebbiolo by grape, climate and winemaking ✅ *built*
 - ✦ *Checkpoint*
 
 ### 5 · CHALK: Reading the Old World
-1. **How wine law works:** PDO/PGI, AOC/DOC/DO, the quality pyramid
-2. **France beyond the big names:** Loire, Rhône, Alsace, Beaujolais
-3. **Champagne**
-4. **Italy:** Piedmont, Tuscany, Veneto
-5. **Spain:** Rioja, Ribera del Duero, Sherry country
-6. **Germany:** the Prädikat ladder
-7. **Portugal:** Douro, Port, Vinho Verde
+1. **How wine law works:** PDO/PGI, AOC/DOC/DO, the quality pyramid ✅ *built*
+2. **France beyond the big names:** Loire, Rhône, Alsace, Beaujolais ✅ *built*
+3. **Champagne** ✅ *built*
+4. **Italy:** Piedmont, Tuscany, Veneto ✅ *built*
+5. **Spain:** Rioja, Ribera del Duero, Sherry country ✅ *built*
+6. **Germany:** the Prädikat ladder ✅ *built*
+7. **Portugal:** Douro, Port, Vinho Verde ✅ *built*
 - ✦ *Checkpoint*
 
 ### 6 · GRANITE: Thinking like a sommelier
-1. **Judging quality:** BLIC in practice
-2. **Deductive blind tasting:** from clues to conclusion
-3. **Faults:** corked, oxidised, reduced, Brett
-4. **Vintage variation:** why the year matters (and when it doesn't)
-5. **Wine lists & buying smart**
+1. **Judging quality:** BLIC in practice ✅ *built*
+2. **Deductive blind tasting:** from clues to conclusion ✅ *built*
+3. **Faults:** corked, oxidised, reduced, Brett ✅ *built*
+4. **Vintage variation:** why the year matters (and when it doesn't) ✅ *built*
+5. **Wine lists & buying smart** ✅ *built*
 - ✦ *Final checkpoint: The Grand Cru Tasting*
 
 ## The original four flights
@@ -108,9 +108,9 @@ The four early "Tasting specials" (Winter, Loire, Barolo, Cool vs Warm) have bee
 
 Every Track B lesson **starts from a label** and works outwards: label → appellation → grapes → rules → taste. The Wine List tab shows it in three parts:
 
-1. **Read a label (B0):** three lessons on how labels work. Opens after Topsoil (Track A, chapter 1).
-2. **Meet the grapes:** the **big international grapes first**, in order (Chardonnay, Sauvignon Blanc, Riesling, Pinot Grigio/Gris, Pinot Noir, Merlot, Cabernet Sauvignon, Syrah/Shiraz). Once the written ones are done, four more groups open: aromatic & classic whites, Mediterranean & island whites (Vermentino, Assyrtiko, Fiano, Greco…), classic reds, and off the beaten track (Xinomavro, Agiorgitiko, Saperavi, Tannat, Furmint, Koshu…).
-3. **Travel the regions:** opens at the same point. Grouped by France · Italy · Spain & Portugal · Central & Eastern Europe · Greece & the Eastern Mediterranean · Britain · the Americas (USA in depth, Canada, Chile, Argentina, Uruguay, Brazil) · Southern Hemisphere & Asia (Australia, New Zealand, South Africa, Japan).
+1. **Read a label (B0):** three lessons on how labels work. Opens after Topsoil (Track A, chapter 1). ✅ *built*
+2. **Meet the grapes:** the **big international grapes first**, in order (Chardonnay, Sauvignon Blanc, Riesling, Pinot Grigio/Gris, Pinot Noir, Merlot, Cabernet Sauvignon, Syrah/Shiraz). Once the written ones are done, four more groups open: aromatic & classic whites (all nine written: Chenin, Sémillon, Viognier, Gewurztraminer, Muscat, Grüner, Albariño, Melon, Marsanne & Roussanne), Mediterranean & island whites (all ten written), classic reds (all eleven written: Grenache, Tempranillo, Sangiovese, Nebbiolo, Cabernet Franc, Gamay, Malbec, Zinfandel, Mourvèdre, Barbera, Carignan & Cinsault), and off the beaten track (all seventeen written: Xinomavro, Agiorgitiko, Aglianico, Nerello Mascalese, Touriga Nacional, Blaufränkisch, Saperavi, Tannat, Carménère, Pinotage, Mencía, Furmint, Torrontés, Koshu, Chasselas, Savagnin, Rkatsiteli). **All 55 grape lessons are written.** ✅ *built*
+3. **Travel the regions:** opens at the same point. Grouped by France · Italy · Spain & Portugal · Central & Eastern Europe · Greece & the Eastern Mediterranean · Britain · the Americas (USA in depth, Canada, Chile, Argentina, Uruguay, Brazil) · Southern Hemisphere & Asia (Australia, New Zealand, South Africa, Japan). ✅ *built*
 
 The full list (about 70 grape lessons and 140 region lessons) lives in `labels.js`. Written so far: B0 (3), all eight big international grapes (Chardonnay, Sauvignon Blanc, Riesling, Pinot Grigio/Gris, Pinot Noir, Merlot, Cabernet Sauvignon, Syrah/Shiraz), and Champagne AOC (11). Everything else shows as "Coming soon".
 
@@ -159,14 +159,14 @@ Lesson cards, in this order:
 
 Appellation rules (permitted grapes, minimum percentages, ageing minimums, sweetness terms) change from time to time, and the app's credibility depends on getting them right. So:
 
-1. **Source first.** Before writing an appellation unit, check every rule it states against the official text:
+1. **Source first.** Before writing an appellation unit, check every rule it states against the official text: ✅ *built*
    - France: the appellation's *cahier des charges* (INAO)
    - Italy: the *disciplinare di produzione*
    - Spain: the *pliego de condiciones*
    - Portugal, Germany, Austria and Hungary: the equivalent official specification
    - New World: the national labelling law (e.g. the US TTB for AVAs and percentage rules, Wine Australia for GIs)
-2. **Record it in the data.** Each unit gets `sources` (official document and version/date) and `checked` (the date of the check). A unit gets `lesson` and `questions` only once both are filled in. Until then it shows as *"Still being poured"* on the Wine List.
-3. **Re-check on a schedule,** e.g. yearly, or whenever a region announces changes.
+2. **Record it in the data.** Each unit gets `sources` (official document and version/date) and `checked` (the date of the check). A unit gets `lesson` and `questions` only once both are filled in. Until then it shows as *"Still being poured"* on the Wine List. ✅ *built*
+3. **Re-check on a schedule,** e.g. yearly, or whenever a region announces changes. ✅ *built*
 
 **Retired Tasting specials (checked 2026-11-08, for reference):**
 
@@ -179,6 +179,135 @@ Appellation rules (permitted grapes, minimum percentages, ageing minimums, sweet
 | Chablis tiers; Grand Cru "seven top vineyards on one slope" | Chablis (arrêté 11 Dec 2023), Chablis Grand Cru (arrêté 24 Oct 2024): Chardonnay only; 7 named climats | **reworded** to "seven named climats" |
 | Icewine "about −7 to −8 °C" | German Weingesetz § 20(4) no. 5: grapes frozen at picking and pressing; **no statutory temperature** | **reworded**: −7 °C described as practice, not law |
 | Barolo ≥38 months (18 in wood); Riserva ≥62 months | Full disciplinare not reachable (EU register only holds temporary amendments; the Italian ministry lists documents dynamically) | ⚠️ **still unchecked** |
+
+## Regions written so far
+
+**All 35 map regions are fully written**, so every postcard can be earned. Region lessons live in `regions-1.js` to `regions-5.js`. **Every planned unit in both tracks (251) is now written.**
+
+## France & Roots chapters 5–6: verification status
+
+**Checked 2026-11-08** against EU-published texts (EUR-Lex notices and eAmbrosia attachments) and EU Reg. 1308/2013.
+
+| Claim in the app | Official text | Result |
+|---|---|---|
+| PDO: grapes exclusively from the area, Vitis vinifera only; PGI: ≥ 85% from the area | Reg. (EU) 1308/2013, Art. 93 | ✅ |
+| Bourgogne, Chablis, Petit Chablis, Mâcon, Pouilly-Fuissé (Premier Cru climats) grape lists | C/2024/2984, C/2025/2447, C/2024/4131, C/2026/1751, OJ C 258 2021 | ✅ |
+| Bordeaux grapes; Médoc gravel terraces; Pessac-Léognan inside Bordeaux city; Margaux, Pauillac, Saint-Estèphe, Pomerol lists | EU notices 2019–2023 | ✅ |
+| Sauternes: five communes; hand-picked in successive passes; grapes | OJ C 520, 2021 + technical sheet | ✅ |
+| Cornas: red only, the only northern Rhône PDO exclusively Syrah; Crozes & Saint-Joseph grapes | OJ C 73 2020, C 83 2021, C/2024/5920 | ✅ |
+| Gigondas grapes; Tavel rosé only; CdR Villages reds ≥ 40% Grenache with ≥ 25% Syrah/Mourvèdre | OJ C 83 2021; PDO-FR-A0328-AM01; OJ C 21 2021 | ✅ |
+| Pouilly-Fumé = Sauvignon Blanc; Savennières = Chenin, right bank near Angers | OJ C 466 2022; OJ C 88 2020 | ✅ |
+| Bandol rosé ≥ 20% Mourvèdre; rosé methods (direct press, short maceration, saignée) | C/2025/4233 | ✅ |
+| Patrimonio reds ≥ 90% Nielluccio; Vin de Corse grapes; Cassis whites (Marsanne, Clairette) | OJ C 401 2022; PDO notice; C/2026/2476 | ✅ |
+| Languedoc grapes & climate; Banyuls = vin doux naturel; Madiran & Jurançon grapes; vin de paille ≥ 6 weeks drying | OJ C 98 2020; C/2024/6184; C/2025/321; C/2025/5378; OJ C 49 2023 | ✅ |
+| Châteauneuf-du-Pape, Côte-Rôtie, Saint-Émilion, Saint-Julien, Cahors, Maury | Not reachable | ⚠️ places, history and grapes only; no % stated |
+
+## New World & Italy: verification status
+
+**Checked 2026-11-08.** New hosts were added to the environment for the US eCFR, Australian, NZ and Chilean legislation, Argentina and Ontario VQA (NZ, Chile and Argentina texts still couldn't be read).
+
+| Claim in the app | Official text | Result |
+|---|---|---|
+| USA: variety ≥ 75%; state/county ≥ 75%; AVA ≥ 85%; vintage ≥ 95% with AVA, else ≥ 85% | 27 CFR §4.23, §4.25, §4.27 (eCFR) | ✅ |
+| Australia: GI, variety, vintage each ≥ 85% | EU–Australia wine agreement, OJ L 28, 2009 | ✅ |
+| South Africa: variety ≥ 85% | EU–South Africa wine agreement, OJ L 28, 2002 | ✅ |
+| Ontario VQA: vintage and area ≥ 85%; vinifera only except Vidal for Icewine; Niagara benches | O. Reg. 406/00 | ✅ |
+| Chile, Argentina, New Zealand | Not readable | ⚠️ no percentages stated |
+| Barbera d'Asti/d'Alba; Dogliani (Dolcetto); Gavi (Cortese); Asti (Moscato Bianco) | OJ C 60 2019, C 31 2022, PDO-IT-A1330-AM04, OJ C 470 2021, OJ C 61 2021 | ✅ |
+| Chianti: Sangiovese, white grapes ≤ 10%, six provinces | 2019/C 373/04 | ✅ |
+| Rosso di Montalcino: Sangiovese only | PDO-IT-A1456-AM03 | ✅ |
+| Vino Nobile: Sangiovese; ≥ 2 years (≥ 1 in wood); Riserva ≥ 3 years (6 months in bottle) | OJ C 227, 2020 | ✅ |
+| Bolgheri grapes; Rosso Superiore; Bolgheri Sassicaia is its own PDO | OJ C 183, 2022; EU register | ✅ |
+| Valpolicella family: Corvina/Corvinone 45–95%; appassimento for Amarone & Recioto | PDO-IT notices, 2019 | ✅ |
+| Prosecco DOC; Conegliano Valdobbiadene DOCG, Rive, Cartizze | PDO-IT-A0516-AM05; A0515-AM02 | ✅ |
+| Trento: traditional method only; ≥ 15 months on lees, Riserva ≥ 36 | PDO-IT-A0752-AM02 | ✅ |
+| Sicilia DOC: Nero d'Avola (Calabrese), Grillo | OJ C 416, 2019 | ✅ |
+| Barolo, Barbaresco, Alto Adige, Collio, Cannonau, Primitivo di Manduria, Goriška Brda, Dingač | Not downloadable | ⚠️ places and grapes only; no % or ageing stated |
+
+## Spain, Portugal, Austria & Germany: verification status
+
+**Checked 2026-11-08** against EU-published texts (EUR-Lex and eAmbrosia attachments).
+
+| Claim in the app | Official text | Result |
+|---|---|---|
+| Rioja: Alta (Atlantic), Alavesa (Sierra de Cantabria), Oriental (Mediterranean); "Viñedo Singular"; grape list | OJ C 168, 2021 | ✅ |
+| Ribera del Duero: reds ≥ 75% Tempranillo (Tinto Fino / Tinta del País); whites ≥ 75% Albillo Mayor | OJ C 268, 2023 | ✅ |
+| Priorat: DOCa/DOQ; llicorella slate | OJ C 316, 2019 | ✅ |
+| Toro: reds ≥ 75% Tinta de Toro | OJ C 118, 2021 | ✅ |
+| Bierzo: ~75-year-old vines on average; reds ≥ 85% Mencía & partners; Villa → Paraje → Viña Clasificada | OJ C 148, 2020 | ✅ |
+| Cava: Guarda ≥ 9 months; Reserva ≥ 18; Guarda Superior from organic vines ≥ 10 years old; Paraje Calificado | OJ C 369, 2021; C/2026/241 | ✅ (no Gran Reserva months stated) |
+| Rueda: Dorado & Pálido traditional wines | OJ C 69, 2020 | ✅ |
+| Port: 19–22%; spirit ~77%; Vintage, LBV, Colheita (≥ 7 years in wood), aged tawnies; Gaia | Technical file PDO-PT-A1540-AM01 | ✅ |
+| Vinho Verde: granite, Atlantic, "Origem do Alvarinho" for Monção e Melgaço | C/2024/3412 | ✅ |
+| Dão grapes; Bairrada (Baga, sparkling, "Clássico"); Alentejo sub-regions | PDO-PT-A1534/A1542-AM01; OJ C 224, 2023 | ✅ |
+| Wachau, Kamptal, Kremstal: Grüner Veltliner & Riesling | OJ C 68, 2023; C 295 & C 298, 2020 | ✅ (Steinfeder/Federspiel/Smaragd are Vinea Wachau's, described as such) |
+| Neusiedlersee: Zweigelt; 300 km² lake, fog; sweet wines mainly Welschriesling | OJ C 68, 2023 | ✅ |
+| Mosel helicopter spraying; Pfalz geography | OJ C 252 & C 272, 2022 | ✅ |
+| Trocken ≤ 4 g/l or ≤ 9 g/l with enough acidity; feinherb undefined | EU Reg. 2019/33 Annex III B | ✅ |
+| Madeira | Text not reachable | ⚠️ traditions and grapes only; no legal rules stated |
+
+## Off the beaten track & first regions: verification status
+
+**Checked 2026-11-08** against EU-published texts.
+
+| Claim in the app | Official text | Result |
+|---|---|---|
+| Etna: Nerello Mascalese & Carricante; volcanic, high, dry-stone terraces; Sicily's first DOC; latest Sicilian harvest | OJ C 240, 2022 | ✅ |
+| Taurasi: Aglianico; ≥ 3 years (≥ 1 in wood); Riserva ≥ 4 years (≥ 18 months in wood) | OJ C 64, 2021 | ✅ |
+| Mittelburgenland: Blaufränkisch only | OJ C 286, 2020 | ✅ |
+| Vin jaune: Savagnin, years under a yeast film (voile); 62 cl clavelin | Côtes du Jura, OJ C 49, 2023 | ✅ (no ageing months stated) |
+| Alsace: flûte bottle, bottled in Alsace; 51 grands crus; grand cru grapes; VT & SGN | C/2025/4116; 51 PDOs in eAmbrosia; Schlossberg OJ C 390, 2022 | ✅ |
+| Tokaji: grapes, volcanic soils; Eszencia free-run; Dry & Sweet Szamorodni; Aszú 3–6 puttonyos, 6 = ≥ 150 g/l | C/2026/1380 | ✅ (note: the 2026 rules re-allow 3 and 4 puttonyos) |
+| Egri Bikavér: Kékfrankos-based blend; "Bull's blood" in print by 1851; Egri Csillag | OJ C 330, 2020 | ✅ |
+| Naoussa = Xinomavro, Nemea = Agiorgitiko | Greek summary sheets not downloadable | ⚠️ named as homes only; no % stated |
+| Switzerland, Georgia, Lebanon, England, Brazil, Uruguay, Japan, Chile, Argentina, South Africa | Outside the EU register | Place and grape facts only; no legal rules stated |
+
+## Classic reds & more Mediterranean whites: verification status
+
+**Checked 2026-11-08** against EU-published texts (EUR-Lex and eAmbrosia). Only these are stated as rules.
+
+| Claim in the app | Official text | Result |
+|---|---|---|
+| Brunello di Montalcino: Sangiovese only; ≥ 24 months in oak | PDO-IT-A1199-AM02 (eAmbrosia) | ✅ |
+| Chianti Classico: main grape Sangiovese; Annata → Riserva → Gran Selezione | OJ C 100, 16.3.2018 | ✅ (no % stated) |
+| Rioja: Joven → Crianza → Reserva → Gran Reserva, each aged longer | OJ C 168, 2021 | ✅ (no months stated; the text describes the categories, not the minimums) |
+| Bandol red: ≥ 50% Mourvèdre; 18 months in wood (usually foudres) | C/2025/4233 | ✅ |
+| Barbera d'Asti: Barbera | OJ C 60, 15.2.2019 | ✅ |
+| Soave: Garganega main grape | OJ C 72, 2020 | ✅ (no % stated) |
+| Verdicchio dei Castelli di Jesi: Esino valley, Ancona; almond, bitter finish | OJ C 288, 2022 | ✅ |
+| Rueda: Verdejo; continental climate, stony soils, up to 870 m | OJ C 69, 2020 | ✅ |
+| "Valdeorras Godello" = Godello only | C/2025/1383 | ✅ |
+| Picpoul de Pinet: Piquepoul Blanc, beside the Étang de Thau | OJ C 253, 2017 | ✅ |
+| Barolo, Barbaresco, Châteauneuf-du-Pape, Cahors | Full texts not reachable | ⚠️ named as places only; no grape % or ageing stated |
+
+## Aromatic whites & the winery: verification status
+
+**Checked 2026-11-08.** Grape style isn't regulated; only the rules below are stated as rules.
+
+| Claim in the app | Official text | Result |
+|---|---|---|
+| Vouvray: Chenin Blanc (Orbois ≤ 5%); sec → demi-sec → moelleux → doux; also sparkling | Arrêté of 29 Nov 2023; EU Reg. 2019/33 Annex III B | ✅ (checked earlier) |
+| Condrieu: built on Viognier; dry, medium-dry and some sweet whites | Single document, C/2025/3459 | ✅ |
+| Alsace names the grape; Gewurztraminer among its fuller wines | Single document, C/2025/4116 | ✅ |
+| Moscato d'Asti made from Moscato Bianco | OJ C 61, 23.2.2021 | ✅ (no alcohol figure stated) |
+| Rías Baixas Albariño | Single document, C/2024/7432 | ✅ (no minimum % stated) |
+| Muscadet Sèvre et Maine: Melon; "sur lie" | Arrêté of 26 Nov 2025 | ✅ (checked earlier) |
+| Sherry: mainly Palomino; Fino aged only under flor; Oloroso aged only oxidatively once flor has gone; criaderas y solera | Jerez-Xérès-Sherry, C/2025/2129 | ✅ |
+| Icewine: grapes frozen when picked and pressed | German Weingesetz § 20(4) no. 5 | ✅ (checked earlier; no temperature stated) |
+| Côte-Rôtie: "a splash" of Viognier co-fermented with Syrah | Not checked against the cahier des charges | ⚠️ no percentage stated |
+
+## Mediterranean whites: verification status
+
+**Checked 2026-11-08** against texts published by the EU (EUR-Lex and the eAmbrosia register). Only rules found there are stated in the lessons.
+
+| Claim in the app | Official text | Result |
+|---|---|---|
+| Dry white Santorini ≥ **85%** Assyrtiko, rest Athiri and Aidani | Santorini PDO, OJ C 143, 31.3.2022 | ✅ (raised from 75% in 2021; the often-quoted 75% is out of date) |
+| Santorini soils almost all sand; phylloxera never arrived; vines on own roots, some ~300 years old | Same document, link to the area | ✅ |
+| Vinsanto from sun-dried grapes, ≥ 51% Assyrtiko | Same document | ✅ |
+| Fiano di Avellino: province of Avellino, Campania; Riserva and Spumante types | Communication C/2025/298 | ✅ (no minimum % stated in the app) |
+| Greco di Tufo: eight villages around Tufo; steep slopes, soils of volcanic origin; Riserva and Spumante types | OJ C 61, 23.2.2021 | ✅ (no minimum % stated in the app) |
+| Vermentino di Gallura is Sardinia's only DOCG | EU register EUGI00000004943 | ✅ (no minimum % stated; the disciplinare itself wasn't reachable) |
 
 ## Champagne: verification status
 

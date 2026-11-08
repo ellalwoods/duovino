@@ -104,12 +104,135 @@
       ${Array.from({ length: 12 }, (_, i) => `<path d="M${-80 + i * 48} 780 Q${30 + i * 30} 600 ${110 + i * 16} 465" stroke="#7f8f4e" stroke-width="3" fill="none" opacity=".6"/>`).join('')}
       ${[60, 330].map(x => `<path d="M${x} 470 v-90" stroke="#8c9a6a" stroke-width="5"/><ellipse cx="${x}" cy="370" rx="12" ry="34" fill="#9aa86e"/>`).join('')}`,
   };
-  const POSTCARDS = [
-    { id: 'champagne', name: 'Champagne', region: 'Champagne AOC' },
-    { id: 'mosel', name: 'The Mosel', region: 'Germany', unit: 'b-de-mosel' },
-    { id: 'santorini', name: 'Santorini', region: 'Greece', unit: 'b-gr-santorini' },
-    { id: 'mendoza', name: 'Mendoza', region: 'Argentina', unit: 'b-ar-mendoza' },
-  ];
+  /* ---------- generated postcards: one landscape per region, built from painted pieces ---------- */
+  const PAL = {
+    soft: ['#f6e3d8', '#f4e2cf', '#fbefdf'], sunny: ['#b9d6e8', '#d9e9ef', '#f6efd8'], warm: ['#f4b49e', '#fbd3ae', '#fde6c6'],
+    golden: ['#f2c48f', '#f8dcae', '#fdecce'], cool: ['#cddbe5', '#e2eaee', '#f2efe6'], misty: ['#e2e3e1', '#ecebe6', '#f6f2e9'],
+    lavender: ['#c9c3dd', '#e2d3df', '#f4e2d6'], winter: ['#d5dfea', '#e8edf2', '#f7f5f1'],
+  };
+  const HUE = {
+    green: ['#d5ddb4', '#c2d19a', '#adc386', '#98b273'], golden: ['#ecd7a6', '#dfc48e', '#d0b077', '#bf9c62'],
+    red: ['#e8c3a2', '#dcab86', '#cc9670', '#b9815c'], brown: ['#e0cbab', '#d0b48f', '#bf9e77', '#ab8a63'],
+    grey: ['#e6e3dc', '#d6d1c6', '#c4bdb0', '#b1a999'],
+  };
+  const P_ = {
+    house: (x, y, s, roof = '#c27a5c', wall = '#fbf4e6') => `<g transform="translate(${x} ${y}) scale(${s})"><rect x="-9" y="-12" width="18" height="12" fill="${wall}"/><path d="M-11 -12 L0 -20 L11 -12Z" fill="${roof}"/></g>`,
+    village: (x, y, s, roof) => [[-26, 4, .8], [-10, 0, 1], [8, 3, .9], [24, 6, .75], [-2, 10, .85]].map(([dx, dy, k]) => P_.house(x + dx * s, y + dy * s, s * k, roof === 'grey' ? '#8d8a94' : '#c27a5c')).join(''),
+    whitehouses: (x, y, s) => [[-24, 0], [-8, -4], [8, 0], [22, -3], [-14, 8], [4, 8]].map(([dx, dy]) => `<rect x="${x + dx * s}" y="${y + dy * s}" width="${14 * s}" height="${10 * s}" fill="#fffaf2"/>`).join(''),
+    spire: (x, y, s) => `<g transform="translate(${x} ${y}) scale(${s})"><rect x="-10" y="-16" width="20" height="16" fill="#efe6d4"/><rect x="-4" y="-34" width="8" height="18" fill="#e7dcc6"/><path d="M-5 -34 L0 -56 L5 -34Z" fill="#8a7f86"/></g>`,
+    campanile: (x, y, s) => `<g transform="translate(${x} ${y}) scale(${s})"><rect x="-5" y="-60" width="10" height="60" fill="#e9c9a8"/><rect x="-6" y="-66" width="12" height="6" fill="#d7b08c"/><path d="M-6 -66 L0 -76 L6 -66Z" fill="#b9805e"/></g>`,
+    tower: (x, y, s) => `<g transform="translate(${x} ${y}) scale(${s})"><rect x="-6" y="-40" width="12" height="40" fill="#e6dcc8"/>${[-6, -2, 2].map(d => `<rect x="${d}" y="-44" width="3" height="4" fill="#e6dcc8"/>`).join('')}</g>`,
+    castle: (x, y, s) => `<g transform="translate(${x} ${y}) scale(${s})"><rect x="-18" y="-18" width="36" height="18" fill="#ddd2bf"/><rect x="-24" y="-30" width="10" height="30" fill="#e6dcc8"/><rect x="14" y="-26" width="10" height="26" fill="#e6dcc8"/>${[-24, -20, -16, 14, 18, 22].map(d => `<rect x="${d}" y="${d < 0 ? -33 : -29}" width="2.5" height="3" fill="#e6dcc8"/>`).join('')}</g>`,
+    chateau: (x, y, s) => `<g transform="translate(${x} ${y}) scale(${s})"><rect x="-22" y="-20" width="44" height="20" fill="#f6efe0"/><path d="M-24 -20 L-14 -30 L14 -30 L24 -20Z" fill="#7d8a9a"/>${[-26, 26].map(d => `<rect x="${d - 6}" y="-28" width="12" height="28" fill="#fbf4e6"/><path d="M${d - 7} -28 L${d} -42 L${d + 7} -28Z" fill="#6f7d8e"/>`).join('')}</g>`,
+    farmhouse: (x, y, s) => `<g transform="translate(${x} ${y}) scale(${s})"><rect x="-20" y="-14" width="40" height="14" fill="#efd8b8"/><path d="M-22 -14 L-12 -22 L12 -22 L22 -14Z" fill="#c27a5c"/><rect x="10" y="-26" width="8" height="12" fill="#e7cba6"/></g>`,
+    quinta: (x, y, s) => `<g transform="translate(${x} ${y}) scale(${s})"><rect x="-26" y="-12" width="52" height="12" fill="#fffaf2"/><path d="M-28 -12 L-22 -18 L22 -18 L28 -12Z" fill="#c27a5c"/></g>`,
+    abbey: (x, y, s) => `<g transform="translate(${x} ${y}) scale(${s})"><rect x="-30" y="-16" width="60" height="16" fill="#f3e6c8"/><rect x="-6" y="-30" width="12" height="14" fill="#f3e6c8"/><path d="M-8 -30 a8 9 0 0 1 16 0Z" fill="#9db08a"/>${[-24, 24].map(d => `<rect x="${d - 3}" y="-34" width="6" height="18" fill="#f3e6c8"/><path d="M${d - 4} -34 a4 6 0 0 1 8 0Z" fill="#9db08a"/>`).join('')}</g>`,
+    mission: (x, y, s) => `<g transform="translate(${x} ${y}) scale(${s})"><rect x="-22" y="-14" width="44" height="14" fill="#fbf2e2"/><path d="M-8 -14 V-26 a8 8 0 0 1 16 0 V-14Z" fill="#fbf2e2"/><rect x="-2" y="-24" width="4" height="5" fill="#c9a36a"/><rect x="-22" y="-16" width="44" height="2" fill="#c27a5c"/></g>`,
+    capedutch: (x, y, s) => `<g transform="translate(${x} ${y}) scale(${s})"><rect x="-28" y="-12" width="56" height="12" fill="#fffdf6"/><path d="M-28 -12 H28 L22 -20 H-22Z" fill="#7a6a5c"/><path d="M-8 -12 V-24 Q-8 -30 -4 -30 Q0 -34 4 -30 Q8 -30 8 -24 V-12Z" fill="#fffdf6"/></g>`,
+    qvevri: () => [[300, 690, 1], [340, 702, .8], [262, 708, .7]].map(([x, y, k]) => `<g transform="translate(${x} ${y}) scale(${k})"><path d="M-16 -40 Q-26 -10 -10 10 Q0 18 10 10 Q26 -10 16 -40Z" fill="#c98f67"/><ellipse cx="0" cy="-40" rx="16" ry="4" fill="#b07a56"/></g>`).join(''),
+    cypress: (x, y, s = 1) => `<ellipse cx="${x}" cy="${y - 34 * s}" rx="${7 * s}" ry="${36 * s}" fill="#5f7a4a"/>`,
+    poplar: (x, y, s = 1) => `<ellipse cx="${x}" cy="${y - 40 * s}" rx="${9 * s}" ry="${42 * s}" fill="#9db46a"/>`,
+    olive: (x, y, s = 1) => `<g><rect x="${x - 2}" y="${y - 14 * s}" width="4" height="${14 * s}" fill="#8a7a62"/><ellipse cx="${x}" cy="${y - 22 * s}" rx="${20 * s}" ry="${13 * s}" fill="#a9b39a"/></g>`,
+    oak: (x, y, s = 1) => `<g><rect x="${x - 3}" y="${y - 18 * s}" width="6" height="${18 * s}" fill="#7d6a52"/><circle cx="${x}" cy="${y - 32 * s}" r="${20 * s}" fill="#8faa62"/></g>`,
+    pine: (x, y, s = 1) => `<g><path d="M${x} ${y} q2 -30 0 -${48 * s}" stroke="#8a6d52" stroke-width="4" fill="none"/><ellipse cx="${x}" cy="${y - 50 * s}" rx="${30 * s}" ry="${10 * s}" fill="#6f8a54"/></g>`,
+    fir: (x, y, s = 1) => `<path d="M${x} ${y - 60 * s} L${x + 14 * s} ${y} H${x - 14 * s}Z" fill="#5f7d5a"/>`,
+    eucalyptus: (x, y, s = 1) => `<g><path d="M${x} ${y} q-4 -40 4 -${70 * s}" stroke="#f1ebe0" stroke-width="5" fill="none"/><ellipse cx="${x + 4}" cy="${y - 74 * s}" rx="${24 * s}" ry="${14 * s}" fill="#9fb7a4"/><ellipse cx="${x - 10}" cy="${y - 58 * s}" rx="${14 * s}" ry="${8 * s}" fill="#9fb7a4"/></g>`,
+    araucaria: (x, y, s = 1) => `<g><rect x="${x - 2}" y="${y - 70 * s}" width="4" height="${70 * s}" fill="#7d6a52"/><path d="M${x - 30 * s} ${y - 66 * s} Q${x} ${y - 90 * s} ${x + 30 * s} ${y - 66 * s} Q${x} ${y - 74 * s} ${x - 30 * s} ${y - 66 * s}Z" fill="#5f7a4a"/></g>`,
+    cherry: (x, y, s = 1) => `<g><rect x="${x - 2}" y="${y - 16 * s}" width="4" height="${16 * s}" fill="#7d5a52"/><circle cx="${x}" cy="${y - 28 * s}" r="${18 * s}" fill="#f2c4cf"/></g>`,
+  };
+  function farLayer(kind, snow) {
+    const snowCap = pts => snow ? pts : '';
+    if (kind === 'hills') return `<path d="M0 395 C80 370 150 380 220 365 C290 350 350 372 390 362 V420 H0Z" fill="#e4d9d6" opacity=".7"/>`;
+    if (kind === 'mountains') return `<path d="M0 380 L60 320 L100 350 L160 290 L220 345 L280 300 L340 340 L390 315 V420 H0Z" fill="#c8bfcf" opacity=".85"/>${snow ? `<path d="M160 290 L174 305 L146 305Z M280 300 L292 313 L268 313Z" fill="#fffaf2"/>` : ''}`;
+    if (kind === 'alps') return `<path d="M0 370 L50 300 L90 330 L150 240 L210 320 L260 270 L320 330 L390 280 V420 H0Z" fill="#bcb6cc" opacity=".85"/><path d="M150 240 L172 268 L128 268Z M260 270 L276 290 L244 290Z M50 300 L62 316 L38 316Z M390 280 L376 300 L404 300Z" fill="#fffaf2"/>`;
+    if (kind === 'dolomites') return `<path d="M0 380 L40 330 L60 300 L80 330 L120 250 L140 280 L170 240 L200 300 L250 260 L280 310 L330 270 L390 330 V420 H0Z" fill="#e4d2c8" opacity=".95"/>`;
+    if (kind === 'volcano') return `<path d="M30 410 L170 250 L210 250 L360 410Z" fill="#9c8f92"/><path d="M170 250 L210 250 L200 270 L180 270Z" fill="#fffaf2" opacity=".8"/>${[0, 1, 2].map(i => `<ellipse cx="${200 + i * 26}" cy="${222 - i * 26}" rx="${18 + i * 8}" ry="${11 + i * 3}" fill="#e9e3e0" opacity="${.75 - i * .2}"/>`).join('')}`;
+    if (kind === 'mesa') return `<path d="M0 400 L40 400 L60 350 L180 350 L200 390 L250 390 L270 360 L340 360 L360 400 L390 400 V420 H0Z" fill="#d9a98a" opacity=".85"/>`;
+    if (kind === 'table') return `<path d="M20 410 L70 300 L300 296 L350 410Z" fill="#a8a3b6"/><path d="M70 300 L300 296 L296 308 L74 310Z" fill="#fffaf2" opacity=".75"/>`;
+    if (kind === 'fuji') return `<path d="M20 410 L160 270 L230 270 L370 410Z" fill="#a9b3c9"/><path d="M160 270 L230 270 L252 292 L232 300 L214 290 L196 302 L178 290 L160 300 L140 290Z" fill="#fffaf2"/>`;
+    if (kind === 'cone') return `<path d="M120 400 L240 270 L360 400Z" fill="#a9b3c9" opacity=".8"/><path d="M240 270 L262 294 L218 294Z" fill="#fffaf2"/>`;
+    return '';
+  }
+  function compose(sp, id) {
+    const sk = PAL[sp.sky] || PAL.sunny, H = HUE[sp.hue] || HUE.green, hz = sp.water === 'sea' ? 410 : 400;
+    let o = `<defs><linearGradient id="k${id}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${sk[0]}"/><stop offset=".6" stop-color="${sk[1]}"/><stop offset="1" stop-color="${sk[2]}"/></linearGradient>
+      <linearGradient id="w${id}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#b8d0dc"/><stop offset="1" stop-color="#8fb3c8"/></linearGradient></defs>
+      <rect width="390" height="780" fill="url(#k${id})"/><rect y="560" width="390" height="220" fill="${(HUE[sp.hue] || HUE.green)[2]}"/><g filter="url(#wobble)">`;
+    const sun = sp.sun || [300, 200];
+    o += `<circle cx="${sun[0]}" cy="${sun[1]}" r="70" fill="#fff4dc" opacity=".55"/><circle cx="${sun[0]}" cy="${sun[1]}" r="22" fill="#fff8e8"/>`;
+    if (sp.clouds) o += [[80, 150], [250, 110], [320, 190]].map(([x, y]) => `<ellipse cx="${x}" cy="${y}" rx="46" ry="14" fill="#fffaf4" opacity=".85"/><ellipse cx="${x + 20}" cy="${y - 8}" rx="26" ry="12" fill="#fffaf4" opacity=".85"/>`).join('');
+    o += farLayer(sp.far, sp.snowcap !== false);
+    if (sp.water === 'sea') o += `<rect y="${hz}" width="390" height="370" fill="url(#w${id})"/><path d="M0 ${hz} H390" stroke="#fff" opacity=".4"/>`;
+    if (sp.water === 'lake') o += `<path d="M0 425 C120 410 270 412 390 424 V470 C270 458 120 460 0 474Z" fill="url(#w${id})"/>`;
+    // mid ground
+    const land = {
+      rolling: `<path d="M0 450 C90 420 180 438 270 418 C330 405 370 420 390 414 V780 H0Z" fill="${H[0]}"/><path d="M0 520 C120 485 250 505 390 470 V780 H0Z" fill="${H[1]}"/>`,
+      flat: `<path d="M0 452 C130 444 260 446 390 440 V780 H0Z" fill="${H[0]}"/><path d="M0 520 C130 506 260 508 390 498 V780 H0Z" fill="${H[1]}"/>`,
+      steep: `<path d="M0 300 C70 300 160 360 230 470 L260 780 H0Z" fill="${H[1]}"/><path d="M180 470 C260 450 330 460 390 446 V780 H160Z" fill="${H[0]}"/>`,
+      terraces: `<path d="M0 392 C80 388 160 410 220 470 L240 780 H0Z" fill="${H[1]}"/>${[0, 1, 2, 3, 4].map(i => `<path d="M0 ${408 + i * 34} C70 ${406 + i * 34} 140 ${428 + i * 32} ${190 + i * 6} ${478 + i * 34}" stroke="#efe4cc" stroke-width="2.5" fill="none" opacity=".75"/>`).join('')}<path d="M220 480 C290 466 340 470 390 460 V780 H200Z" fill="${H[0]}"/>`,
+      coast: `<path d="M0 420 C60 410 110 420 160 440 C190 455 200 500 190 560 L180 780 H0Z" fill="${H[1]}"/>`,
+    }[sp.land || 'rolling'];
+    if (sp.water === 'river') o += `<path d="M0 470 C100 450 220 470 390 450 V500 C220 520 100 500 0 520Z" fill="url(#w${id})"/>`;
+    o += land;
+    if (sp.water === 'river' && (sp.land === 'steep' || sp.land === 'terraces')) o += `<path d="M150 780 C190 640 260 560 390 520 V590 C300 620 260 690 250 780Z" fill="url(#w${id})"/>`;
+    (sp.features || []).forEach(([t, x, y, sc = 1, extra]) => { o += P_[t] ? P_[t](x, y, sc, extra) : ''; });
+    (sp.trees || []).forEach(([t, x, y, sc = 1]) => { o += P_[t](x, y, sc); });
+    if (sp.fog) o += [430, 470, 505].map((y, i) => `<path d="M-20 ${y} C80 ${y - 12} 200 ${y + 10} 410 ${y - 6}" stroke="#ffffff" stroke-width="${18 - i * 3}" opacity=".55" fill="none" stroke-linecap="round"/>`).join('');
+    // foreground vines
+    const fg = `<path d="M0 600 C130 572 260 590 390 562 V780 H0Z" fill="${H[2]}"/>`;
+    const v = sp.vines || 'rows', vc = sp.snow ? '#9a8c80' : '#7c8a4e';
+    if (v === 'rows') o += fg + Array.from({ length: 11 }, (_, i) => { const k = i - 5; return `<path d="M${195 + k * 95} 800 Q${195 + k * 36} 660 ${195 + k * 11} 585" stroke="${vc}" stroke-width="3.5" fill="none" opacity=".6" stroke-linecap="round"/>`; }).join('');
+    if (v === 'bush') o += fg + Array.from({ length: 5 }, (_, r) => Array.from({ length: 7 + r }, (_, c) => { const y = 610 + r * 34, x = 20 + c * (360 / (6 + r)) + (r % 2) * 14; return `<ellipse cx="${x}" cy="${y}" rx="${7 + r * 2}" ry="${5 + r}" fill="#7c8a4e" opacity=".8"/>`; }).join('')).join('');
+    if (v === 'pergola') o += fg + `<g stroke="#8a6d52" stroke-width="3">${[40, 130, 220, 310].map(x => `<path d="M${x} 780 V640"/>`).join('')}<path d="M10 640 H380"/></g><path d="M0 626 C100 610 290 612 390 624 V652 H0Z" fill="#8faa62"/>${[60, 170, 270].map(x => `<ellipse cx="${x}" cy="660" rx="7" ry="10" fill="#6a3a5a" opacity=".7"/>`).join('')}`;
+    if (v === 'terraces') o += `<path d="M0 640 C130 618 260 630 390 606 V780 H0Z" fill="${H[2]}"/>` + [0, 1, 2, 3].map(i => `<path d="M0 ${655 + i * 34} C130 ${635 + i * 34} 260 ${645 + i * 34} 390 ${622 + i * 34}" stroke="#efe4cc" stroke-width="3" fill="none"/>${Array.from({ length: 12 }, (_, c) => `<path d="M${16 + c * 32} ${650 + i * 34 - c * 2} v-12" stroke="${vc}" stroke-width="3" stroke-linecap="round"/>`).join('')}`).join('');
+    if (sp.snow) o += `<path d="M0 600 C130 572 260 590 390 562 V780 H0Z" fill="#fbfbf8" opacity=".55"/>${Array.from({ length: 30 }, (_, i) => `<circle cx="${(i * 71) % 390}" cy="${(i * 37) % 560 + 20}" r="1.6" fill="#fff" opacity=".8"/>`).join('')}`;
+    if (sp.extras) sp.extras.forEach(t => { o += P_[t](); });
+    return o + `</g><rect width="390" height="780" filter="url(#paper)" fill="#fff"/>`;
+  }
+  // Every region with a place on the map has a postcard. Four are hand-painted; the rest are composed.
+  const SPECS = {
+    'Burgundy': { sky: 'soft', far: 'hills', land: 'rolling', hue: 'green', features: [['village', 150, 452, 1], ['spire', 215, 448, 1]] },
+    'Bordeaux': { sky: 'sunny', land: 'flat', water: 'river', hue: 'green', features: [['chateau', 205, 448, 1.2]], trees: [['poplar', 60, 452], ['poplar', 340, 446]] },
+    'Rhône': { sky: 'warm', far: 'hills', land: 'terraces', water: 'river', hue: 'brown', features: [['tower', 60, 400, .9]], trees: [['cypress', 330, 460]], vines: 'terraces' },
+    'Loire': { sky: 'soft', land: 'rolling', water: 'river', hue: 'green', features: [['chateau', 230, 440, 1]], trees: [['oak', 70, 450]] },
+    'Alsace': { sky: 'sunny', far: 'mountains', land: 'steep', hue: 'green', features: [['castle', 90, 330, 1], ['village', 270, 468, 1]], snowcap: false },
+    'Provence & Corsica': { sky: 'lavender', water: 'sea', land: 'coast', hue: 'golden', features: [['village', 90, 440, .9]], trees: [['pine', 150, 440], ['cypress', 40, 470]], vines: 'bush' },
+    'South, South-West & mountains': { sky: 'warm', far: 'mountains', land: 'rolling', hue: 'golden', features: [['castle', 230, 430, .9]], trees: [['olive', 70, 476], ['olive', 330, 470]], vines: 'bush' },
+    'Piedmont': { sky: 'misty', far: 'alps', land: 'rolling', hue: 'green', fog: true, features: [['village', 220, 418, .9], ['tower', 238, 404, .8]] },
+    'Tuscany': { sky: 'golden', land: 'rolling', hue: 'golden', features: [['farmhouse', 240, 432, 1]], trees: [['cypress', 175, 446], ['cypress', 192, 448], ['cypress', 300, 436], ['cypress', 90, 462]] },
+    'Veneto': { sky: 'soft', far: 'hills', land: 'rolling', hue: 'green', features: [['campanile', 240, 428, 1], ['village', 190, 440, .8]], vines: 'pergola' },
+    'The north': { sky: 'sunny', far: 'dolomites', water: 'lake', land: 'steep', hue: 'green', features: [['spire', 300, 460, .8]], vines: 'pergola' },
+    'Centre, south & islands': { sky: 'warm', far: 'volcano', land: 'rolling', hue: 'red', trees: [['olive', 70, 478], ['olive', 320, 470]], vines: 'bush' },
+    'Spain': { sky: 'sunny', far: 'mesa', land: 'flat', hue: 'red', features: [['castle', 250, 446, 1]], vines: 'bush' },
+    'Portugal': { sky: 'warm', land: 'terraces', water: 'river', hue: 'brown', features: [['quinta', 100, 420, 1]], vines: 'terraces' },
+    'Austria': { sky: 'soft', land: 'terraces', water: 'river', hue: 'green', features: [['abbey', 100, 414, .9]], vines: 'terraces' },
+    'Switzerland': { sky: 'sunny', far: 'alps', water: 'lake', land: 'terraces', hue: 'green', features: [['village', 90, 424, .8]], vines: 'terraces' },
+    'Hungary': { sky: 'misty', land: 'rolling', hue: 'golden', fog: true, features: [['village', 200, 440, .9], ['spire', 232, 432, .8]] },
+    'Slovenia & Croatia': { sky: 'sunny', water: 'sea', land: 'coast', hue: 'green', features: [['village', 90, 436, 1]], trees: [['cypress', 170, 470]], vines: 'terraces' },
+    'Georgia': { sky: 'cool', far: 'alps', land: 'rolling', hue: 'green', features: [['tower', 250, 424, .9]], extras: ['qvevri'] },
+    'Lebanon': { sky: 'warm', far: 'mountains', land: 'flat', hue: 'red', trees: [['poplar', 60, 452], ['poplar', 82, 456], ['poplar', 330, 450]] },
+    'England': { sky: 'cool', clouds: true, land: 'rolling', hue: 'green', features: [['spire', 230, 440, .8]], trees: [['oak', 80, 452], ['oak', 320, 440]] },
+    'California': { sky: 'golden', land: 'rolling', hue: 'golden', features: [['mission', 230, 438, 1]], trees: [['oak', 80, 456], ['oak', 310, 442]] },
+    'Pacific Northwest & East': { sky: 'cool', far: 'cone', land: 'rolling', hue: 'green', fog: true, trees: [['fir', 50, 450], ['fir', 75, 456], ['fir', 340, 446], ['fir', 362, 450]] },
+    'Canada': { sky: 'winter', water: 'lake', land: 'flat', hue: 'grey', snow: true, trees: [['fir', 60, 446], ['fir', 330, 446]] },
+    'Chile': { sky: 'sunny', far: 'alps', land: 'flat', hue: 'green', trees: [['poplar', 50, 452], ['poplar', 340, 448]] },
+    'Uruguay': { sky: 'sunny', water: 'sea', land: 'coast', hue: 'green', features: [['farmhouse', 90, 438, .9]], trees: [['eucalyptus', 160, 470]] },
+    'Brazil': { sky: 'soft', land: 'rolling', hue: 'green', trees: [['araucaria', 70, 448], ['araucaria', 320, 438]] },
+    'Australia': { sky: 'golden', land: 'rolling', hue: 'red', features: [['farmhouse', 230, 440, .8]], trees: [['eucalyptus', 60, 452], ['eucalyptus', 340, 440]] },
+    'New Zealand': { sky: 'sunny', far: 'alps', water: 'lake', land: 'rolling', hue: 'golden' },
+    'South Africa': { sky: 'sunny', far: 'table', land: 'rolling', hue: 'green', features: [['capedutch', 230, 446, 1]], trees: [['oak', 90, 456]] },
+    'Japan': { sky: 'soft', far: 'fuji', land: 'rolling', hue: 'green', trees: [['cherry', 70, 458], ['cherry', 330, 446]], vines: 'pergola' },
+  };
+  const HAND = { 'Champagne AOC': 'champagne', 'Germany': 'mosel', 'Greece': 'santorini', 'Argentina': 'mendoza' };
+  const NAMES = { 'Champagne AOC': 'Champagne', 'The north': 'Northern Italy', 'Centre, south & islands': 'Southern Italy & islands', 'South, South-West & mountains': 'Southern France', 'Pacific Northwest & East': 'Oregon & beyond', 'Germany': 'The Mosel', 'Greece': 'Santorini', 'Argentina': 'Mendoza' };
+  const slug = t => t.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+  const POSTCARDS = [];
+  (D.trackB ? D.trackB.continents : []).forEach(ct => ct.countries.forEach(c => c.regions.forEach(rg => {
+    if (!rg.at) return;
+    const id = HAND[rg.name] || slug(rg.name);
+    POSTCARDS.push({ id, name: NAMES[rg.name] || rg.name, region: rg.name, country: c.name });
+    if (!POSTCARD_ART[id]) POSTCARD_ART[id] = (uidp) => compose(SPECS[rg.name] || { sky: 'sunny', land: 'rolling', hue: 'green' }, uidp);
+  })));
   const postcard = (id, mode = 'full') => `<svg class="scene" viewBox="${mode === 'thumb' ? '0 120 390 520' : '0 0 390 780'}" preserveAspectRatio="${mode === 'thumb' ? 'xMidYMid slice' : 'xMidYMax slice'}" aria-hidden="true">${POSTCARD_ART[id]('p' + (++uid))}</svg>`;
 
   /* ---------- maps ---------- */

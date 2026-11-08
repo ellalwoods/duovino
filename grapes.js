@@ -128,7 +128,7 @@
           [s('Weingut Hellner', 'producer', { note: 'Weingut means wine estate.' })],
           [s('Graacher Himmelreich', 'site', { big: true, note: 'Village + vineyard: the Himmelreich vineyard in the village of Graach.' })],
           [s('Riesling Kabinett', 'grape', { note: 'The grape (Riesling) and the Prädikat (Kabinett, the lightest ripeness level).' })],
-          [s('Mosel · 2022', 'region', { note: 'The region and vintage. The Mosel is famous for light, delicate Riesling.' })],
+          [s('Mosel · 2022', 'region', { note: 'The region and vintage. The Mosel is famous for light, delicate Riesling, often low in alcohol (around 8–10%).' })],
         ] } },
       { kind: 'text', title: 'A grape built for the cold', big: 'Searing acidity, pure fruit',
         body: 'Riesling ripens late and keeps <b>very high acidity</b>. It\'s intensely aromatic, and winemakers rarely let oak flavour get in the way.' },

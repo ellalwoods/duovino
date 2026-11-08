@@ -23,7 +23,7 @@
         low: 'Light', high: 'Full', marks: [{ t: 'Italian Grigio', at: 0.15 }, { t: 'Oregon', at: 0.5 }, { t: 'Alsace Gris', at: 0.85 }] },
       { kind: 'facts', title: 'Where to find it', rows: [
         { k: 'Italy', v: 'Veneto, Friuli and Alto Adige: mostly light and crisp.' },
-        { k: 'France', v: 'Alsace: rich, spicy, sometimes sweet.' },
+        { k: 'France', v: 'Alsace, on the border with Germany: rich, spicy, sometimes sweet.' },
         { k: 'USA', v: 'Oregon: in between, with ripe pear.' },
         { k: 'Also', v: 'Germany (as Grauburgunder), New Zealand, Hungary.' },
       ] },
@@ -163,7 +163,7 @@
         reveal: 'The grapes were <b>not fully ripe</b>: a cool year or site. Riper Cabernet swaps it for pure blackcurrant and black cherry.' },
       { kind: 'compare', title: 'Bordeaux vs Napa', cols: [
         { h: 'Left Bank Bordeaux', items: ['Blackcurrant, cedar, pencil', 'Firm, savoury, restrained', 'Blended with Merlot'] },
-        { h: 'Napa Valley', items: ['Ripe blackcurrant, mocha', 'Plush, powerful', 'Often more alcohol'] }] },
+        { h: 'Napa Valley (California)', items: ['Ripe blackcurrant, mocha', 'Plush, powerful', 'Often more alcohol'] }] },
       { kind: 'facts', title: 'Where else', rows: [
         { k: 'Australia', v: 'Coonawarra (with a minty edge) and Margaret River.' },
         { k: 'Chile', v: 'Maipo: ripe and approachable.' },
