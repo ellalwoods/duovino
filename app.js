@@ -53,6 +53,9 @@
   // An unwritten draft never blocks what follows it: look past it to the unit before.
   const prevOk = p => !p || done(p) || (p.u.draft && !playable(p) && prevOk(p.prev));
   const unlocked = r => (DRAFTS && r.u.draft) || (prevOk(r.prev) && reqMet(r));
+  const TEST = D.chapters[0].testOut;
+  const topsoilDone = () => TOPSOIL.every(done);
+  const testLink = (cls = 'testout-link') => !TEST || topsoilDone() ? '' : `<button class="${cls}" data-act="go" data-h="#test-${TEST.id}"><span class="mono">Done WSET 1?</span> Take the Topsoil test-out and skip ahead <span aria-hidden="true">→</span></button>`;
   const reqText = () => { const w = TOPSOIL.filter(playable); return `Topsoil (${w[0].tag}–${w[w.length - 1].tag})`; };
   const unitState = r => done(r) ? 'done' : !playable(r) ? 'soon' : unlocked(r) ? 'current' : 'locked';
   const nextUnit = (track = 'A') => { const left = UNITS.filter(r => r.track === track && !done(r)); return left.find(r => unitState(r) === 'current') || left[0]; };
@@ -307,6 +310,7 @@
       <section class="today-body">
         ${nextCard(nx)}
         ${chapterStrip(nx)}
+        ${testLink()}
         ${nb ? `<p class="zone-label mono">Track B · The wine list</p>${nextCard(nb)}` : ''}
         ${ready ? `<button class="cellar-nudge" data-act="go" data-h="#cellar">
           <span class="cn-bottles">${readyBottles.map(([id, e]) => bottleSVG(id, e)).join('')}</span>
@@ -387,6 +391,7 @@
           <span class="mono">Chapter ${ci + 1} · ${st.name}</span>
           <h2>${ch.title}</h2>
           <p>${ch.blurb}</p>
+          ${ci === 0 ? testLink('testout-link on-soil') : ''}
         </header>
         <div class="path" style="height:${H}px">
           <svg class="path-svg" viewBox="0 0 300 ${H}" width="300" height="${H}" aria-hidden="true">
@@ -447,7 +452,7 @@
         <p>Every lesson starts from a label and works outwards: appellation, then grapes, then the rules, then the taste.</p>
         <div class="roots-stats mono"><span><strong>${doneCount('B')}</strong> of ${trackCount('B')} poured</span><span>Start with <strong>B0</strong>, then any region</span></div>
       </header>
-      ${section('Before you order', introRs, reqMet(UNIT['b0-1']) ? 'How labels work. Finish these three to open the whole list.' : `Opens once you've finished ${reqText()} in Track A. Then finish these three to open the whole list.`)}
+      ${section('Before you order', introRs, reqMet(UNIT['b0-1']) ? 'How labels work. Finish these three to open the whole list.' : `Opens once you've finished ${reqText()} in Track A, or passed the Topsoil test-out. Then finish these three to open the whole list.` + testLink('testout-link in-list'))}
       ${countries}
       <p class="foot mono">Rules are checked against each region's official regulations before a unit is poured</p>
     </div>${tabbar('list')}`;
@@ -472,7 +477,7 @@
       ${u.draft ? `<div class="draft-box"><p class="mono">Draft · rules not yet checked</p>${u.toCheck && u.toCheck.length ? `<p>To check against ${esc(u.sources.join(' and '))}:</p><ul>${u.toCheck.map(t => `<li>${esc(t)}</li>`).join('')}</ul>` : `<p>To check against ${esc(u.sources.join(' and '))}.</p>`}</div>`
         : u.checked ? `<div class="checked-box"><p class="mono">✓ Rules checked ${u.checked}</p><p>Against: ${esc(u.sources.join('; '))}.</p>${u.note ? `<p class="note">${esc(u.note)}</p>` : ''}</div>` : ''}
       ${s === 'current' || s === 'done' ? `<button class="primary" data-act="go" data-h="#unit-${id}">${s === 'done' ? 'Pour it again' : 'Start lesson'}</button>`
-        : s === 'locked' && !reqMet(r) ? `<p class="mono resting-note">Locked · finish ${reqText()} in Track A first</p><button class="primary" data-act="go" data-h="#roots">Go to Topsoil</button>`
+        : s === 'locked' && !reqMet(r) ? `<p class="mono resting-note">Locked · finish ${reqText()} in Track A first, or test out</p><button class="primary" data-act="go" data-h="#test-${TEST.id}">Take the Topsoil test-out</button><button class="link-btn" data-act="go" data-h="#roots">Go to Topsoil</button>`
         : s === 'locked' ? `<p class="mono resting-note">Locked · finish ${label(prev)} ${prev.u.title} first</p>`
         : u.draft && u.questions ? `<p class="mono resting-note">Written, waiting for the rule check before it's poured</p>`
         : `<p class="mono resting-note">${r.track === 'B' ? 'Still being poured · written once its rules are checked against the official regulations' : 'Still being poured · this unit is planned but not written yet'}</p>`}
@@ -501,6 +506,12 @@
     P = { kind: 'unit', r, id, title: r.u.title, tag: `Unit ${label(r)}`, wine: r.wine, lesson: r.u.lesson || [], questions: qs, card: 0, i: 0, correct: 0, results: [], phase: 'lesson' };
     setWine(P.wine);
     if (P.lesson.length) renderLesson(); else renderQ();
+  }
+  function startTest(id) {
+    if (!TEST || TEST.id !== id) { location.hash = '#roots'; return; }
+    P = { kind: 'test', id, title: TEST.title, tag: 'Test-out', wine: D.chapters[0].wine, questions: TEST.questions, i: 0, correct: 0, results: [], phase: 'practice' };
+    setWine(P.wine);
+    renderQ();
   }
   function startFlight(id) {
     const f = D.flights.find(x => x.id === id);
@@ -862,7 +873,7 @@
     const n = scoredCount(), pct = Math.round((P.correct / n) * 100), now = Date.now();
     S.days[todayKey()] = (S.days[todayKey()] || 0) + 1;
     let first = false;
-    const store = P.kind === 'unit' ? S.units : S.flights;
+    const store = P.kind === 'unit' ? S.units : P.kind === 'test' ? (S.tests ||= {}) : S.flights;
     const rec = store[P.id];
     first = !rec;
     store[P.id] = { best: Math.max(rec ? rec.best : 0, pct), plays: (rec ? rec.plays : 0) + 1 };
@@ -873,9 +884,19 @@
       if (!e) { S.cellar[concept] = { stage: 0, born: now, due: ok ? now + INTERVALS[0] * DAY : now, reviews: 0 }; laid.push(concept); }
       else if (!ok) e.due = Math.min(e.due, now);
     });
+    const passed = P.kind === 'test' && pct >= TEST.pass;
+    if (passed) TOPSOIL.forEach(r => { if (!S.units[r.u.id]) S.units[r.u.id] = { best: pct, plays: 0, testedOut: true }; });
     save();
     pop(); buzz([20, 60, 20]);
     let unlock = '', nextBtn = '';
+    if (P.kind === 'test') {
+      unlock = passed
+        ? `<div class="unlock"><span class="mono">Topsoil cleared</span><strong>Track B is open</strong><p>You passed with ${pct}% (${TEST.pass}% needed). All of Topsoil is marked as done, and the Wine List starts at B0. You can still replay any Topsoil unit from Roots.</p></div>`
+        : `<div class="unlock"><span class="mono">Not quite</span><strong>${pct}%: you need ${TEST.pass}%</strong><p>The ideas you missed are now in your cellar, ready to taste. Try again any time, or work through the Topsoil units.</p></div>`;
+      nextBtn = passed
+        ? `<button class="primary" data-act="go" data-h="#list">Open the Wine List</button><button class="link-btn" data-act="go" data-h="#roots">See your roots</button>`
+        : `<button class="primary" data-act="go" data-h="#unit-1-1">Start Topsoil 1.1</button>`;
+    }
     if (P.kind === 'unit') {
       const cand = UNITS[P.r.n + 1], nx = cand && cand.track === P.r.track ? cand : null;
       const home = P.r.track === 'A' ? '#roots' : '#list', homeName = P.r.track === 'A' ? 'Back to your roots' : 'Back to the wine list';
@@ -892,7 +913,7 @@
     app.innerHTML = `<div class="player result" style="--fw:${P.wine}">
       <div class="tint"></div>
       <div class="res">
-        <p class="eyebrow">${P.kind === 'unit' ? P.tag + ' complete' : 'Flight complete'}</p>
+        <p class="eyebrow">${P.kind === 'unit' ? P.tag + ' complete' : P.kind === 'test' ? 'Test-out complete' : 'Flight complete'}</p>
         <h2>${P.title}</h2>
         <div class="big-ring">${ring(pct, P.wine, 200)}<div class="big-num"><strong>${pct}%</strong><span class="mono">${P.correct} of ${n} correct</span></div></div>
         <div class="res-stats">
@@ -994,10 +1015,56 @@
       <p class="set-label mono">DRAFT LESSONS</p>
       <div class="seg">${[false, true].map(v => `<button class="${!!S.settings.drafts === v ? 'on' : ''}" data-act="drafts" data-v="${v}">${v ? 'Preview drafts' : 'Hide drafts'}</button>`).join('')}</div>
       <p class="set-note">Drafts are written lessons whose rules haven't yet been checked against the official regulations (e.g. Champagne). Previewing unlocks them and shows a draft banner.</p>
+      <p class="set-label mono">BACKUP</p>
+      <div class="seg"><button data-act="export">Export backup</button><button data-act="import">Import backup</button></div>
+      <p class="set-note">Your progress lives only in this browser. Export a backup now and then, and import it on a new phone or after clearing Safari.</p>
       <p class="set-label mono">PROGRESS</p>
       <button class="link-btn danger" data-act="reset">Pour it all away (reset)</button>
     </div></div>`;
     overlay.querySelector('.modal').addEventListener('click', ev => { if (ev.target.classList.contains('modal')) closeModal(); });
+  }
+
+  /* ---------- backup ---------- */
+  const backupText = () => JSON.stringify({ app: 'duovino', version: 1, exported: new Date().toISOString(), state: S });
+  function exportBackup() {
+    const txt = backupText();
+    let url = '';
+    try { url = URL.createObjectURL(new Blob([txt], { type: 'application/json' })); } catch { /* no blob */ }
+    overlay.innerHTML = `<div class="modal" role="dialog" aria-modal="true"><div class="modal-card backup">
+      <button class="icon-btn close" data-act="close" aria-label="Close">${closeIcon()}</button>
+      <p class="eyebrow">Backup</p><h2>Export your vineyard</h2>
+      <p class="set-note">Copy this text somewhere safe (Notes, an email to yourself) or download it as a file.</p>
+      <textarea class="backup-text" readonly>${esc(txt)}</textarea>
+      <div class="judge"><button class="opt" data-act="copy-backup">Copy</button>${url ? `<a class="primary dl" href="${url}" download="duovino-backup-${todayKey()}.json">Download file</a>` : ''}</div>
+      <p class="mono copy-note" hidden>Copied ✓</p>
+    </div></div>`;
+  }
+  function importBackup() {
+    overlay.innerHTML = `<div class="modal" role="dialog" aria-modal="true"><div class="modal-card backup">
+      <button class="icon-btn close" data-act="close" aria-label="Close">${closeIcon()}</button>
+      <p class="eyebrow">Backup</p><h2>Import a backup</h2>
+      <p class="set-note">Paste the backup text, or choose a backup file. This replaces the progress in this browser.</p>
+      <textarea class="backup-text" placeholder='{"app":"duovino", …}'></textarea>
+      <input type="file" class="backup-file" accept=".json,application/json">
+      <p class="mono import-error" hidden></p>
+      <button class="primary" data-act="restore">Restore</button>
+    </div></div>`;
+    overlay.querySelector('.backup-file').addEventListener('change', async e => {
+      const f = e.target.files[0]; if (f) overlay.querySelector('.backup-text').value = await f.text();
+    });
+  }
+  function restoreBackup() {
+    const err = overlay.querySelector('.import-error');
+    let data;
+    try { data = JSON.parse(overlay.querySelector('.backup-text').value.trim()); } catch { data = null; }
+    if (!data || data.app !== 'duovino' || !data.state || typeof data.state !== 'object' || typeof data.state.units !== 'object') {
+      err.textContent = 'That doesn\'t look like a Duovino backup.'; err.hidden = false; return;
+    }
+    const st = data.state;
+    ask('Replace your progress?', `This restores the backup from ${data.exported ? new Date(data.exported).toLocaleDateString('en-GB') : 'an earlier date'} and replaces everything in this browser.`, 'Restore', () => {
+      S = { ...defaults(), ...st, settings: { ...defaults().settings, ...(st.settings || {}) } };
+      save(); location.hash = '#today'; location.reload();
+    });
   }
 
   /* in-page confirm dialog (native confirm() is blocked in some frames) */
@@ -1087,6 +1154,16 @@
       case 'hemi': S.settings.hemi = b.dataset.h; save(); today(); settings(); break;
       case 'drafts': S.settings.drafts = b.dataset.v === 'true'; save(); location.reload(); break;
       case 'sound': S.settings.sound = b.dataset.v === 'true'; save(); settings(); if (S.settings.sound) clink(); break;
+      case 'export': exportBackup(); break;
+      case 'import': importBackup(); break;
+      case 'restore': restoreBackup(); break;
+      case 'copy-backup': {
+        const ta = overlay.querySelector('.backup-text'), note = overlay.querySelector('.copy-note');
+        const done = () => { note.hidden = false; };
+        try { navigator.clipboard.writeText(ta.value).then(done, () => { ta.select(); note.textContent = 'Select all and copy'; done(); }); }
+        catch { ta.select(); note.textContent = 'Select all and copy'; done(); }
+        break;
+      }
       case 'reset': ask('Pour it all away?', 'Your cellar, roots and vintages will be emptied. This can\'t be undone.', 'Reset everything', () => { S = defaults(); save(); go('#today'); }); break;
     }
   });
@@ -1098,6 +1175,7 @@
     const h = location.hash.slice(1);
     if (h.startsWith('unit-')) return startUnit(h.slice(5));
     if (h.startsWith('flight-')) return startFlight(h.slice(7));
+    if (h.startsWith('test-')) return startTest(h.slice(5));
     P = null;
     if (h === 'roots') { lastTab = 'roots'; roots(); }
     else if (h === 'cellar') { lastTab = 'cellar'; cellar(); }

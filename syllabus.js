@@ -40,9 +40,64 @@
       q: 'What does BLIC stand for?', a: 'Balance, Length, Intensity, Complexity: the four signs of a quality wine.' },
   });
 
+  Object.assign(D.concepts, {
+    stylesmap: { name: 'The styles of wine', short: 'Styles', kind: 'Style', wine: C.gold, style: 'white', shape: 'burgundy',
+      q: 'Give an example each of a light white, a full-bodied white and a full-bodied red.', a: 'Light white: Muscadet or Sancerre. Full-bodied white: oaked Napa Chardonnay. Full-bodied red: Barossa Shiraz or Napa Cabernet Sauvignon.' },
+    foodpair: { name: 'What food does to wine', short: 'Food', kind: 'Pairing', wine: C.ruby, style: 'red', shape: 'bordeaux',
+      q: 'What do sweet, salty and chilli-hot foods do to a wine?', a: 'Sweet food makes wine taste more acidic and bitter and less fruity. Salt makes it taste less acidic and bitter and fuller. Chilli heat increases the burn of alcohol and the bitterness of tannin.' },
+    serving: { name: 'Serving & storing', short: 'Serving', kind: 'Tasting', wine: C.lemon, style: 'white', shape: 'flute',
+      q: 'Serving temperatures, coldest to warmest? And how should bottles be stored?', a: 'Sparkling (well chilled) → full-bodied whites (lightly chilled) → light reds (lightly chilled) → full reds (room temperature). Store on their side, somewhere cool, dark and steady.' },
+  });
+
+  // Test-out for people who already know the basics (e.g. WSET Level 1). Passing marks all of Topsoil done.
+  const topsoilTest = {
+    id: 'topsoil', title: 'Topsoil test-out', sub: 'Done WSET 1? Prove it and skip ahead', pass: 80,
+    questions: [
+      { type: 'choice', concept: 'fermentation', q: 'Test-out: yeast turns sugar into…',
+        options: ['Alcohol and carbon dioxide', 'Tannin and acid', 'Colour and aroma', 'Water and oxygen'], answer: 0,
+        explain: 'Sugar + yeast → alcohol + CO₂.' },
+      { type: 'choice', concept: 'redcolour', q: 'Test-out: where does red wine get its colour?',
+        options: ['From the pulp', 'From the skins, during fermentation', 'From oak barrels', 'From added colouring'], answer: 1,
+        explain: 'Almost all grape juice is clear. The colour comes from fermenting with the skins.' },
+      { type: 'sort', concept: 'structure', q: 'Test-out: structure or flavour?', buckets: ['Structure', 'Flavour'],
+        items: [{ t: 'Tannin', b: 0 }, { t: 'Raspberry', b: 1 }, { t: 'Acidity', b: 0 }, { t: 'Smoke', b: 1 }, { t: 'Alcohol', b: 0 }],
+        explain: 'Structure is felt; flavours are smelled and tasted.' },
+      { type: 'slider', concept: 'tannin', q: 'Test-out: place Cabernet Sauvignon on the tannin scale.', low: 'Low', high: 'High', answer: 0.82, tol: 0.18,
+        explain: 'Thick-skinned Cabernet Sauvignon is high in tannin.' },
+      { type: 'order', concept: 'colourage', q: 'Test-out: order these red wine colours from youngest to oldest.', items: ['Purple', 'Ruby', 'Garnet', 'Tawny'],
+        explain: 'Reds fade with age, from purple to tawny.' },
+      { type: 'sort', concept: 'aromalayers', q: 'Test-out: which layer of aroma?', buckets: ['Primary', 'Secondary', 'Tertiary'],
+        items: [{ t: 'Lemon', b: 0 }, { t: 'Toast', b: 1 }, { t: 'Dried fruit', b: 2 }, { t: 'Butter', b: 1 }, { t: 'Raspberry', b: 0 }, { t: 'Leather', b: 2 }],
+        explain: 'Primary from the grape, secondary from winemaking, tertiary from age.' },
+      { type: 'choice', concept: 'blic', q: 'Test-out: what does BLIC stand for?',
+        options: ['Balance, Length, Intensity, Complexity', 'Body, Lees, Intensity, Colour', 'Balance, Lightness, Initial taste, Clarity', 'Bitterness, Length, Ice, Character'], answer: 0,
+        explain: 'Balance, Length, Intensity, Complexity: the signs of quality.' },
+      { type: 'sort', concept: 'stylesmap', q: 'Test-out: which style is each wine?', buckets: ['Light white', 'Full white', 'Full red'],
+        items: [{ t: 'Muscadet', b: 0 }, { t: 'Oaked Napa Chardonnay', b: 1 }, { t: 'Barossa Shiraz', b: 2 }, { t: 'Sancerre', b: 0 }, { t: 'Napa Cabernet Sauvignon', b: 2 }],
+        explain: 'Cool climates and no oak give light whites. Warm climates and oak give fuller wines.' },
+      { type: 'choice', concept: 'foodpair', q: 'Test-out: a dry wine with a sweet dessert will taste…',
+        options: ['Sweeter and fruitier', 'More acidic and bitter, less fruity', 'Exactly the same', 'Lower in alcohol'], answer: 1,
+        explain: 'Sweet food makes dry wine taste thin, sour and bitter. The wine should be at least as sweet as the food.' },
+      { type: 'choice', concept: 'foodpair', q: 'Test-out: salty food tends to make a wine taste…',
+        options: ['More bitter and more acidic', 'Less bitter and less acidic, and fuller', 'Sweeter', 'Higher in alcohol'], answer: 1,
+        explain: 'Salt is wine-friendly: it softens bitterness and acidity and makes the wine feel fuller.' },
+      { type: 'choice', concept: 'foodpair', q: 'Test-out: which wine is the safest choice with a fiery chilli dish?',
+        options: ['An off-dry, lower-alcohol white', 'A 15% tannic red', 'A bone-dry, heavily oaked white', 'A young Barolo'], answer: 0,
+        explain: 'Chilli heat makes alcohol burn and tannin taste bitter. A touch of sweetness and low alcohol soothe it.' },
+      { type: 'order', concept: 'serving', q: 'Test-out: order these from coldest to warmest serving temperature.', items: ['Sparkling wine', 'Full-bodied oaked white', 'Light-bodied red', 'Full-bodied red'],
+        explain: 'Sparkling well chilled, full whites lightly chilled, light reds lightly chilled, full reds at room temperature.' },
+      { type: 'choice', concept: 'serving', q: 'Test-out: why decant an old red?',
+        options: ['To make it colder', 'To separate the wine from its sediment', 'To add bubbles', 'To make it sweeter'], answer: 1,
+        explain: 'Old reds throw sediment. Decanting leaves it behind in the bottle.' },
+      { type: 'choice', concept: 'serving', q: 'Test-out: how should you store bottles with a natural cork?',
+        options: ['Standing up in a warm kitchen', 'On their side, somewhere cool, dark and steady', 'In the fridge door', 'Next to a sunny window'], answer: 1,
+        explain: 'Lying down keeps the cork moist. Heat, light and vibration all age wine badly.' },
+    ],
+  };
+
   const chapters = [
     {
-      id: 'topsoil', title: 'How wine works', wine: C.ruby,
+      id: 'topsoil', title: 'How wine works', wine: C.ruby, testOut: topsoilTest,
       blurb: 'The language every later chapter uses: what wine is, how it feels, how to taste it.',
       units: [
         {

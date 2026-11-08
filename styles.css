@@ -532,3 +532,16 @@ em { font-style: italic; }
 .checked-box p { margin: 0 0 4px; }
 .checked-box .mono { font-size: 10px; }
 .checked-box .note { font-style: italic; margin-top: 6px; }
+
+/* test-out & backup */
+.testout-link { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; width: 100%; margin-top: 12px; padding: 12px 14px; border-radius: 16px; text-align: left; font-size: 15px; background: color-mix(in srgb, var(--wine) 10%, #fffaf2); border: 1.5px dashed color-mix(in srgb, var(--wine) 55%, transparent); color: var(--ink); }
+.testout-link .mono { font-size: 10px; color: var(--wine); }
+.testout-link.on-soil { justify-content: center; margin: 14px auto 4px; max-width: 320px; background: rgba(255,248,236,.14); border-color: rgba(255,248,236,.6); color: inherit; }
+.testout-link.on-soil .mono { color: inherit; opacity: .85; }
+.testout-link.in-list { margin: 10px 0 0; justify-content: center; text-align: center; font-style: normal; }
+.backup-text { width: 100%; min-height: 140px; margin: 12px 0; padding: 10px; border-radius: 12px; border: 1.5px solid #dccdb5; background: #fffaf2; font-family: var(--mono); font-size: 11px; color: var(--ink); resize: vertical; }
+.backup-file { display: block; margin: 0 0 14px; font-size: 14px; }
+.backup .judge { margin-top: 2px; }
+.primary.dl { text-align: center; text-decoration: none; }
+.copy-note, .import-error { margin: 10px 0 0; color: var(--ink-soft); }
+.import-error { color: #9a2a2a; }

@@ -29,9 +29,20 @@ python3 -m http.server 8000
 # open http://localhost:8000
 ```
 
-Turn on **Settings → Draft lessons → Preview drafts** (or add `?drafts` to the URL) to preview draft units such as Champagne that are waiting for their rule check. Add `?demo` to the URL (`http://localhost:8000/?demo`) to start with a lived-in cellar, with two units done and a cellar of ageing and corked bottles.
+Add `?demo` to the URL to start with a lived-in vineyard (two units done, a cellar of ageing and corked bottles). Turn on **Settings → Draft lessons → Preview drafts** (or add `?drafts`) to preview units still waiting for their rule check.
 
-To use it on your phone, enable **GitHub Pages** for this repository (Settings → Pages → deploy from branch), then open the URL in Safari and tap **Share → Add to Home Screen**.
+## Put it on your phone (GitHub Pages)
+
+1. Merge the pull request into `main`.
+2. In the repository: **Settings → Pages → Build and deployment → Deploy from a branch → `main` / `(root)` → Save**.
+3. After a minute or two the app is live at `https://ellalwoods.github.io/duovino/`.
+4. On iPhone, open it in **Safari → Share → Add to Home Screen**. It then opens full-screen and works offline.
+
+## Your progress
+
+Progress is stored only in the browser on that device. Use **Settings → Backup → Export backup** now and then (copy the text into Notes or download the file), and **Import backup** to restore it on a new phone or after clearing Safari.
+
+Already done WSET Level 1? Take the **Topsoil test-out** (on Today, Roots or the Wine List). Scoring 80% or more marks all of Topsoil as done and opens Track B.
 
 ## Files
 
