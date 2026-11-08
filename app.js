@@ -58,7 +58,20 @@
   const DRAFTS = /[?&]drafts\b/.test(location.search) || !!S.settings.drafts;
   const playable = r => !!(r.u.questions && r.u.questions.length) && (!r.u.draft || DRAFTS);
   const done = r => !!S.units[r.u.id];
-  const reqMet = r => !r.req || r.req.every(x => !playable(x) || done(x));
+  // Gates open once and stay open, so adding new lessons never re-locks what you'd already opened.
+  // Earlier versions opened Track B after Roots 1.1–1.3, and the regions after B0 + Chardonnay, Sauvignon, Riesling.
+  TOPSOIL.key = 'topsoil'; CORE_REQ.key = 'core';
+  const GATE_HISTORY = { topsoil: ['1-1', '1-2', '1-3'], core: ['b0-1', 'b0-2', 'b0-3', 'b-g-chardonnay', 'b-g-sauvignon', 'b-g-riesling'] };
+  S.gates ||= {};
+  Object.entries(GATE_HISTORY).forEach(([k, ids]) => { if (!S.gates[k] && ids.every(id => S.units[id])) S.gates[k] = true; });
+  const reqMet = r => {
+    if (!r.req) return true;
+    const k = r.req.key;
+    if (k && (S.gates ||= {})[k]) return true;
+    const ok = r.req.every(x => !playable(x) || done(x));
+    if (ok && k) { S.gates[k] = true; save(); }
+    return ok;
+  };
   // An unwritten draft never blocks what follows it: look past it to the unit before.
   const prevOk = p => !p || done(p) || (p.u.draft && !playable(p) && prevOk(p.prev));
   const unlocked = r => (DRAFTS && r.u.draft) || (prevOk(r.prev) && reqMet(r));

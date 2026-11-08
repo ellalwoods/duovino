@@ -219,11 +219,7 @@
   const grapeGroups = [
     { name: 'The big international grapes', core: true, blurb: 'The grapes you\'ll meet on every wine list in the world. Start here.', units: [
       G.chardonnay, G.sauvignon, G.riesling,
-      u('g-pinotgris', 'Pinot Grigio / Pinot Gris', 'One grape, two very different styles'),
-      u('g-pinotnoir', 'Pinot Noir', 'Silky, fragrant, fussy'),
-      u('g-merlot', 'Merlot', 'Plush and plummy'),
-      u('g-cabernet', 'Cabernet Sauvignon', 'Blackcurrant, cedar, grip'),
-      u('g-syrah', 'Syrah / Shiraz', 'Pepper in the cool, spice in the heat') ] },
+      G.pinotgris, G.pinotnoir, G.merlot, G.cabernet, G.syrah ] },
     { name: 'Aromatic & classic whites', blurb: 'Perfumed, textured and long-lived whites.', units: [
       u('g-chenin', 'Chenin Blanc', 'Dry to sweet, still to sparkling'),
       u('g-semillon', 'Sémillon', 'Waxy, honeyed, built to age'),
