@@ -48,7 +48,8 @@ Progress is stored only in the browser on that device. Use **Settings → Backup
 | `labels.js` | Track B: B0 units and the full grapes & regions list |
 | `grapes.js`, `grapes-core.js` | Track B: the eight big international grape lessons |
 | `grapes-aromatic.js` | Track B: the nine aromatic & classic whites |
-| `grapes-med.js` | Track B: Vermentino, Assyrtiko, Fiano and Greco (rules checked against EU texts) |
+| `grapes-med.js` | Track B: the ten Mediterranean & island whites |
+| `grapes-reds.js` | Track B: the eleven classic reds |
 | `wines.js` | The cellar's wines and their tasting profiles |
 | `scenes.js` | Artwork: the living sky, region postcards, Journey maps |
 | `champagne.js` | Track B: Champagne AOC (10 lessons + checkpoint; 1–9 and checkpoint checked against the 2025 cahier des charges, lesson 10 still a draft) |

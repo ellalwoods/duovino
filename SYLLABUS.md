@@ -109,7 +109,7 @@ The four early "Tasting specials" (Winter, Loire, Barolo, Cool vs Warm) have bee
 Every Track B lesson **starts from a label** and works outwards: label → appellation → grapes → rules → taste. The Wine List tab shows it in three parts:
 
 1. **Read a label (B0):** three lessons on how labels work. Opens after Topsoil (Track A, chapter 1).
-2. **Meet the grapes:** the **big international grapes first**, in order (Chardonnay, Sauvignon Blanc, Riesling, Pinot Grigio/Gris, Pinot Noir, Merlot, Cabernet Sauvignon, Syrah/Shiraz). Once the written ones are done, four more groups open: aromatic & classic whites (all nine written: Chenin, Sémillon, Viognier, Gewurztraminer, Muscat, Grüner, Albariño, Melon, Marsanne & Roussanne), Mediterranean & island whites (Vermentino, Assyrtiko, Fiano and Greco written; six more to come), classic reds, and off the beaten track (Xinomavro, Agiorgitiko, Saperavi, Tannat, Furmint, Koshu…).
+2. **Meet the grapes:** the **big international grapes first**, in order (Chardonnay, Sauvignon Blanc, Riesling, Pinot Grigio/Gris, Pinot Noir, Merlot, Cabernet Sauvignon, Syrah/Shiraz). Once the written ones are done, four more groups open: aromatic & classic whites (all nine written: Chenin, Sémillon, Viognier, Gewurztraminer, Muscat, Grüner, Albariño, Melon, Marsanne & Roussanne), Mediterranean & island whites (all ten written), classic reds (all eleven written: Grenache, Tempranillo, Sangiovese, Nebbiolo, Cabernet Franc, Gamay, Malbec, Zinfandel, Mourvèdre, Barbera, Carignan & Cinsault), and off the beaten track (Xinomavro, Agiorgitiko, Saperavi, Tannat, Furmint, Koshu…).
 3. **Travel the regions:** opens at the same point. Grouped by France · Italy · Spain & Portugal · Central & Eastern Europe · Greece & the Eastern Mediterranean · Britain · the Americas (USA in depth, Canada, Chile, Argentina, Uruguay, Brazil) · Southern Hemisphere & Asia (Australia, New Zealand, South Africa, Japan).
 
 The full list (about 70 grape lessons and 140 region lessons) lives in `labels.js`. Written so far: B0 (3), all eight big international grapes (Chardonnay, Sauvignon Blanc, Riesling, Pinot Grigio/Gris, Pinot Noir, Merlot, Cabernet Sauvignon, Syrah/Shiraz), and Champagne AOC (11). Everything else shows as "Coming soon".
@@ -179,6 +179,24 @@ Appellation rules (permitted grapes, minimum percentages, ageing minimums, sweet
 | Chablis tiers; Grand Cru "seven top vineyards on one slope" | Chablis (arrêté 11 Dec 2023), Chablis Grand Cru (arrêté 24 Oct 2024): Chardonnay only; 7 named climats | **reworded** to "seven named climats" |
 | Icewine "about −7 to −8 °C" | German Weingesetz § 20(4) no. 5: grapes frozen at picking and pressing; **no statutory temperature** | **reworded**: −7 °C described as practice, not law |
 | Barolo ≥38 months (18 in wood); Riserva ≥62 months | Full disciplinare not reachable (EU register only holds temporary amendments; the Italian ministry lists documents dynamically) | ⚠️ **still unchecked** |
+
+## Classic reds & more Mediterranean whites: verification status
+
+**Checked 2026-11-08** against EU-published texts (EUR-Lex and eAmbrosia). Only these are stated as rules.
+
+| Claim in the app | Official text | Result |
+|---|---|---|
+| Brunello di Montalcino: Sangiovese only; ≥ 24 months in oak | PDO-IT-A1199-AM02 (eAmbrosia) | ✅ |
+| Chianti Classico: main grape Sangiovese; Annata → Riserva → Gran Selezione | OJ C 100, 16.3.2018 | ✅ (no % stated) |
+| Rioja: Joven → Crianza → Reserva → Gran Reserva, each aged longer | OJ C 168, 2021 | ✅ (no months stated; the text describes the categories, not the minimums) |
+| Bandol red: ≥ 50% Mourvèdre; 18 months in wood (usually foudres) | C/2025/4233 | ✅ |
+| Barbera d'Asti: Barbera | OJ C 60, 15.2.2019 | ✅ |
+| Soave: Garganega main grape | OJ C 72, 2020 | ✅ (no % stated) |
+| Verdicchio dei Castelli di Jesi: Esino valley, Ancona; almond, bitter finish | OJ C 288, 2022 | ✅ |
+| Rueda: Verdejo; continental climate, stony soils, up to 870 m | OJ C 69, 2020 | ✅ |
+| "Valdeorras Godello" = Godello only | C/2025/1383 | ✅ |
+| Picpoul de Pinet: Piquepoul Blanc, beside the Étang de Thau | OJ C 253, 2017 | ✅ |
+| Barolo, Barbaresco, Châteauneuf-du-Pape, Cahors | Full texts not reachable | ⚠️ named as places only; no grape % or ageing stated |
 
 ## Aromatic whites & the winery: verification status
 

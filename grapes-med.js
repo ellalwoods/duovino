@@ -179,5 +179,171 @@
     ],
   };
 
-  Object.assign(D.grapeLessons, { vermentino, assyrtiko, fiano, greco });
+
+  /* Six more. Checked 2026-11-08: Soave (OJ C 72, 2020: Garganega main), Verdicchio dei Castelli di Jesi (OJ C 288, 2022:
+   * Esino valley, Ancona province; almond aroma, bitter finish), Rueda (OJ C 69, 2020: Verdejo; continental climate,
+   * stony soils, up to 870 m), Valdeorras (C/2025/1383: "Valdeorras Godello" = Godello only), Picpoul de Pinet
+   * (OJ C 253, 2017: Piquepoul blanc, beside the Étang de Thau). */
+  const garganega = {
+    id: 'b-g-garganega', title: 'Garganega', sub: 'The grape behind Soave', sources: ['Soave DOC: OJ C 72, 2020'],
+    lesson: [
+      { kind: 'label', title: 'Meet Garganega', body: 'The grape is rarely named. Tap the underlined words.',
+        label: { style: 'italy', lines: [
+          [s('Tenuta Monteforte', 'producer', { note: 'The producer.' })],
+          [s('Soave Classico', 'app', { big: true, note: 'Soave, near Verona in the Veneto. Garganega is the main grape; "Classico" is the historic hilly heart.' })],
+          [s('2023', 'vintage', { note: 'The vintage.' })],
+        ] } },
+      { kind: 'text', title: 'Gentle and nutty', big: 'Lemon · pear · almond',
+        body: 'Garganega gives <b>light to medium</b>-bodied, dry whites with lemon, pear, white flowers and a soft <b>almond</b> finish. The best, from the volcanic hills of Soave Classico, have more depth and age well.' },
+      { kind: 'facts', title: 'Good to know', rows: [
+        { k: 'Recioto di Soave', v: 'A sweet wine from dried Garganega grapes.' },
+        { k: 'Food', v: 'Risotto, light fish, spring vegetables.' },
+      ] },
+    ],
+    questions: [
+      { type: 'choice', wines: ['soave'], q: 'Soave is made mainly from…', options: ['Garganega', 'Pinot Grigio', 'Chardonnay', 'Glera'], answer: 0,
+        explain: 'Near Verona, in the Veneto.' },
+      { type: 'choice', q: 'Soave\'s typical finish?', options: ['Almond', 'Vanilla', 'Blackcurrant', 'Smoke'], answer: 0,
+        explain: 'Gentle, nutty and dry.' },
+      { type: 'choice', q: 'Recioto di Soave is…', options: ['Sweet, from dried grapes', 'Sparkling', 'Red', 'Fortified'], answer: 0,
+        explain: 'Drying concentrates the sugar.' },
+      { type: 'choice', q: 'What does "Classico" mean on a Soave label?', options: ['The historic hilly heart of the region', 'Aged in oak', 'Sweet', 'Made by a monastery'], answer: 0,
+        explain: 'As in Chianti Classico.' },
+    ],
+  };
+
+  const verdicchio = {
+    id: 'b-g-verdicchio', title: 'Verdicchio', sub: 'Almond and lemon from the Marche', sources: ['Verdicchio dei Castelli di Jesi DOC: OJ C 288, 2022'],
+    lesson: [
+      { kind: 'label', title: 'Meet Verdicchio', body: 'Tap the underlined words.',
+        label: { style: 'italy', lines: [
+          [s('Fattoria San Lorenzo', 'producer', { note: 'The producer.' })],
+          [s('Verdicchio dei Castelli di Jesi', 'app', { big: true, note: 'From the hills around the Esino valley, near Ancona in the Marche, on Italy\'s Adriatic side.' })],
+          [s('2023', 'vintage', { note: 'The vintage.' })],
+        ] } },
+      { kind: 'text', title: 'Crisp, with a bitter twist', big: 'Lemon · green apple · almond',
+        body: 'Verdicchio is dry with <b>high acidity</b>, lemon and green apple, a distinctive <b>almond</b> aroma and a pleasant <b>bitter</b> finish. Simple ones are fresh; the best gain weight and age surprisingly well.' },
+      { kind: 'facts', title: 'Two homes in the Marche', rows: [
+        { k: 'Castelli di Jesi', v: 'The larger, near the coast.' },
+        { k: 'Matelica', v: 'Higher and further inland: leaner, sharper.' },
+      ] },
+    ],
+    questions: [
+      { type: 'choice', wines: ['verdicchio'], q: 'Verdicchio comes from which region?', options: ['The Marche', 'Piedmont', 'Sicily', 'Tuscany'], answer: 0,
+        explain: 'On Italy\'s Adriatic side, near Ancona.' },
+      { type: 'sort', wines: ['verdicchio'], q: 'Typical of Verdicchio?', buckets: ['Typical', 'Not typical'],
+        items: [{ t: 'Almond', b: 0 }, { t: 'Bitter finish', b: 0 }, { t: 'High acidity', b: 0 }, { t: 'Sweet and honeyed', b: 1 }, { t: 'Tannic', b: 1 }],
+        explain: 'Crisp, almondy and bitter-edged.' },
+      { type: 'choice', q: 'Which Verdicchio is higher and further inland?', options: ['Matelica', 'Castelli di Jesi', 'Soave', 'Gallura'], answer: 0,
+        explain: 'Leaner and sharper.' },
+    ],
+  };
+
+  const verdejo = {
+    id: 'b-g-verdejo', title: 'Verdejo', sub: 'Rueda\'s herbal white', sources: ['Rueda DO: OJ C 69, 2020'],
+    lesson: [
+      { kind: 'label', title: 'Meet Verdejo', body: 'Tap the underlined words.',
+        label: { style: 'spain', lines: [
+          [s('Bodegas Medina Alta', 'producer', { note: 'The producer.' })],
+          [s('Verdejo', 'grape', { big: true, note: 'The grape, named on the label.' })],
+          [s('Rueda', 'app', { note: 'On a high plateau in Castilla y León, up to 870 m. Long cold winters, late frosts, hot dry summers, stony soils.' })],
+          [s('Denominación de Origen', 'do', { small: true, note: 'DO: Spain\'s main quality tier.' })],
+        ] } },
+      { kind: 'text', title: 'Fresh and herbal', big: 'Lime · fennel · bitter almond',
+        body: 'Verdejo is dry and zesty, with <b>citrus, fennel and herbs</b> and a slightly <b>bitter</b> finish. Like Sauvignon Blanc, which also grows in Rueda, but rounder. Grapes are often picked <b>at night</b> to keep them cool and fresh.' },
+    ],
+    questions: [
+      { type: 'chain', wines: ['verdejo'], q: 'Read the Rueda label, step by step.',
+        label: { style: 'spain', lines: [[s('Bodegas Medina Alta', 'producer')], [s('Verdejo', 'grape', { big: true })], [s('Rueda', 'app')]] },
+        steps: [
+          { q: 'Which country?', options: ['Spain', 'Portugal', 'Italy', 'Argentina'], answer: 0 },
+          { q: 'What\'s the climate?', options: ['High plateau: cold winters, hot dry summers', 'Wet and Atlantic', 'Tropical', 'Cool and foggy'], answer: 0 },
+          { q: 'What style?', options: ['Dry, citrus, herbal', 'Sweet and golden', 'Tannic red', 'Fortified'], answer: 0 },
+        ], explain: 'Rueda: Verdejo on Castilla y León\'s high plateau.' },
+      { type: 'choice', q: 'Why are Verdejo grapes often picked at night?', options: ['To keep them cool and fresh', 'Tradition only', 'To avoid birds', 'It\'s the law'], answer: 0,
+        explain: 'Cool grapes keep their aromas.' },
+      { type: 'odd', q: 'Which is NOT a Verdejo note?', options: ['Lime', 'Fennel', 'Herbs', 'Blackberry jam'], answer: 3,
+        explain: 'Blackberry jam belongs to Zinfandel.' },
+      { type: 'choice', q: 'Which other grape grows in Rueda and tastes a bit similar?', options: ['Sauvignon Blanc', 'Gewurztraminer', 'Viognier', 'Muscat'], answer: 0,
+        explain: 'Verdejo is rounder.' },
+    ],
+  };
+
+  const godello = {
+    id: 'b-g-godello', title: 'Godello', sub: 'Spain\'s rising star', sources: ['Valdeorras DO: C/2025/1383'],
+    lesson: [
+      { kind: 'text', title: 'Saved from extinction', big: 'Pear · apple · mineral',
+        body: 'Godello nearly vanished in the 20th century. Now it\'s one of Spain\'s most exciting whites: <b>medium to full body</b>, fresh acidity, <b>pear and apple</b>, a <b>mineral</b> edge, sometimes rounded out with lees or oak.' },
+      { kind: 'facts', title: 'Where to find it', rows: [
+        { k: 'Valdeorras', v: 'Galicia\'s inland valleys. "Valdeorras Godello" must be 100% Godello.' },
+        { k: 'Bierzo', v: 'Next door in Castilla y León.' },
+        { k: 'Portugal', v: 'Called Gouveio.' },
+      ] },
+      { kind: 'compare', title: 'Galicia\'s two whites', cols: [
+        { h: 'Albariño', items: ['Coast: Rías Baixas', 'Peachy, salty, lighter'] },
+        { h: 'Godello', items: ['Inland: Valdeorras', 'Rounder, pear, mineral'] }] },
+    ],
+    questions: [
+      { type: 'choice', wines: ['godello'], q: 'A "Valdeorras Godello" must be…', options: ['100% Godello', 'At least 50% Godello', 'A blend with Albariño', 'Sparkling'], answer: 0,
+        explain: 'Godello only.' },
+      { type: 'sort', q: 'Albariño or Godello?', buckets: ['Albariño', 'Godello'],
+        items: [{ t: 'Coastal Rías Baixas', b: 0 }, { t: 'Inland Valdeorras', b: 1 }, { t: 'Salty and peachy', b: 0 }, { t: 'Rounder, pear', b: 1 }],
+        explain: 'Galicia\'s coast vs its inland valleys.' },
+      { type: 'choice', q: 'In Portugal, Godello is called…', options: ['Gouveio', 'Alvarinho', 'Tinta Roriz', 'Aragonez'], answer: 0,
+        explain: 'One grape, two names.' },
+      { type: 'choice', q: 'What nearly happened to Godello?', options: ['It almost disappeared', 'It was banned', 'It turned red', 'Nothing'], answer: 0,
+        explain: 'Now it\'s a rising star.' },
+    ],
+  };
+
+  const picpoul = {
+    id: 'b-g-picpoul', title: 'Picpoul', sub: 'The "lip-stinger" of the Languedoc', sources: ['Picpoul de Pinet AOC: OJ C 253, 2017'],
+    lesson: [
+      { kind: 'label', title: 'Meet Picpoul', body: 'Tap the underlined words.',
+        label: { style: 'burgundy', lines: [
+          [s('Domaine de l\'Étang', 'producer', { note: 'The producer.' })],
+          [s('Picpoul de Pinet', 'app', { big: true, note: 'Languedoc, beside the Étang de Thau lagoon near Sète. Made from Piquepoul Blanc.' })],
+          [s('2024', 'vintage', { note: 'Drink it young.' })],
+        ] } },
+      { kind: 'text', title: 'Stings the lips', big: 'Lemon · green apple · salty',
+        body: '"Picpoul" means <b>lip-stinger</b>: a nod to its <b>bright acidity</b>, even in the warm south. Light, dry, lemony and saline, it\'s the local match for the lagoon\'s <b>oysters and mussels</b>.' },
+    ],
+    questions: [
+      { type: 'choice', wines: ['picpoul'], q: 'What does "Picpoul" mean?', options: ['Lip-stinger', 'Little peach', 'Golden', 'Sea breeze'], answer: 0,
+        explain: 'A nod to its acidity.' },
+      { type: 'choice', q: 'Picpoul de Pinet grows beside…', options: ['The Étang de Thau lagoon', 'The Mosel river', 'Lake Geneva', 'The Atlantic in Galicia'], answer: 0,
+        explain: 'Near Sète in the Languedoc.' },
+      { type: 'choice', q: 'The local food match?', options: ['Oysters and mussels', 'Lamb stew', 'Chocolate', 'Blue cheese'], answer: 0,
+        explain: 'Straight from the lagoon.' },
+      { type: 'slider', wines: ['picpoul'], q: 'Place Picpoul on the acidity scale.', low: 'Low', high: 'High', answer: 0.85, tol: 0.18,
+        explain: 'Bright, even in the warm south.' },
+    ],
+  };
+
+  const malvasia = {
+    id: 'b-g-malvasia', title: 'Malvasia', sub: 'An ancient family of grapes',
+    lesson: [
+      { kind: 'text', title: 'A family, not one grape', big: 'Apricot · peach · flowers',
+        body: '"Malvasia" is a name shared by <b>many related and unrelated grapes</b> around the Mediterranean, most of them aromatic, with apricot, peach and flowers. The name likely comes from Monemvasia, an old Greek trading port.' },
+      { kind: 'facts', title: 'Many styles', rows: [
+        { k: 'Madeira', v: 'Malmsey: the richest, sweetest style of fortified Madeira.' },
+        { k: 'Italy', v: 'Dry whites in Friuli and Lazio; sweet Malvasia delle Lipari from the Aeolian islands.' },
+        { k: 'Croatia', v: 'Malvazija Istarska: fresh, dry and floral, from Istria.' },
+        { k: 'Spain', v: 'In white Rioja blends, and sweet wines in the Canaries.' },
+      ] },
+    ],
+    questions: [
+      { type: 'choice', q: '"Malvasia" is…', options: ['A family of many different grapes', 'One single grape', 'A region', 'A sparkling style'], answer: 0,
+        explain: 'Many grapes share the name.' },
+      { type: 'choice', wines: ['malmsey'], q: 'Malmsey is…', options: ['The sweetest style of Madeira, from Malvasia', 'A dry Croatian white', 'A Port grape', 'A Champagne'], answer: 0,
+        explain: 'Rich and fortified.' },
+      { type: 'choice', q: 'Where does the name likely come from?', options: ['Monemvasia, a Greek port', 'A Roman emperor', 'A Spanish saint', 'A French river'], answer: 0,
+        explain: 'Its wines were traded far and wide.' },
+      { type: 'sort', q: 'Dry or sweet?', buckets: ['Dry', 'Sweet'],
+        items: [{ t: 'Malvazija Istarska', b: 0 }, { t: 'Malmsey Madeira', b: 1 }, { t: 'Malvasia delle Lipari', b: 1 }],
+        explain: 'The same family makes both.' },
+    ],
+  };
+
+  Object.assign(D.grapeLessons, { vermentino, assyrtiko, fiano, greco, garganega, verdicchio, verdejo, godello, picpoul, malvasia });
 })();
