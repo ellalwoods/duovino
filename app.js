@@ -348,11 +348,11 @@
 
   /* Swirl detection: measures how much the finger's direction of travel turns, so small circles
      anywhere on the glass count (a full circle = 2π of turning), whatever the size or position. */
-  function trackSwirl(el, onTurn) {
-    let prev = null, heading = null;
+  function trackSwirl(el, onTurn, onEnd) {
+    let prev = null, heading = null, start = null;
     el.addEventListener('pointerdown', e => {
       try { el.setPointerCapture(e.pointerId); } catch (_) { /* fine without capture */ }
-      prev = { x: e.clientX, y: e.clientY }; heading = null; el.classList.add('swirling'); e.preventDefault();
+      prev = start = { x: e.clientX, y: e.clientY }; heading = null; el.classList.add('swirling'); e.preventDefault();
     });
     el.addEventListener('pointermove', e => {
       if (!prev) return;
@@ -361,11 +361,11 @@
       const h = Math.atan2(dy, dx); prev = { x: e.clientX, y: e.clientY };
       if (heading !== null) {
         let d = h - heading; if (d > Math.PI) d -= 2 * Math.PI; if (d < -Math.PI) d += 2 * Math.PI;
-        if (Math.abs(d) < 1.3) onTurn(d); // ignore sharp reversals: only smooth turning counts
+        if (Math.abs(d) < 1.3) onTurn(d, e.clientX - start.x, e.clientY - start.y); // ignore sharp reversals: only smooth turning counts
       }
       heading = h;
     });
-    const end = () => { prev = null; heading = null; el.classList.remove('swirling'); };
+    const end = () => { prev = null; heading = null; el.classList.remove('swirling'); onEnd && onEnd(); };
     el.addEventListener('pointerup', end); el.addEventListener('pointercancel', end);
   }
 
@@ -380,22 +380,47 @@
     return S.glass;
   }
   function glassStatus() { const g = glassToday(); return !g.wine ? 'empty' : g.done ? 'done' : 'ready'; }
-  function miniGlass(colour) {
-    return `<svg viewBox="0 0 40 56" aria-hidden="true"><path d="M9 4C8 20 12 30 20 31C28 30 32 20 31 4Z" fill="#fffaf2" stroke="#3a2a2a" stroke-opacity=".45" stroke-width="1.2"/>
-      <path d="M9.6 15C15 13 25 17 30.4 14.5C30 24 26 30 20 30.6C14 30 10 24 9.6 15Z" fill="${colour}"/><path d="M20 31V49M13 51Q20 48.5 27 51" stroke="#3a2a2a" stroke-opacity=".45" stroke-width="1.2" fill="none" stroke-linecap="round"/></svg>`;
+  /* Glass shapes: the right glass for each style. Bowl paths share one 390×520 frame (stem centre x = 195). */
+  const GLASSES = {
+    bordeaux: { bowl: 'M128 40C114 180 142 272 195 282C248 272 276 180 262 40', stem: 282, wine: 190 },
+    burgundy: { bowl: 'M152 52C86 122 96 268 195 288C294 268 304 122 238 52', stem: 288, wine: 206 },
+    white:    { bowl: 'M146 92C136 192 158 262 195 270C232 262 254 192 244 92', stem: 270, wine: 202 },
+    flute:    { bowl: 'M170 34C163 150 173 292 195 302C217 292 227 150 220 34', stem: 302, wine: 96 },
+    copita:   { bowl: 'M174 150C150 220 158 292 195 296C232 292 240 220 216 150', stem: 296, wine: 240 },
+    dessert:  { bowl: 'M158 172C152 250 168 300 195 304C222 300 238 250 232 172', stem: 304, wine: 238 },
+  };
+  const BURGUNDY_STYLE = /pinot noir|pinot nero|spätburgunder|nebbiolo|gamay|nerello|mencía|barolo|beaujolais/i;
+  function glassKind(w) {
+    if (!w) return 'bordeaux';
+    const id = Object.keys(D.wines).find(k => D.wines[k] === w);
+    if (w.shape === 'champagne' || id === 'brazilsparkling') return 'flute';
+    if (id === 'fino' || id === 'oloroso') return 'copita';
+    if (['port', 'tawny', 'vintageport', 'banyuls', 'malmsey', 'sercial'].includes(id) || (w.style === 'sweet' && id !== 'muscat')) return 'dessert';
+    if (w.style === 'red') return BURGUNDY_STYLE.test(w.grapes + ' ' + w.name) ? 'burgundy' : 'bordeaux';
+    return 'white';
   }
-  function bigGlass(colour, fill, stained) {
+  let glassUid = 0;
+  function glassArt(colour, fill, kind, big) {
+    const G = GLASSES[kind] || GLASSES.bordeaux, id = 'gl' + (++glassUid), wy = G.wine;
+    const x0 = +G.bowl.match(/^M(\d+)/)[1], top = +G.bowl.match(/^M\d+ (\d+)/)[1];
+    const wine = `M90 ${wy} C150 ${wy - 16} 200 ${wy + 14} 240 ${wy - 4} C262 ${wy - 12} 282 ${wy - 8} 300 ${wy - 10} V330 H90Z`;
+    const bubbles = kind === 'flute' ? [[186, 260, 3], [200, 225, 2.5], [192, 185, 2], [204, 150, 2.4], [188, 120, 1.8]].map(([x, y, r]) => `<circle class="bubble" cx="${x}" cy="${y}" r="${r}" fill="#fffaf2" opacity=".75"/>`).join('') : '';
+    const legs = big && kind !== 'flute' ? [x0 + 22, x0 + 40, 390 - x0 - 40, 390 - x0 - 22].map((x, i) => `<path d="M${x} ${top + 30} q2 ${Math.max(20, wy - top - 60) * .6} -1 ${Math.max(24, wy - top - 40)}" stroke="${mix(colour, '#ffffff', .5)}" stroke-width="2" fill="none" opacity=".75"/>`).join('') : '';
+    return `<defs><clipPath id="${id}"><path d="${G.bowl}Z"/></clipPath>
+        <linearGradient id="${id}w" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${mix(colour, '#ffffff', .35)}"/><stop offset="1" stop-color="${colour}"/></linearGradient></defs>
+      <path d="${G.bowl}Z" fill="#fffaf2" opacity=".55"/>
+      <g clip-path="url(#${id})">${fill ? `<path class="bg-wine" d="${wine}" fill="url(#${id}w)" style="transform-origin: 195px ${wy + 40}px"/>${bubbles}${legs}` : ''}</g>
+      <path d="${G.bowl}" fill="none" stroke="#3a2a2a" stroke-width="${big ? 2 : 9}" opacity=".5"/>
+      ${big ? `<path d="M${x0 + 10} ${top + 22}C${x0 + 4} ${top + 100} ${x0 + 14} ${G.stem - 60} ${x0 + 40} ${G.stem - 24}" fill="none" stroke="#fff" stroke-width="5" opacity=".6" stroke-linecap="round"/>` : ''}
+      <path d="M195 ${G.stem}V440M150 452Q195 438 240 452" fill="none" stroke="#3a2a2a" stroke-width="${big ? 2 : 9}" opacity=".5" stroke-linecap="round"/>`;
+  }
+  function miniGlass(colour, kind) {
+    return `<svg viewBox="90 20 210 450" aria-hidden="true">${glassArt(colour, true, kind, false)}</svg>`;
+  }
+  function bigGlass(colour, fill, stained, kind) {
     return `<svg class="big-glass" viewBox="0 0 390 520" aria-hidden="true">
-      <defs>
-        <clipPath id="bgbowl"><path d="M120 40C108 180 140 270 195 280C250 270 282 180 270 40Z"/></clipPath>
-        <linearGradient id="bgwine" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${mix(colour, '#ffffff', .35)}"/><stop offset="1" stop-color="${colour}"/></linearGradient>
-      </defs>
       <g filter="url(#stain)" class="glass-stain ${stained ? 'on' : ''}"><ellipse cx="195" cy="462" rx="96" ry="22" fill="none" stroke="${colour}" stroke-width="5" opacity=".5"/><ellipse cx="199" cy="460" rx="100" ry="24" fill="none" stroke="${colour}" stroke-width="1.4" opacity=".7"/></g>
-      <g clip-path="url(#bgbowl)">${fill ? `<path class="bg-wine" d="M100 190 C150 172 200 205 240 186 C262 176 280 182 300 178 V300 H100Z" fill="url(#bgwine)"/>
-        ${[148, 170, 222, 246].map((x, i) => `<path d="M${x} 70 q2 40 -1 ${80 + i * 10}" stroke="${mix(colour, '#ffffff', .5)}" stroke-width="2" fill="none" opacity=".8"/>`).join('')}` : ''}</g>
-      <path d="M120 40C108 180 140 270 195 280C250 270 282 180 270 40" fill="none" stroke="#3a2a2a" stroke-width="2" opacity=".5"/>
-      <path d="M134 60C128 140 140 210 168 250" fill="none" stroke="#fff" stroke-width="5" opacity=".6" stroke-linecap="round"/>
-      <path d="M195 280V440M150 452Q195 438 240 452" fill="none" stroke="#3a2a2a" stroke-width="2" opacity=".5" stroke-linecap="round"/>
+      <g class="glass-body">${glassArt(colour, fill, kind, true)}</g>
     </svg>`;
   }
   /* The tasting: swirl → name → structure sliders → pick the aromas → compare with the real profile */
@@ -457,16 +482,17 @@
     }
     const dims = w ? TASTE_DIMS.filter(([k]) => w.profile[k] != null) : [];
     let body;
-    if (!w) body = `${bigGlass('#e2d6b8', false, false)}<p class="glass-line">Your first glass arrives with your first wine.</p>
+    const gk = glassKind(w);
+    if (!w) body = `${bigGlass('#e2d6b8', false, false, 'bordeaux')}<p class="glass-line">Your first glass arrives with your first wine.</p>
       <button class="primary narrow" data-act="go" data-h="#list">Find a wine</button>`;
-    else if (g.done) body = `${bigGlass(w.wine, false, true)}<p class="glass-name">${w.name}</p><p class="glass-line">${g.ok ? 'Tasted. Lovely.' : 'Tasted. It\'ll come round again soon.'}</p><p class="glass-small mono">Next glass tomorrow</p>`;
-    else if (phase === 'swirl') body = `<div class="glass-wrap big" data-glass>${bigGlass(w.wine, true, false)}<svg class="swirl-ring" viewBox="0 0 100 100"><circle cx="50" cy="50" r="47" pathLength="100" stroke-dasharray="0 100"/></svg></div>
+    else if (g.done) body = `${bigGlass(w.wine, false, true, gk)}<p class="glass-name">${w.name}</p><p class="glass-line">${g.ok ? 'Tasted. Lovely.' : 'Tasted. It\'ll come round again soon.'}</p><p class="glass-small mono">Next glass tomorrow</p>`;
+    else if (phase === 'swirl') body = `<div class="glass-wrap big" data-glass>${bigGlass(w.wine, true, false, gk)}<svg class="swirl-ring" viewBox="0 0 100 100" style="top:${((GLASSES[gk].bowl.match(/^M\d+ (\d+)/)[1] * 1 + GLASSES[gk].stem) / 2 - 144) / 520 * 100}%"><circle cx="50" cy="50" r="47" pathLength="100" stroke-dasharray="0 100"/></svg></div>
       <p class="glass-small mono">Swirl the glass with your finger ↻</p><button class="link-btn" data-act="glass-open">or tap here</button>`;
-    else if (phase === 'name') body = `${bigGlass(w.wine, true, false)}<p class="glass-name">${w.name}</p><p class="glass-line">Taste it in your mind.</p>
+    else if (phase === 'name') body = `${bigGlass(w.wine, true, false, gk)}<p class="glass-name">${w.name}</p><p class="glass-line">Taste it in your mind.</p>
       <button class="primary narrow" data-act="glass-pour">Start tasting</button>`;
     else if (['taste', 'notes', 'reveal'].includes(phase)) {
       const step = { taste: 1, notes: 2, reveal: 3 }[phase];
-      const head = `<header class="gs-head"><span class="gs-glass">${miniGlass(w.wine)}</span>
+      const head = `<header class="gs-head"><span class="gs-glass">${miniGlass(w.wine, gk)}</span>
         <div><h1 class="gs-name">${w.name}</h1><p class="gs-sub">${w.grapes.replace(/\s*\(.*?\)/g, '')} · ${w.origin.split(' · ')[0]}</p></div></header>
         <ol class="gs-steps">${['Structure', 'Aromas', 'Result'].map((t, i) => `<li class="${i + 1 < step ? 'past' : i + 1 === step ? 'now' : ''}">${t}</li>`).join('')}</ol>`;
       let inner, action;
@@ -502,17 +528,25 @@
       }
       body = `<div class="glass-sheet" style="--fw:${w.wine}">${head}<div class="gs-body">${inner}</div><div class="gs-act">${action}</div></div>`;
     }
-    app.innerHTML = `<div class="tabview glass-page ${['taste', 'notes', 'reveal'].includes(phase) && w && !g.done ? 'noted' : ''}">${body}</div>${tabbar('glass')}`;
+    app.innerHTML = `<div class="tabview glass-page ${['taste', 'notes', 'reveal'].includes(phase) && w && !g.done ? 'noted' : ''}" style="--fw:${w ? w.wine : '#a8434e'}">${body}</div>${tabbar('glass')}`;
     const wrap = app.querySelector('[data-glass]');
     if (wrap) {
-      const ringC = wrap.querySelector('.swirl-ring circle'), wine = wrap.querySelector('.bg-wine'), NEED = Math.PI * 2 * 1.5;
+      const ringC = wrap.querySelector('.swirl-ring circle'), wine = wrap.querySelector('.bg-wine'), body = wrap.querySelector('.glass-body'), NEED = Math.PI * 2 * 1.5;
       let acc = 0, done = false;
-      trackSwirl(wrap, d => {
+      const clamp = (v, m) => Math.max(-m, Math.min(m, v));
+      trackSwirl(wrap, (d, dx, dy) => {
         if (done) return;
         acc += Math.abs(d);
-        wine?.setAttribute('transform', `rotate(${Math.sin(acc * 2) * 5} 195 230)`);
+        // the glass follows the finger in a small circle and tilts; the wine swings the other way
+        const tx = clamp(dx * .6, 30), ty = clamp(dy * .4, 16);
+        body.style.transition = 'none'; if (wine) wine.style.transition = 'none';
+        body.style.transform = `translate(${tx}px, ${ty}px) rotate(${tx * .18}deg)`;
+        if (wine) wine.style.transform = `rotate(${clamp(-tx * .6 + Math.sin(acc * 2.2) * 6, 16)}deg)`;
         ringC.setAttribute('stroke-dasharray', `${Math.min(100, acc / NEED * 100)} 100`);
-        if (acc >= NEED) { done = true; clink(); buzz(12); glassPage('name'); }
+        if (acc >= NEED) { done = true; clink(); buzz(12); setTimeout(() => glassPage('name'), 260); }
+      }, () => {
+        body.style.transition = 'transform .5s cubic-bezier(.3,1.6,.5,1)'; body.style.transform = '';
+        if (wine) { wine.style.transition = 'transform .7s cubic-bezier(.3,1.8,.5,1)'; wine.style.transform = ''; }
       });
     }
     app.querySelectorAll('.trange').forEach(r => {

@@ -858,3 +858,15 @@ button.aroma:active { transform: scale(.96); }
 .cmp-row .cmp-mark { font-weight: 600; text-align: center; }
 .cmp-row.ok .cmp-mark { color: #5f7d3a; } .cmp-row.near .cmp-mark { color: #b0733a; } .cmp-row.off .cmp-mark { color: #b4534c; }
 .bars.cmp { display: grid; gap: 12px; }
+
+/* Swirl: the glass moves with the finger, and the circle is drawn in a visible wine tone */
+.big-glass .glass-body { transform-box: view-box; transform-origin: 195px 440px; }
+.big-glass .bg-wine { transform-box: view-box; }
+.glass-wrap.big .swirl-ring circle { stroke: color-mix(in srgb, var(--fw) 65%, #5a3a2e); stroke-width: 3.5; }
+.gs-glass svg { width: 30px; height: 56px; }
+@keyframes rise-bubble { from { transform: translateY(0); opacity: .8; } to { transform: translateY(-120px); opacity: 0; } }
+.big-glass .bubble { animation: rise-bubble 3s linear infinite; transform-box: fill-box; }
+.big-glass .bubble:nth-of-type(2n) { animation-duration: 2.3s; animation-delay: -1s; }
+.big-glass .bubble:nth-of-type(3n) { animation-duration: 3.6s; animation-delay: -2s; }
+.glass-wrap.big { background: none; padding: 0; border-radius: 0; font-size: inherit; text-align: initial; }
+.swirl-ring circle[stroke-dasharray="0 100"] { opacity: 0; }
