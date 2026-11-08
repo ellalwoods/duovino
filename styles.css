@@ -781,7 +781,7 @@ em { font-style: italic; }
 .glass-page { padding-bottom: calc(110px + var(--safe-bot)); }
 .glass-page.noted { padding-bottom: calc(130px + var(--safe-bot)); }
 .lv { white-space: nowrap; }
-.bar-row { grid-template-columns: 78px 1fr auto; }
+
 
 /* ---------- fixed-height app shell: content scrolls inside, the tab bar never moves ---------- */
 html, body { height: 100%; overflow: hidden; overscroll-behavior: none; }
@@ -790,3 +790,71 @@ html, body { height: 100%; overflow: hidden; overscroll-behavior: none; }
 .home { overflow: hidden; }
 .tabbar { position: absolute; }
 .lnav { background: linear-gradient(transparent, var(--paper) 30%); }
+
+/* ---------- Meters: fill = how much (empty = Dry / Low, full = High) ---------- */
+.bar-row { display: grid; grid-template-columns: 80px 1fr 108px; align-items: center; gap: 12px; }
+.bar-row .lv { font-size: 13.5px; text-align: right; white-space: normal; line-height: 1.2; }
+.meter { position: relative; display: block; height: 10px; border-radius: 5px; overflow: visible;
+  background: #efe5d3 repeating-linear-gradient(90deg, transparent 0 calc(25% - 1px), rgba(255,250,242,.95) calc(25% - 1px) 25%); }
+.meter i { position: absolute; top: 0; bottom: 0; border-radius: 5px; }
+.meter .m-solid { left: 0; background: color-mix(in srgb, var(--fw, #b0733a) 55%, #9a6233); }
+.meter .m-range { background: repeating-linear-gradient(135deg, color-mix(in srgb, var(--fw, #b0733a) 45%, #c99a6a) 0 4px, color-mix(in srgb, var(--fw, #b0733a) 20%, #efe5d3) 4px 8px); border-radius: 0 5px 5px 0; }
+.meter em { position: absolute; top: 50%; width: 16px; height: 16px; margin: -8px 0 0 -8px; border-radius: 50%; background: var(--ink); border: 3px solid #fffaf2; box-shadow: 0 1px 4px rgba(0,0,0,.3); }
+
+/* ---------- Today's glass: the tasting sheet ---------- */
+.glass-page.noted { justify-content: flex-start; padding: calc(18px + var(--safe-top)) 16px calc(112px + var(--safe-bot)); }
+.glass-sheet { width: 100%; max-width: 440px; margin: auto 0; display: flex; flex-direction: column; gap: 14px; animation: rise .3s ease-out; }
+.gs-head { display: flex; align-items: center; gap: 14px; }
+.gs-glass { flex: none; width: 44px; height: 62px; display: grid; place-items: center; border-radius: 16px; background: color-mix(in srgb, var(--fw) 14%, #fffaf2); }
+.gs-glass svg { width: 28px; }
+.gs-name { margin: 0; font-size: 30px; line-height: 1.05; font-weight: 500; font-style: italic; font-variation-settings: 'SOFT' 100, 'WONK' 1; }
+.gs-sub { margin: 4px 0 0; font-size: 14px; color: var(--ink-soft); }
+.gs-steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; list-style: none; margin: 2px 0 0; padding: 0; }
+.gs-steps li { font-family: var(--mono, monospace); font-size: 10px; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-soft); padding-top: 7px; border-top: 3px solid #e7dcc8; }
+.gs-steps li.past { border-color: color-mix(in srgb, var(--fw) 45%, #b0733a); }
+.gs-steps li.now { border-color: var(--ink); color: var(--ink); }
+.gs-ask { margin: 2px 0 0; font-size: 17px; line-height: 1.35; }
+.gs-body { display: flex; flex-direction: column; gap: 12px; }
+.gs-act { display: flex; }
+.gs-act .primary { flex: 1; }
+.gs-card { padding: 14px 16px; border-radius: 18px; background: #fffaf2; border: 1px solid #ece2cf; box-shadow: 0 1px 0 rgba(255,255,255,.7) inset, 0 6px 18px -12px rgba(60,30,20,.25); }
+.gs-h { display: flex; justify-content: space-between; margin: 0 0 12px; font-family: var(--mono, monospace); font-size: 11px; letter-spacing: .1em; text-transform: uppercase; font-weight: 400; color: var(--ink-soft); }
+.gs-h span { color: var(--ink); font-size: 13px; }
+.gs-text { margin: 0; font-size: 15.5px; line-height: 1.45; }
+.gs-key { display: flex; align-items: center; flex-wrap: wrap; gap: 4px 6px; margin: 12px 0 0; font-size: 12px; color: var(--ink-soft); }
+.gs-key i { display: inline-block; width: 16px; height: 9px; border-radius: 5px; margin-left: 8px; }
+.gs-key i:first-child { margin-left: 0; }
+.gs-key .k-fill { background: color-mix(in srgb, var(--fw) 55%, #9a6233); }
+.gs-key .k-dot { width: 11px; height: 11px; border-radius: 50%; background: var(--ink); }
+.gs-key .k-hit { background: #e1ecd2; border: 1px solid #7c9a4e; }
+.gs-key .k-miss { border: 1px dashed #7c9a4e; }
+.gs-key .k-wrong { background: #f5d9d6; border: 1px solid #b4534c; }
+
+.taste { display: grid; gap: 8px; }
+.taste-row { padding: 9px 16px 6px; border-radius: 18px; background: #fffaf2; border: 1px solid #ece2cf; }
+.taste-head { display: flex; justify-content: space-between; align-items: baseline; }
+.taste-head .mono { font-size: 11px; letter-spacing: .08em; color: var(--ink-soft); }
+.taste-lv { font-size: 17px; font-weight: 500; }
+.trange { height: 36px; touch-action: pan-y; }
+.trange::-webkit-slider-runnable-track { height: 10px; border-radius: 5px; background: #efe5d3 repeating-linear-gradient(90deg, transparent 0 calc(25% - 1px), rgba(255,250,242,.95) calc(25% - 1px) 25%); }
+.trange::-moz-range-track { height: 10px; border-radius: 5px; background: #efe5d3; }
+.trange::-webkit-slider-thumb { width: 30px; height: 30px; margin-top: -10px; border-width: 3px; }
+.taste-ends { display: flex; justify-content: space-between; font-size: 10.5px; color: var(--ink-soft); margin-top: -4px; }
+
+.aroma-picks { display: flex; flex-wrap: wrap; gap: 8px; }
+.aroma { padding: 10px 16px; border-radius: 99px; font-size: 15.5px; background: #fffaf2; border: 1.5px solid #e4d8c2; color: var(--ink); transition: transform .12s, background .15s; }
+button.aroma:active { transform: scale(.96); }
+.aroma.on { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+.aroma-picks.result { gap: 6px; }
+.aroma-picks.result .aroma { padding: 6px 12px; font-size: 14px; }
+.aroma.hit { background: #e1ecd2; border-color: #7c9a4e; }
+.aroma.miss { border: 1.5px dashed #7c9a4e; }
+.aroma.wrong { background: #f5d9d6; border-color: #b4534c; text-decoration: line-through; }
+.aroma.idle { opacity: .45; }
+.primary[disabled] { opacity: .4; pointer-events: none; }
+.cmp-row { grid-template-columns: 74px 1fr 84px 14px; gap: 10px; }
+.cmp-row .mono { font-size: 10px; letter-spacing: .06em; color: var(--ink-soft); }
+.cmp-row .lv { font-size: 12.5px; }
+.cmp-row .cmp-mark { font-weight: 600; text-align: center; }
+.cmp-row.ok .cmp-mark { color: #5f7d3a; } .cmp-row.near .cmp-mark { color: #b0733a; } .cmp-row.off .cmp-mark { color: #b4534c; }
+.bars.cmp { display: grid; gap: 12px; }

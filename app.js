@@ -216,13 +216,18 @@
 
   const wineCat = w => w.shape === 'champagne' ? 'Sparkling' : w.style === 'red' ? 'Red' : w.wine === D.C.pink || w.wine === D.C.salmon ? 'Rosé' : w.style === 'sweet' ? 'Sweet' : 'White';
   const LV = ['', 'Low', 'Medium−', 'Medium', 'Medium+', 'High'], SW = ['', 'Dry', 'Off-dry', 'Medium', 'Sweet', 'Luscious'];
+  // A meter: empty = none (Dry / Low), full = High. A range [a, b] fills solid to a, lighter to b. m = the taster's mark.
+  const meterPct = x => (x - 1) / 4 * 100;
+  function meter(a, b, m) {
+    return `<span class="meter"><i class="m-solid" style="width:${meterPct(a)}%"></i>${b > a ? `<i class="m-range" style="left:${meterPct(a)}%;width:${meterPct(b) - meterPct(a)}%"></i>` : ''}${m ? `<em style="left:${meterPct(m)}%"></em>` : ''}</span>`;
+  }
   function profileHTML(w) {
     const rows = [['Sweetness', 'sweetness', SW], ['Acidity', 'acidity', LV], ['Tannin', 'tannin', LV], ['Body', 'body', LV], ['Alcohol', 'alcohol', LV]];
     return `<div class="profile">
       <dl class="facts compact"><div><dt class="mono">Grapes</dt><dd>${w.grapes}</dd></div><div><dt class="mono">From</dt><dd>${w.origin}</dd></div></dl>
       <div class="bars">${rows.filter(([, k]) => w.profile[k] != null).map(([n, k, L]) => {
         const v = w.profile[k], [a, b] = Array.isArray(v) ? v : [v, v];
-        return `<div class="bar-row"><span class="mono">${n}</span><span class="bar"><i style="left:${(a - 1) * 20}%;width:${(b - a + 1) * 20}%"></i></span><span class="lv">${a === b ? L[a] : L[a] + ' to ' + L[b]}</span></div>`;
+        return `<div class="bar-row"><span class="mono">${n}</span>${meter(a, b)}<span class="lv">${a === b ? L[a] : L[a] + ' to ' + L[b]}</span></div>`;
       }).join('')}</div>
       <p class="mono notes-h">Aromas & flavours</p>
       <div class="chips">${w.notes.map(n => `<span>${n}</span>`).join('')}</div>
@@ -341,6 +346,29 @@
     </div>${tabbar('home')}`;
   }
 
+  /* Swirl detection: measures how much the finger's direction of travel turns, so small circles
+     anywhere on the glass count (a full circle = 2π of turning), whatever the size or position. */
+  function trackSwirl(el, onTurn) {
+    let prev = null, heading = null;
+    el.addEventListener('pointerdown', e => {
+      try { el.setPointerCapture(e.pointerId); } catch (_) { /* fine without capture */ }
+      prev = { x: e.clientX, y: e.clientY }; heading = null; el.classList.add('swirling'); e.preventDefault();
+    });
+    el.addEventListener('pointermove', e => {
+      if (!prev) return;
+      const dx = e.clientX - prev.x, dy = e.clientY - prev.y;
+      if (Math.hypot(dx, dy) < 4) return;
+      const h = Math.atan2(dy, dx); prev = { x: e.clientX, y: e.clientY };
+      if (heading !== null) {
+        let d = h - heading; if (d > Math.PI) d -= 2 * Math.PI; if (d < -Math.PI) d += 2 * Math.PI;
+        if (Math.abs(d) < 1.3) onTurn(d); // ignore sharp reversals: only smooth turning counts
+      }
+      heading = h;
+    });
+    const end = () => { prev = null; heading = null; el.classList.remove('swirling'); };
+    el.addEventListener('pointerup', end); el.addEventListener('pointercancel', end);
+  }
+
   /* ---------- TODAY'S GLASS: one wine a day, tasted from memory ---------- */
   function glassToday() {
     const k = todayKey();
@@ -352,6 +380,10 @@
     return S.glass;
   }
   function glassStatus() { const g = glassToday(); return !g.wine ? 'empty' : g.done ? 'done' : 'ready'; }
+  function miniGlass(colour) {
+    return `<svg viewBox="0 0 40 56" aria-hidden="true"><path d="M9 4C8 20 12 30 20 31C28 30 32 20 31 4Z" fill="#fffaf2" stroke="#3a2a2a" stroke-opacity=".45" stroke-width="1.2"/>
+      <path d="M9.6 15C15 13 25 17 30.4 14.5C30 24 26 30 20 30.6C14 30 10 24 9.6 15Z" fill="${colour}"/><path d="M20 31V49M13 51Q20 48.5 27 51" stroke="#3a2a2a" stroke-opacity=".45" stroke-width="1.2" fill="none" stroke-linecap="round"/></svg>`;
+  }
   function bigGlass(colour, fill, stained) {
     return `<svg class="big-glass" viewBox="0 0 390 520" aria-hidden="true">
       <defs>
@@ -366,36 +398,127 @@
       <path d="M195 280V440M150 452Q195 438 240 452" fill="none" stroke="#3a2a2a" stroke-width="2" opacity=".5" stroke-linecap="round"/>
     </svg>`;
   }
+  /* The tasting: swirl → name → structure sliders → pick the aromas → compare with the real profile */
+  const TASTE_DIMS = [['sweetness', 'Sweetness', SW], ['acidity', 'Acidity', LV], ['tannin', 'Tannin', LV], ['body', 'Body', LV], ['alcohol', 'Alcohol', LV]];
+  // Notes that describe structure or appearance, not aroma, are left out of the aroma game
+  const NOT_AROMA = /(bone dry|still dry|^dry$|colour|tannin|acidity|texture|fizz|spritz|^warmth$|^delicate$|^velvety$|freshness|no new oak|sun-dried grapes|never harshly|bitter finish)/i;
+  const AROMA_FAMILIES = {
+    fresh: ['lemon', 'lime', 'grapefruit', 'citrus', 'orange peel', 'yuzu', 'apple', 'quince', 'pear', 'gooseberry'],
+    stone: ['peach', 'apricot', 'stone fruit', 'nectarine'],
+    tropical: ['pineapple', 'mango', 'passion fruit', 'melon', 'lychee', 'banana'],
+    red: ['red cherry', 'raspberry', 'strawberry', 'sour cherry', 'red fruit', 'red berries', 'cherry', 'red apple'],
+    black: ['blackberry', 'blackcurrant', 'plum', 'black cherry', 'black fruit', 'dark cherry', 'dark fruit', 'cassis'],
+    herbal: ['grass', 'herbs', 'green pepper', 'leafy', 'fennel', 'tomato leaf', 'thyme', 'mint', 'garrigue', 'herbal', 'green bean', 'jalapeño', 'maquis', 'tea', 'esteva'],
+    spice: ['spice', 'pepper', 'ginger', 'clove', 'liquorice', 'curry'],
+    oak: ['vanilla', 'toast', 'coconut', 'mocha', 'cedar', 'butter', 'brioche', 'bread', 'pencil', 'coffee', 'chocolate', 'tobacco'],
+    sweet: ['honey', 'marmalade', 'dried fruit', 'raisin', 'fig', 'caramel', 'toffee', 'grapey', 'grapes', 'dried cherry', 'jam'],
+    nut: ['almond', 'hazelnut', 'walnut'],
+    earth: ['earth', 'mushroom', 'forest floor', 'leather', 'truffle', 'tar', 'game', 'smoked meat', 'olive', 'petrol'],
+    floral: ['flower', 'violet', 'rose', 'blossom', 'elderflower', 'chamomile', 'bergamot'],
+    mineral: ['flint', 'stone', 'slate', 'chalk', 'mineral', 'smoke', 'salt', 'sea spray', 'saline'],
+  };
+  const cleanNote = n => n.replace(/\s*\(.*?\)\s*/g, '').trim();
+  const familiesOf = n => { const t = n.toLowerCase(); return Object.keys(AROMA_FAMILIES).filter(f => AROMA_FAMILIES[f].some(k => t.includes(k))); };
+  const midOf = v => v == null ? null : Array.isArray(v) ? (v[0] + v[1]) / 2 : v;
+  function aromaOptions(id) {
+    const w = D.wines[id];
+    const truths = w.notes.map(cleanNote).filter(n => n && !NOT_AROMA.test(n)).slice(0, 4);
+    const fams = new Set(truths.flatMap(familiesOf));
+    const seen = new Set(truths.map(t => t.toLowerCase()));
+    // Confusables: aromas from the most similar wines (same colour, closest structure) that this wine doesn't have
+    const dist = o => TASTE_DIMS.reduce((sum, [k]) => sum + Math.abs((midOf(o.profile[k]) ?? 0) - (midOf(w.profile[k]) ?? 0)), 0);
+    // ...but never from a wine made from the same grape (its aromas could well be right for this one too)
+    const STOP = new Set(['with', 'and', 'others', 'other', 'blend', 'blends', 'mostly', 'often', 'based', 'black', 'white', 'grapes', 'some', 'least', 'from', 'local', 'douro', 'only', 'mainly', 'whites', 'reds', 'dried', 'led', 'or']);
+    const toks = g => new Set((g.toLowerCase().match(/[a-zà-ÿ]{4,}/g) || []).filter(t => !STOP.has(t)));
+    const mine = toks(w.grapes), kin = o => [...toks(o.grapes)].some(t => mine.has(t));
+    const pool = Object.entries(D.wines).filter(([oid, o]) => oid !== id && !kin(o));
+    const near = pool.filter(([, o]) => wineCat(o) === wineCat(w)).sort((a, b) => dist(a[1]) - dist(b[1]));
+    const far = pool.filter(([, o]) => wineCat(o) !== wineCat(w));
+    const decoys = [], used = new Set();
+    for (const [, o] of [...near, ...shuffle(far)]) {
+      for (const n of shuffle(o.notes.map(cleanNote))) {
+        const key = n.toLowerCase();
+        if (!n || NOT_AROMA.test(n) || seen.has(key) || n.length > 22) continue;
+        const f = familiesOf(n);
+        if (!f.length || f.some(x => fams.has(x) || used.has(x))) continue; // never a near-synonym of a right answer, and varied
+        seen.add(key); f.forEach(x => used.add(x)); decoys.push(n); break;
+      }
+      if (decoys.length >= Math.max(4, truths.length + 1)) break;
+    }
+    return { truths, options: shuffle([...truths, ...decoys]) };
+  }
+  let GT = null; // today's tasting in progress
   function glassPage(phase = 'swirl') {
     const g = glassToday(), w = g.wine && D.wines[g.wine];
     setWine(w ? w.wine : '#a8434e');
+    if (w && (!GT || GT.id !== g.wine || GT.day !== g.day)) {
+      const ao = aromaOptions(g.wine);
+      GT = { id: g.wine, day: g.day, marks: {}, picks: new Set(), ...ao };
+    }
+    const dims = w ? TASTE_DIMS.filter(([k]) => w.profile[k] != null) : [];
     let body;
     if (!w) body = `${bigGlass('#e2d6b8', false, false)}<p class="glass-line">Your first glass arrives with your first wine.</p>
       <button class="primary narrow" data-act="go" data-h="#list">Find a wine</button>`;
     else if (g.done) body = `${bigGlass(w.wine, false, true)}<p class="glass-name">${w.name}</p><p class="glass-line">${g.ok ? 'Tasted. Lovely.' : 'Tasted. It\'ll come round again soon.'}</p><p class="glass-small mono">Next glass tomorrow</p>`;
     else if (phase === 'swirl') body = `<div class="glass-wrap big" data-glass>${bigGlass(w.wine, true, false)}<svg class="swirl-ring" viewBox="0 0 100 100"><circle cx="50" cy="50" r="47" pathLength="100" stroke-dasharray="0 100"/></svg></div>
-      <p class="glass-small mono">Swirl to begin ↻</p><button class="link-btn" data-act="glass-open">or tap here</button>`;
-    else if (phase === 'name') body = `${bigGlass(w.wine, true, false)}<p class="glass-name">${w.name}</p><p class="glass-line">Picture it: grapes, style, aromas.</p>
-      <button class="primary narrow" data-act="glass-pour">Pour</button>`;
-    else body = `<p class="glass-name top">${w.name}</p><div class="glass-note review-a" style="--fw:${w.wine}">${profileHTML(w)}</div>
-      <div class="judge"><button class="opt" data-act="glass-judge" data-ok="0">Forgot</button><button class="primary" data-act="glass-judge" data-ok="1">Knew it</button></div>`;
-    app.innerHTML = `<div class="tabview glass-page ${phase === 'note' && w && !g.done ? 'noted' : ''}">${body}</div>${tabbar('glass')}`;
+      <p class="glass-small mono">Swirl the glass with your finger ↻</p><button class="link-btn" data-act="glass-open">or tap here</button>`;
+    else if (phase === 'name') body = `${bigGlass(w.wine, true, false)}<p class="glass-name">${w.name}</p><p class="glass-line">Taste it in your mind.</p>
+      <button class="primary narrow" data-act="glass-pour">Start tasting</button>`;
+    else if (['taste', 'notes', 'reveal'].includes(phase)) {
+      const step = { taste: 1, notes: 2, reveal: 3 }[phase];
+      const head = `<header class="gs-head"><span class="gs-glass">${miniGlass(w.wine)}</span>
+        <div><h1 class="gs-name">${w.name}</h1><p class="gs-sub">${w.grapes.replace(/\s*\(.*?\)/g, '')} · ${w.origin.split(' · ')[0]}</p></div></header>
+        <ol class="gs-steps">${['Structure', 'Aromas', 'Result'].map((t, i) => `<li class="${i + 1 < step ? 'past' : i + 1 === step ? 'now' : ''}">${t}</li>`).join('')}</ol>`;
+      let inner, action;
+      if (phase === 'taste') {
+        inner = `<p class="gs-ask">How does it taste? Drag each slider.</p>
+          <div class="taste">${dims.map(([k, n, L]) => { const v = GT.marks[k] || 3; return `<div class="taste-row"><div class="taste-head"><span class="mono">${n}</span><b class="taste-lv" data-lv="${k}">${L[v]}</b></div>
+            <input type="range" class="range trange" min="1" max="5" step="1" value="${v}" data-k="${k}" aria-label="${n}"><div class="taste-ends mono"><span>${L[1]}</span><span>${L[5]}</span></div></div>`; }).join('')}</div>`;
+        action = `<button class="primary" data-act="glass-notes">Next: aromas</button>`;
+      } else if (phase === 'notes') {
+        inner = `<p class="gs-ask">Which aromas would you expect? Pick ${GT.truths.length}.</p>
+          <div class="aroma-picks">${GT.options.map(n => `<button class="aroma ${GT.picks.has(n) ? 'on' : ''}" data-act="gnote" data-n="${esc(n)}">${n}</button>`).join('')}</div>`;
+        action = `<button class="primary" data-act="glass-check" ${GT.picks.size ? '' : 'disabled'}>Check</button>`;
+      } else {
+        // Compare: structure (in range = 1, one step off = ½) and aromas (hits minus wrong picks)
+        const rows = dims.map(([k, n, L]) => {
+          const v = w.profile[k], [lo, hi] = Array.isArray(v) ? v : [v, v], m = GT.marks[k] || 3;
+          const off = m < lo ? lo - m : m > hi ? m - hi : 0, pts = off === 0 ? 1 : off === 1 ? .5 : 0;
+          return { pts, html: `<div class="bar-row cmp-row ${off === 0 ? 'ok' : off === 1 ? 'near' : 'off'}"><span class="mono">${n}</span>${meter(lo, hi, m)}
+            <span class="lv">${lo === hi ? L[lo] : L[lo] + ' to ' + L[hi]}</span><span class="cmp-mark">${off === 0 ? '✓' : off === 1 ? '≈' : '✗'}</span></div>` };
+        });
+        const hits = GT.truths.filter(t => GT.picks.has(t)).length, wrong = [...GT.picks].filter(p => !GT.truths.includes(p)).length;
+        const struct = rows.reduce((t, r) => t + r.pts, 0) / rows.length, aroma = Math.max(0, hits - wrong) / GT.truths.length;
+        const ok = struct * .5 + aroma * .5 >= .6;
+        inner = `<section class="gs-card"><h2 class="gs-h">Structure <span>${rows.filter(r => r.pts === 1).length}/${rows.length}</span></h2>
+            <div class="bars cmp">${rows.map(r => r.html).join('')}</div>
+            <p class="gs-key"><i class="k-fill"></i>the wine<i class="k-dot"></i>your mark</p></section>
+          <section class="gs-card"><h2 class="gs-h">Aromas <span>${hits}/${GT.truths.length}</span></h2>
+            <div class="aroma-picks result">${GT.options.map(n => { const t = GT.truths.includes(n), p = GT.picks.has(n);
+              return `<span class="aroma ${t && p ? 'hit' : t ? 'miss' : p ? 'wrong' : 'idle'}">${n}</span>`; }).join('')}</div>
+            <p class="gs-key"><i class="k-hit"></i>right<i class="k-miss"></i>missed<i class="k-wrong"></i>not in its profile</p></section>
+          <section class="gs-card"><h2 class="gs-h">With time</h2><p class="gs-text">${w.ages}</p></section>`;
+        action = `<button class="primary" data-act="glass-judge" data-ok="${ok ? 1 : 0}">${ok ? 'Lovely. Done' : 'Done. It\'ll come round again'}</button>`;
+      }
+      body = `<div class="glass-sheet" style="--fw:${w.wine}">${head}<div class="gs-body">${inner}</div><div class="gs-act">${action}</div></div>`;
+    }
+    app.innerHTML = `<div class="tabview glass-page ${['taste', 'notes', 'reveal'].includes(phase) && w && !g.done ? 'noted' : ''}">${body}</div>${tabbar('glass')}`;
     const wrap = app.querySelector('[data-glass]');
     if (wrap) {
-      const ringC = wrap.querySelector('.swirl-ring circle'), NEED = Math.PI * 2 * 1.2;
-      let last = null, acc = 0;
-      const ang = e => { const r = wrap.getBoundingClientRect(); return Math.atan2(e.clientY - (r.top + r.height * .35), e.clientX - (r.left + r.width / 2)); };
-      wrap.addEventListener('pointerdown', e => { wrap.setPointerCapture(e.pointerId); last = ang(e); });
-      wrap.addEventListener('pointermove', e => {
-        if (last === null) return;
-        const a = ang(e); let d = a - last; if (d > Math.PI) d -= 2 * Math.PI; if (d < -Math.PI) d += 2 * Math.PI;
-        last = a; acc += Math.abs(d);
-        wrap.querySelector('.bg-wine')?.setAttribute('transform', `rotate(${Math.sin(acc * 3) * 4} 195 230)`);
+      const ringC = wrap.querySelector('.swirl-ring circle'), wine = wrap.querySelector('.bg-wine'), NEED = Math.PI * 2 * 1.5;
+      let acc = 0, done = false;
+      trackSwirl(wrap, d => {
+        if (done) return;
+        acc += Math.abs(d);
+        wine?.setAttribute('transform', `rotate(${Math.sin(acc * 2) * 5} 195 230)`);
         ringC.setAttribute('stroke-dasharray', `${Math.min(100, acc / NEED * 100)} 100`);
-        if (acc >= NEED) { last = null; clink(); glassPage('name'); }
+        if (acc >= NEED) { done = true; clink(); buzz(12); glassPage('name'); }
       });
-      wrap.addEventListener('pointerup', () => { last = null; });
     }
+    app.querySelectorAll('.trange').forEach(r => {
+      const upd = () => { const k = r.dataset.k, v = +r.value; GT.marks[k] = v; app.querySelector(`[data-lv="${k}"]`).textContent = TASTE_DIMS.find(x => x[0] === k)[2][v]; };
+      r.addEventListener('input', upd); r.addEventListener('change', () => { upd(); buzz(4); });
+    });
   }
 
   /* ---------- JOURNEY: the stain map, a few stains of numbers, and postcards ---------- */
@@ -759,7 +882,7 @@
   function initSwirl(q) {
     const wrap = app.querySelector('.glass-wrap'), winePath = app.querySelector('.wine'), ringC = app.querySelector('.swirl-ring circle');
     const NEED = Math.PI * 2 * 1.4;
-    let last = null, acc = 0, phase = 0, amp = 2;
+    let phase = 0, amp = 2;
     const wave = () => {
       let d = '';
       for (let x = 0; x <= 120; x += 4) {
@@ -774,20 +897,14 @@
       wave(); requestAnimationFrame(tick);
     };
     tick();
-    const ang = e => { const r = wrap.getBoundingClientRect(); const dx = e.clientX - (r.left + r.width / 2), dy = e.clientY - (r.top + r.height / 2); return { a: Math.atan2(dy, dx), dist: Math.hypot(dx, dy) }; };
-    wrap.addEventListener('pointerdown', e => { wrap.setPointerCapture(e.pointerId); last = ang(e).a; wrap.classList.add('swirling'); });
-    wrap.addEventListener('pointermove', e => {
-      if (last === null || P.locked) return;
-      const { a, dist } = ang(e);
-      if (dist < 14) return;
-      let d = a - last; if (d > Math.PI) d -= 2 * Math.PI; if (d < -Math.PI) d += 2 * Math.PI;
-      last = a; acc += Math.abs(d); phase += d * 1.6; amp = Math.min(13, amp + Math.abs(d) * 4);
+    let acc2 = 0;
+    trackSwirl(wrap, d => {
+      if (P.locked) return;
+      acc2 += Math.abs(d); phase += d * 1.6; amp = Math.min(13, amp + Math.abs(d) * 4);
       if (P.clues >= q.clues.length) { ringC.setAttribute('stroke-dasharray', '100 100'); return; }
-      ringC.setAttribute('stroke-dasharray', `${Math.min(100, (acc / NEED) * 100)} 100`);
-      if (acc >= NEED) { acc = 0; revealClue(q); ringC.setAttribute('stroke-dasharray', '0 100'); }
+      ringC.setAttribute('stroke-dasharray', `${Math.min(100, (acc2 / NEED) * 100)} 100`);
+      if (acc2 >= NEED) { acc2 = 0; revealClue(q); ringC.setAttribute('stroke-dasharray', '0 100'); }
     });
-    const end = () => { last = null; wrap.classList.remove('swirling'); };
-    wrap.addEventListener('pointerup', end); wrap.addEventListener('pointercancel', end);
   }
 
   function revealClue(q) {
@@ -1224,8 +1341,12 @@
       case 'drafts': S.settings.drafts = b.dataset.v === 'true'; save(); location.reload(); break;
       case 'sound': S.settings.sound = b.dataset.v === 'true'; save(); settings(); if (S.settings.sound) clink(); break;
       case 'glass-open': clink(); glassPage('name'); break;
-      case 'glass-pour': glassPage('note'); break;
-      case 'glass-judge': { const g = glassToday(); ageBottle(g.wine, b.dataset.ok === '1'); g.done = true; g.ok = b.dataset.ok === '1'; save(); glassPage(); break; }
+      case 'glass-pour': glassPage('taste'); break;
+      case 'glass-notes': glassPage('notes'); break;
+      case 'gnote': { const n = b.dataset.n; GT.picks.has(n) ? GT.picks.delete(n) : GT.picks.add(n); b.classList.toggle('on'); buzz(5);
+        const c = app.querySelector('[data-act="glass-check"]'); if (c) c.disabled = !GT.picks.size; break; }
+      case 'glass-check': glassPage('reveal'); break;
+      case 'glass-judge': { const g = glassToday(); ageBottle(g.wine, b.dataset.ok === '1'); g.done = true; g.ok = b.dataset.ok === '1'; save(); GT = null; glassPage(); break; }
       case 'mapview': S.mapView = b.dataset.v; save(); journey(); break;
       case 'setview': S.settings.view = b.dataset.v; save(); clink(); journey(); break;
       case 'export': exportBackup(); break;

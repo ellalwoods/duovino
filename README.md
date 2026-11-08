@@ -7,6 +7,7 @@ See [`CONCEPT.md`](CONCEPT.md) for the full product concept.
 
 Five tabs (icons only):
 
+- **Today's glass:** swirl the glass, drag sliders for sweetness, acidity, tannin, body and alcohol, pick the aromas from a shuffled list with deliberate lookalikes, then compare with the real profile.
 - **Home:** one living scene (the vineyard by season and time of day: dawn, day, sunset, blue hour, or a postcard you've earned) and one **Continue** button.
 - **Learn:** *Roots* (how wine works, drawn as soil layers) and *Grapes & places* (read a label → meet the grapes → travel the regions), behind one switch. See [`SYLLABUS.md`](SYLLABUS.md).
 - **Today's glass:** one wine from your cellar a day. Swirl the glass, picture the wine, pour to see its tasting note, and say whether you knew it.
