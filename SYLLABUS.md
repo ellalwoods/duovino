@@ -191,21 +191,41 @@ Appellation rules (permitted grapes, minimum percentages, ageing minimums, sweet
 
 ## Champagne: verification status
 
-All 11 Champagne units are written but marked `draft: true`. Drafts are locked in the app. Turn on Settings → Draft lessons → Preview drafts (or open it with `?drafts`) to preview them under a "draft" banner. Each unit lists exactly what still needs checking (`toCheck`), shown in its preview card.
+**Checked 2026-11-08** against the official texts, which were downloaded and read in full:
 
-**Why they're drafts:** the official texts couldn't be read from this session because the environment's network policy blocks `extranet.inao.gouv.fr`, `info.agriculture.gouv.fr`, `ec.europa.eu` and `eur-lex.europa.eu`. Secondary sources (searched 2026-11-07) agree with most of the spec, but flag:
+- **AOC Champagne** cahier des charges, homologated by *arrêté* of 31 July 2025 (JORF 5 Aug 2025; BO agri 7 Aug 2025). This is the version in force. It was also compared with the Nov 2022 version.
+- **EU Delegated Regulation 2019/33**, consolidated text of 8 Dec 2023 (EUR-Lex): Art. 23 (Champagne may omit the term "protected designation of origin") and Annex III Part A (sparkling-wine sweetness terms).
+- **AOC Coteaux Champenois** and **AOC Rosé des Riceys** cahiers des charges, homologated 31 July 2025.
 
-| Item | Spec | What secondary sources say | Status |
+| Unit | Status |
+|---|---|
+| 1–9 + Checkpoint | ✅ checked, live |
+| 10 Champagne vs other sparkling | 📝 draft: needs the Crémant cahiers des charges, Cava's *pliego de condiciones* and Franciacorta's *disciplinare* (Spanish and Italian official sites aren't on this environment's allowlist yet) |
+
+**What the official texts changed or confirmed in the spec:**
+
+| Item | Spec | Official text | Change made |
 |---|---|---|---|
-| NV ageing | 15 months | 15 months from tirage; a 12-months-on-lees minimum is also often cited | check CDC |
-| Vintage ageing | 3 years | 36 months from tirage | check CDC |
-| Dosage bands | as listed | Match EU Reg. 2019/33 Annex III Part A (Brut Nature: no sugar added after the second fermentation) | check regulation text |
-| Grand Cru villages | 17 | 17 | check CDC |
-| Premier Cru villages | 42 | 42, though some sources say 43 or 44 | check CDC |
-| Permitted grapes | 7 | 7 **plus Voltis**, a disease-resistant variety added on a trial basis (~2022; reported caps of 5% of an estate's vineyard area and 10% of a blend) | **added to lesson 3**; check CDC |
-| Tirage date | n/a | From 1 January after the harvest | check CDC |
+| Grand Cru villages | 17 | 17, named in Ch. I §II b | none |
+| Premier Cru villages | 42 | 42, named in Ch. I §II c | none |
+| Permitted grapes | 7 | **8 main varieties: adds Chardonnay rose (2025)**, plus Voltis | lesson 3 updated |
+| Voltis | n/a | ≤5% of an estate's AOC vineyard; ≤10% of a blend; never alone; needs a signed agreement | added to lesson 3 |
+| "Minor" grapes | Arbane, Petit Meslier, Pinot Blanc, Pinot Gris | Legally all are **main varieties** ("cépages principaux") | worded as "rarer", not "minor" |
+| Hand-picking | required | Rule is "whole bunches only" (any method that can't do that is banned), which in effect means hand-picking | reworded |
+| Pressing | cuvée vs taille | Max **102 L per 160 kg**; fractioning "per Champagne custom", **no figures** for cuvée/taille | no cuvée/taille volumes stated |
+| Tirage | n/a | Not before 1 January after harvest | added |
+| Lees ageing | 15 months NV, 3 years vintage | Sale ≥15 months from tirage (vintage ≥36 months); **no disgorgement before 12 months** | both stated |
+| Dosage bands | as listed | Match Reg. 2019/33 Annex III A; Brut Nature also requires no sugar added after second fermentation | none |
+| Blanc de Blancs | 100% Chardonnay | "White grapes only" (no labelling rule of its own) | "white grapes only, in practice almost always Chardonnay" |
+| Vintage | n/a | 100% that year's grapes; max 80% of a year's wine may be sold as vintage; vintage also on the cork | added to lessons 1 and 6 |
+| Grape on label | n/a | Only if 100% that grape; small type | added to lesson 6 |
+| Village on label | n/a | 100% from that village; non-cru villages need "Vigne de" / "Vignoble de" | added to lesson 2 |
+| "AOC" on label | may omit | Reg. 2019/33 Art. 23 allows omitting "protected designation of origin" for Champagne | source recorded |
+| Producer codes | NM, RM… | Cahier des charges requires the CIVC registration code (XII h); **code meanings are set by the CIVC**, not in the official texts read | noted on lessons 1 and 7 |
+| Coteaux Champenois | still red & white | Still **white, rosé and red** | lesson 9 fixed |
+| Rosé des Riceys | Pinot Noir | Still rosé, 100% Pinot Noir, commune of Les Riceys only | none |
 
-To finish: allow those hosts for this repository (a personal "duovino" environment), read the current cahier des charges and Reg. 2019/33, fix anything that differs, then set `draft: false` with `sources` and `checked` on each unit.
+**Re-check when:** INAO's pending amendments (approved by its national committee on 11 Sept 2024 and 18 June 2026) are homologated and published. The INAO site reset connections from this environment, so their content couldn't be read.
 
 ## Open questions (Track B)
 1. ~~Champagne spec~~ **Received** and written up as drafts in `champagne.js`.

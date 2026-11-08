@@ -42,7 +42,7 @@ To use it on your phone, enable **GitHub Pages** for this repository (Settings â
 | `data.js` | Seasons, soil strata, concepts, tasting specials |
 | `syllabus.js` | Track A: chapters, units, lesson cards and questions |
 | `labels.js` | Track B: B0 units and the wine list skeleton |
-| `champagne.js` | Track B: Champagne AOC (10 lessons + checkpoint, drafts until rule-checked) |
+| `champagne.js` | Track B: Champagne AOC (10 lessons + checkpoint; 1â€“9 and checkpoint checked against the 2025 cahier des charges, lesson 10 still a draft) |
 | `app.js` | Screens, games, swirl gesture, spaced-repetition cellar, sounds |
 | `sw.js`, `manifest.webmanifest`, `icon.svg` | Offline support and home-screen install |
 

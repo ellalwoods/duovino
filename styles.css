@@ -528,3 +528,7 @@ em { font-style: italic; }
 .label-back .lbl-border { border: 0; outline: 0; text-align: left; align-items: stretch; padding: 14px 10px; gap: 4px; }
 .label-back .lbl-line { justify-content: flex-start; }
 .label-back .term { font-family: var(--mono); font-size: 12px; letter-spacing: 0; }
+.checked-box { margin: 0 0 16px; padding: 12px 14px; border-radius: 14px; background: #eef3dd; border: 1px solid #a9bd7a; color: #34421a; font-size: 13.5px; line-height: 1.4; }
+.checked-box p { margin: 0 0 4px; }
+.checked-box .mono { font-size: 10px; }
+.checked-box .note { font-style: italic; margin-top: 6px; }

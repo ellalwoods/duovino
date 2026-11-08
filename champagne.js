@@ -1,16 +1,22 @@
 /* Track B · France · Champagne AOC: 10 lessons + a checkpoint.
  *
- * STATUS: DRAFT. Units carry `draft: true` until every rule in `toCheck` has been verified against the
- * official AOC Champagne cahier des charges (INAO) and, for sweetness terms, EU Delegated Regulation
- * 2019/33 Annex III. Drafts are locked in the app; open the app with ?drafts to preview them.
- * Once checked, set `draft: false`, fill `sources` and `checked`, and clear `toCheck`.
+ * STATUS (checked 2026-11-08): lessons 1–9 and the checkpoint were checked against the cahier des
+ * charges of AOC Champagne homologated by arrêté of 31 July 2025 (JORF 5 Aug 2025, BO agri 7 Aug 2025),
+ * EU Delegated Regulation 2019/33 (consolidated 8 Dec 2023: Art. 23, Annex III Part A), and the 2025
+ * cahiers des charges of AOC Coteaux Champenois and AOC Rosé des Riceys.
+ * Lesson 10 stays a DRAFT until the Crémant, Cava and Franciacorta rules are checked.
+ * Re-check when INAO's pending amendments (comité national 11 Sept 2024 and 18 June 2026) are homologated.
  */
 (() => {
   const D = window.DUOVINO, C = D.C;
   const s = (t, k, o = {}) => ({ t, k, ...o });
-  const CDC = 'AOC Champagne cahier des charges (INAO)';
-  const EU33 = 'EU Delegated Regulation 2019/33, Annex III Part A';
+  const CDC = 'AOC Champagne cahier des charges (arrêté of 31 July 2025)';
+  const EU33 = 'EU Delegated Regulation 2019/33 (Art. 23, Annex III Part A)';
+  const CC = 'AOC Coteaux Champenois cahier des charges (arrêté of 31 July 2025)';
+  const RR = 'AOC Rosé des Riceys cahier des charges (arrêté of 31 July 2025)';
+  const CHECKED = '2026-11-08';
   const draft = (unit, toCheck, sources = [CDC]) => ({ ...unit, draft: true, sources, checked: null, toCheck });
+  const verified = (unit, sources, note) => ({ ...unit, draft: false, sources, checked: CHECKED, toCheck: [], note });
 
   Object.assign(D.concepts, {
     chLabel: { name: 'Reading a Champagne label', short: 'Ch. label', kind: 'Label', wine: C.lemon, style: 'white', shape: 'champagne',
@@ -30,7 +36,7 @@
     chGrapes: { name: 'The Champagne grapes', short: 'Grapes', kind: 'Grape', wine: C.lemon, style: 'white', shape: 'champagne',
       q: 'What does each of the main Champagne grapes bring?', a: 'Chardonnay: citrus, finesse, ageing. Pinot Noir: body, red fruit, structure. Meunier: fruitiness, roundness, earlier drinking.' },
     chMinor: { name: 'The minor grapes', short: 'Minor', kind: 'Grape', wine: C.lemonGreen, style: 'white', shape: 'champagne',
-      q: 'Name Champagne\'s minor permitted grapes.', a: 'Arbane, Petit Meslier, Pinot Blanc and Pinot Gris, plus Voltis, a disease-resistant variety being trialled.' },
+      q: 'Besides Chardonnay, Pinot Noir and Meunier, which grapes are permitted in Champagne?', a: 'Arbane, Petit Meslier, Pinot Blanc, Pinot Gris and Chardonnay rose (all legally "main" varieties), plus Voltis, a disease-resistant variety capped at 5% of an estate\'s vineyards and 10% of a blend.' },
     pressing: { name: 'Cuvée & taille', short: 'Pressing', kind: 'Making', wine: C.lemon, style: 'white', shape: 'champagne',
       q: 'What are the cuvée and the taille?', a: 'The cuvée is the first, purest juice from the press. The taille comes next and is fruitier and less fine. Both have legal volume limits.' },
     tirage: { name: 'Tirage & second fermentation', short: 'Tirage', kind: 'Making', wine: C.gold, style: 'white', shape: 'champagne',
@@ -42,7 +48,7 @@
     dosageLadder: { name: 'The dosage ladder', short: 'Dosage', kind: 'Label', wine: C.gold, style: 'sweet', shape: 'champagne',
       q: 'Order the sweetness terms from driest to sweetest.', a: 'Brut Nature → Extra Brut → Brut → Extra Dry → Sec → Demi-Sec → Doux. Extra Dry is sweeter than Brut.' },
     chStyles: { name: 'Champagne styles', short: 'Styles', kind: 'Style', wine: C.pink, style: 'white', shape: 'champagne',
-      q: 'Blanc de Blancs vs Blanc de Noirs: which grapes, and how do they taste?', a: 'Blanc de Blancs: 100% Chardonnay, linear and citrus. Blanc de Noirs: Pinot Noir and/or Meunier, broader, with a red-fruit edge.' },
+      q: 'Blanc de Blancs vs Blanc de Noirs: which grapes, and how do they taste?', a: 'Blanc de Blancs: white grapes only, in practice almost always Chardonnay; linear and citrus. Blanc de Noirs: black grapes only (Pinot Noir and/or Meunier); broader, with a red-fruit edge.' },
     chRose: { name: 'Rosé Champagne', short: 'Rosé', kind: 'Style', wine: C.salmon, style: 'white', shape: 'champagne',
       q: 'Two ways to make rosé Champagne?', a: 'Rosé d\'assemblage: blending a little still red wine into white. Saignée: bleeding off pink juice after a short skin contact, usually deeper and more vinous.' },
     chProducers: { name: 'Houses, growers, co-ops', short: 'Who', kind: 'Label', wine: C.gold, style: 'white', shape: 'champagne',
@@ -50,24 +56,24 @@
     chAge: { name: 'How Champagne ages', short: 'Ageing', kind: 'Tasting', wine: C.amber, style: 'white', shape: 'champagne',
       q: 'How does Champagne change with age?', a: 'Young: citrus, green apple, chalky feel, high acidity, fine mousse. With lees and bottle age: brioche and toast, then nuts, honey and mushroom, with softer bubbles.' },
     coteaux: { name: 'Coteaux Champenois & Rosé des Riceys', short: 'Still', kind: 'Place', wine: C.pink, style: 'white', shape: 'burgundy',
-      q: 'What are Coteaux Champenois and Rosé des Riceys?', a: 'The region\'s still wines, each its own appellation. Coteaux Champenois is still red or white. Rosé des Riceys is a still Pinot Noir rosé.' },
+      q: 'What are Coteaux Champenois and Rosé des Riceys?', a: 'The region\'s still wines, each its own appellation. Coteaux Champenois is still white, rosé or red. Rosé des Riceys is a still rosé, 100% Pinot Noir, from Les Riceys.' },
     sparklingFamily: { name: 'Champagne vs other sparkling', short: 'Sparkling', kind: 'Style', wine: C.lemon, style: 'white', shape: 'champagne',
       q: 'How does Champagne differ from Cava, Crémant and Prosecco?', a: 'Cava, Crémant and Franciacorta share the traditional method but have different places, grapes and rules. Prosecco is usually tank-method, with fresher fruit and little lees character.' },
   });
 
   const units = [
-    draft({
+    verified({
       id: 'b-fr-ch-1', title: 'Reading a Champagne label', sub: 'Front, back and the small print',
       lesson: [
         { kind: 'label', title: 'A Champagne label', body: 'Tap each underlined word to see what it tells you.',
           label: { style: 'champagne', lines: [
             [s('Maison Delorme-Varin', 'producer', { note: 'The house (producer) name.' })],
-            [s('Champagne', 'app', { big: true, note: 'The appellation. Champagne doesn\'t need to write "Appellation Contrôlée" or "AOC" on its labels.' })],
+            [s('Champagne', 'app', { big: true, note: 'The appellation. EU rules let Champagne leave out the words "protected designation of origin" (AOP/AOC): the word Champagne is enough. It must also be printed on the cork.' })],
             [s('Blanc de Blancs', 'style', { note: 'A style term: made only from white grapes, which in practice means Chardonnay.' }), s('Grand Cru', 'cru', { note: 'Grapes from Champagne\'s top-rated villages.' })],
             [s('Brut', 'dosage', { note: 'The sweetness term. Brut is dry (less than 12 g/L of sugar).' }), s('2016', 'vintage', { note: 'A vintage year: all the grapes come from 2016. No year means non-vintage.' })],
             [s('NM-27845-01 · Élaboré à Reims', 'matricule', { small: true, note: 'The producer code (matricule). NM means négociant-manipulant: a house.' })],
           ] } },
-        { kind: 'facts', title: 'The producer code', body: 'Find it in the small print, often on the front label rim or the back.', rows: [
+        { kind: 'facts', title: 'The producer code', body: 'The law requires a registration code on every label, issued by the Comité Champagne. Find it in the small print. The two letters tell you who made the wine:', rows: [
           { k: 'NM', v: 'Négociant-manipulant: a house that buys grapes and makes the wine.' },
           { k: 'RM', v: 'Récoltant-manipulant: a grower making wine from their own grapes.' },
           { k: 'CM', v: 'Coopérative de manipulation: a co-operative.' },
@@ -78,7 +84,7 @@
         ] },
         { kind: 'try', title: 'No year on the label', body: 'Most Champagne carries no vintage.',
           prompt: 'What does a missing year tell you?',
-          reveal: 'It\'s <b>non-vintage</b>: a blend of several years, using reserve wines to keep the house style consistent. A year on the label means all the grapes come from that single harvest.' },
+          reveal: 'It\'s <b>non-vintage</b>: a blend of several years, using reserve wines to keep the house style consistent. A year on the label means all the base wine comes from that single harvest, and the year must also be printed on the cork.' },
         { kind: 'label', title: 'Turn the bottle round', body: 'Good producers print the details that matter on the back label.',
           label: { style: 'back', lines: [
             [s('Dégorgement : mars 2023', 'disg', { note: 'Disgorgement date: when the yeast sediment was removed and the final cork went in. It tells you how long the wine has rested since.' })],
@@ -108,9 +114,9 @@
           options: ['The wine is faulty', 'It has had about seven years since disgorgement, so expect more developed, toasty or nutty notes', 'It was harvested in 2019', 'It is non-vintage'], answer: 1,
           explain: 'The disgorgement date isn\'t the harvest year. Time after disgorgement adds development, so this bottle will taste more mature than a freshly disgorged one.' },
       ],
-    }, ['That Champagne labels may omit "Appellation d\'Origine Contrôlée"', 'The matricule (producer code) categories and their definitions', 'The Brut and Extra Brut g/L bands']),
+    }, [CDC, EU33], 'The cahier des charges requires the producer registration code (XII h) but the meaning of each code (NM, RM, CM…) is set by the Comité Champagne; those meanings were cross-checked with secondary sources.'),
 
-    draft({
+    verified({
       id: 'b-fr-ch-2', title: 'The place', sub: 'Chalk, cold and the crus',
       lesson: [
         { kind: 'text', title: 'Cool, northern, marginal', big: 'Northern France · about 49°N',
@@ -124,9 +130,9 @@
           { h: 'Côte des Bar', t: 'Far to the south-east: Pinot Noir on Kimmeridgian soils, like Chablis.' },
         ] },
         { kind: 'facts', title: 'The village ladder (échelle des crus)', body: 'Champagne rates whole villages, not single vineyards.', rows: [
-          { k: 'Grand Cru', v: '17 top-rated villages.' },
+          { k: 'Grand Cru', v: '17 top-rated villages, all in the Marne.' },
           { k: 'Premier Cru', v: '42 villages in the next tier.' },
-          { k: 'Guarantees', v: 'The grapes come from villages of that rank.' },
+          { k: 'Guarantees', v: 'The grapes come from villages of that rank. A named village on the label means all the grapes come from that village.' },
           { k: 'Doesn\'t', v: 'Producer skill, style, sweetness or age. A great non-cru blend can beat a dull Grand Cru.' },
         ] },
       ],
@@ -146,22 +152,27 @@
           options: ['The best wine the house makes', 'Grapes from top-rated villages', 'At least 10 years of ageing', 'A single top vineyard'], answer: 1,
           explain: 'Champagne rates villages, not vineyards, and the term promises origin, not quality of winemaking.' },
       ],
-    }, ['17 Grand Cru villages', '42 Premier Cru villages (secondary sources give 42–44)', 'That Grand Cru/Premier Cru on the label requires 100% of grapes from such villages']),
+    }, [CDC]),
 
-    draft({
-      id: 'b-fr-ch-3', title: 'The grapes', sub: 'Chardonnay, Pinot Noir, Meunier & the minor four',
+    verified({
+      id: 'b-fr-ch-3', title: 'The grapes', sub: 'Chardonnay, Pinot Noir, Meunier & the rarer grapes',
       lesson: [
         { kind: 'layers', title: 'The main three', rows: [
           { h: 'Chardonnay', t: 'Citrus, finesse, and the backbone for long ageing.' },
           { h: 'Pinot Noir', t: 'Body, red fruit, structure.' },
           { h: 'Meunier', t: 'Fruitiness and roundness. Drinks well young.' },
         ] },
-        { kind: 'facts', title: 'The minor permitted grapes', body: 'Rare, but allowed:', rows: [
+        { kind: 'facts', title: 'The rarer grapes', body: 'In law, all eight are equal "main" varieties. These five are just rarely planted:', rows: [
           { k: 'Arbane', v: 'An old, rare white variety.' },
           { k: 'Petit Meslier', v: 'An old white variety with high acidity.' },
           { k: 'Pinot Blanc', v: 'A white mutation of Pinot.' },
           { k: 'Pinot Gris', v: 'A pink-skinned mutation of Pinot.' },
-          { k: 'Voltis', v: 'A new disease-resistant variety, allowed on a limited trial basis.' },
+          { k: 'Chardonnay rose', v: 'A pink-skinned Chardonnay, added to the rules in 2025.' },
+        ] },
+        { kind: 'facts', title: 'Voltis: the newcomer', body: 'A disease-resistant variety, allowed "for adaptation" (to climate change and fewer sprays) under strict limits:', rows: [
+          { k: 'Vineyard', v: 'At most 5% of an estate\'s AOC vineyard area.' },
+          { k: 'Blend', v: 'At most 10% of a blend, and never on its own.' },
+          { k: 'Paperwork', v: 'Only under a signed agreement with INAO and the growers\' body.' },
         ] },
         { kind: 'compare', title: 'Blend → taste', body: 'The blend percentages on a back label are your best clue to the style.',
           cols: [{ h: 'Chardonnay-led', items: ['Lemon, green apple', 'Linear and fine', 'Ages slowly'] },
@@ -180,15 +191,15 @@
           options: ['Meunier', 'Chardonnay', 'Arbane', 'Pinot Gris'], answer: 1,
           explain: 'Chardonnay\'s acidity and finesse let it age slowly. Meunier is usually for earlier drinking.' },
       ],
-    }, ['Full list of permitted grape varieties', 'Voltis: status and limits (reported as up to 5% of an estate\'s vineyard area and 10% of a blend, on a trial)']),
+    }, [CDC]),
 
-    draft({
+    verified({
       id: 'b-fr-ch-4', title: 'How it\'s made', sub: 'The traditional method, step by step',
       lesson: [
-        { kind: 'text', title: 'Harvest & pressing', body: 'Grapes are <b>picked by hand</b> as whole bunches, and picked early to keep acidity. They\'re pressed gently and quickly so black grapes don\'t colour the juice. The first, purest juice is the <b>cuvée</b>, and the next portion is the <b>taille</b>: fruitier and less fine.' },
+        { kind: 'text', title: 'Harvest & pressing', body: 'Grapes must be harvested as <b>whole bunches</b>. The rules ban any method that can\'t do that, which rules out machine harvesters, so Champagne is picked by hand. Growers pick early to keep acidity. The grapes are pressed whole, gently and quickly, so black grapes don\'t colour the juice, and the law caps the yield at <b>102 litres of juice per 160 kg</b> of grapes. The first, purest juice is the <b>cuvée</b>, and the next portion is the <b>taille</b>: fruitier and less fine.' },
         { kind: 'text', title: 'Base wines & blending', body: 'The juice ferments into still, high-acid <b>base wines</b>. Then comes the art: blending across <b>villages, grapes and years</b>, using <b>reserve wines</b> from older harvests. Some producers keep a <b>perpetual reserve</b>: a blend topped up each year and never fully emptied.' },
-        { kind: 'text', title: 'Tirage: the second fermentation', big: 'Wine + yeast + sugar → bottle', body: 'The blend is bottled with yeast and sugar and capped. Inside the bottle a <b>second fermentation</b> makes a little more alcohol and traps the CO₂: the bubbles.' },
-        { kind: 'text', title: 'Lees ageing', body: 'The wine then rests on the dead yeast (<b>lees</b>). As the yeast breaks down (<b>autolysis</b>) it gives <b>brioche, toast and biscuit</b> aromas and a finer, creamier mousse. Legal minimums: non-vintage at least <b>15 months</b> from tirage before release, vintage at least <b>3 years</b>.' },
+        { kind: 'text', title: 'Tirage: the second fermentation', big: 'Wine + yeast + sugar → bottle', body: 'Not before <b>1 January</b> after the harvest, the blend is bottled with yeast and sugar and capped. Inside the bottle a <b>second fermentation</b> makes a little more alcohol and traps the CO₂: the bubbles. It must happen in glass bottles, and the wine is sold in the same bottle (except for sizes under 75 cl or over 1.5 L).' },
+        { kind: 'text', title: 'Lees ageing', body: 'The wine then rests on the dead yeast (<b>lees</b>). As the yeast breaks down (<b>autolysis</b>) it gives <b>brioche, toast and biscuit</b> aromas and a finer, creamier mousse. Legal minimums: no disgorgement until <b>12 months</b> after tirage, and no sale until <b>15 months</b> after tirage (<b>36 months</b> for vintage).' },
         { kind: 'layers', title: 'The finish line', rows: [
           { h: 'Riddling', t: 'Bottles are turned and tilted until the sediment slides into the neck, by hand or by machine (gyropalette).' },
           { h: 'Disgorgement', t: 'The neck is frozen and opened, and the plug of sediment shoots out.' },
@@ -212,11 +223,11 @@
           explain: 'Autolysis is why long lees ageing tastes of bakery. It\'s the key to Champagne\'s character.' },
         { type: 'choice', concept: 'autolysis', q: 'Minimum time from tirage before a non-vintage Champagne can be sold?',
           options: ['3 months', '9 months', '15 months', '5 years'], answer: 2,
-          explain: 'At least 15 months for non-vintage and 3 years for vintage. Many houses age far longer.' },
+          explain: 'At least 15 months from tirage for non-vintage (and no disgorgement before 12 months), and 36 months for vintage. Many houses age far longer.' },
       ],
-    }, ['Hand harvest of whole bunches required', 'Pressing volumes for cuvée and taille', 'Ageing minimums: non-vintage 15 months from tirage (and any minimum time on lees, often cited as 12 months); vintage 3 years', 'Earliest tirage date (1 January after harvest)']),
+    }, [CDC], 'The cahier des charges sets the total press yield (102 L per 160 kg) and requires fractioning "according to Champagne custom"; it gives no separate cuvée/taille volumes, so the lesson states none.'),
 
-    draft({
+    verified({
       id: 'b-fr-ch-5', title: 'The dosage ladder', sub: 'From Brut Nature to Doux',
       lesson: [
         { kind: 'text', title: 'Dosage sets the sweetness', body: 'After disgorgement, a little wine and sugar (the <b>dosage</b>) is added. Champagne\'s acidity is so high that some sugar often just makes it feel balanced rather than sweet.' },
@@ -250,21 +261,24 @@
           options: ['The bubbles hide sugar completely', 'Champagne\'s high acidity balances the sugar', 'The sugar ferments away in the bottle', 'Cold serving removes sweetness'], answer: 1,
           explain: 'Acidity and sweetness balance each other, so the same grams taste drier in a high-acid wine.' },
       ],
-    }, ['All seven sweetness bands, incl. "Brut Nature" requiring no added sugar'], [EU33, CDC]),
+    }, [EU33]),
 
-    draft({
+    verified({
       id: 'b-fr-ch-6', title: 'The styles', sub: 'NV, vintage, BdB, BdN, rosé, prestige',
       lesson: [
         { kind: 'facts', title: 'The style words', rows: [
           { k: 'Non-vintage Brut', v: 'The house signature: blended across years with reserve wines for a consistent style.' },
-          { k: 'Vintage', v: 'Declared only in good years, from one harvest. Longer ageing, more depth, longer life.' },
-          { k: 'Blanc de Blancs', v: '100% Chardonnay: linear, citrus, fine.' },
-          { k: 'Blanc de Noirs', v: 'Pinot Noir and/or Meunier: broader, with a red-fruit edge.' },
+          { k: 'Vintage', v: 'Usually made in good years. All the base wine is from that harvest, at least 36 months from tirage to sale, and at most 80% of a producer\'s wine from that year may be sold as vintage.' },
+          { k: 'Blanc de Blancs', v: 'White grapes only, in practice almost always 100% Chardonnay: linear, citrus, fine.' },
+          { k: 'Blanc de Noirs', v: 'Black grapes only (Pinot Noir and/or Meunier): broader, with a red-fruit edge.' },
           { k: 'Prestige cuvée', v: 'The house\'s top blend, usually with the longest ageing.' },
           { k: 'Single village / vineyard', v: 'Shows one place rather than a blend.' },
           { k: 'Late-disgorged', v: 'Left on its lees for extra years before disgorgement.' },
         ] },
-        { kind: 'compare', title: 'Two ways to make rosé', cols: [
+        { kind: 'try', title: 'Naming a grape', body: 'A label says "Chardonnay" in small letters under "Champagne".',
+          prompt: 'How much of the wine must be Chardonnay?',
+          reveal: '<b>All of it</b>. A grape may only be named if 100% of the base wine comes from it, and it must be printed small: no bigger than half the size of the word "Champagne".' },
+        { kind: 'compare', title: 'Two ways to make rosé', body: 'Both are allowed (and so is pressing black grapes directly to a pale pink).', cols: [
           { h: 'Rosé d\'assemblage', items: ['Still red wine blended into white', 'Most common', 'Fresh, consistent colour'] },
           { h: 'Saignée', items: ['Juice bled off after brief skin contact', 'Deeper colour', 'More vinous, red-fruited'] }] },
       ],
@@ -272,7 +286,7 @@
         { type: 'chain', concept: 'chStyles', q: 'Style term → grapes → taste.',
           label: { style: 'champagne', lines: [[s('Champagne Arnoult Père & Fils', 'producer')], [s('Champagne', 'app', { big: true })], [s('Blanc de Noirs', 'style'), s('Brut', 'dosage')], [s('RM-31207-02', 'matricule', { small: true })]] },
           steps: [
-            { q: 'Which grapes can it contain?', options: ['Chardonnay only', 'Pinot Noir and/or Meunier', 'Any white grape', 'Pinot Gris only'], answer: 1 },
+            { q: 'Which grapes can it contain?', options: ['Chardonnay only', 'Black grapes: Pinot Noir and/or Meunier', 'Any white grape', 'Pinot Gris only'], answer: 1 },
             { q: 'What colour is the wine?', options: ['Red', 'Pink', 'White / pale gold', 'Orange'], answer: 2 },
             { q: 'What will it taste like?', options: ['Linear, lemony, very fine', 'Broader, with a red-fruit edge', 'Sweet and floral', 'Tannic'], answer: 1 },
           ], explain: 'A white wine from black grapes: gently pressed, with body and a hint of red fruit.' },
@@ -285,9 +299,9 @@
         { type: 'odd', concept: 'chStyles', q: 'Three of these usually mean longer ageing. Which doesn\'t?', options: ['Vintage', 'Prestige cuvée', 'Late-disgorged', 'Non-vintage Brut'], answer: 3,
           explain: 'Non-vintage Brut is the house\'s everyday style, while the others usually spend longer on the lees.' },
       ],
-    }, ['Rosé by blending (assemblage) permitted', 'Labelling conditions for "Blanc de Blancs", "Blanc de Noirs" and vintage (millésime)']),
+    }, [CDC], '"Blanc de Blancs" and "Blanc de Noirs" are described in the cahier des charges (white grapes only / black grapes only) but have no separate labelling rule; naming a grape requires 100% of that grape.'),
 
-    draft({
+    verified({
       id: 'b-fr-ch-7', title: 'Who makes it', sub: 'Houses, growers, co-ops',
       lesson: [
         { kind: 'compare', title: 'Houses vs growers', cols: [
@@ -310,9 +324,9 @@
         { type: 'odd', concept: 'chProducers', q: 'Which code means the bottler made the wine from grapes they grew themselves?', options: ['NM', 'MA', 'RM', 'ND'], answer: 2,
           explain: 'Only RM guarantees a grower using their own fruit.' },
       ],
-    }, ['Matricule categories (source: the labelling regulations rather than the cahier des charges; to confirm)']),
+    }, [CDC], 'The cahier des charges requires the producer registration code (XII h); the meaning of each code (NM, RM, CM, RC, SR, ND, MA) is set by the Comité Champagne and was cross-checked with secondary sources.'),
 
-    draft({
+    verified({
       id: 'b-fr-ch-8', title: 'How it tastes & ages', sub: 'From green apple to brioche to honey',
       lesson: [
         { kind: 'compare', title: 'Young vs aged', cols: [
@@ -338,14 +352,14 @@
           items: [{ t: 'Green apple', b: 0 }, { t: 'Hazelnut', b: 1 }, { t: 'Lively mousse', b: 0 }, { t: 'Honey', b: 1 }, { t: 'Mushroom', b: 1 }, { t: 'Chalky feel', b: 0 }],
           explain: 'Primary fruit and energy point to youth. Tertiary nuts, honey and mushroom point to age.' },
       ],
-    }, []),
+    }, [CDC], 'Tasting lesson: no legal rules stated beyond earlier lessons.'),
 
-    draft({
+    verified({
       id: 'b-fr-ch-9', title: 'The region\'s other wines', sub: 'Coteaux Champenois & Rosé des Riceys',
       lesson: [
         { kind: 'facts', title: 'Still wines of Champagne', body: 'Two separate appellations from the same region:', rows: [
-          { k: 'Coteaux Champenois', v: 'Still red and white wines. Villages such as Bouzy are known for still Pinot Noir.' },
-          { k: 'Rosé des Riceys', v: 'A rare still rosé from Pinot Noir, made around Les Riceys in the Côte des Bar.' },
+          { k: 'Coteaux Champenois', v: 'Still white, rosé and red wines from the same area and grapes as Champagne. Villages such as Bouzy are known for still Pinot Noir.' },
+          { k: 'Rosé des Riceys', v: 'A rare still rosé, 100% Pinot Noir, from the single commune of Les Riceys in the Côte des Bar.' },
         ] },
         { kind: 'label', title: 'Spot the difference', body: 'The appellation name is the giveaway. Tap the words.',
           label: { style: 'burgundy', lines: [
@@ -365,7 +379,7 @@
           label: { style: 'burgundy', lines: [[s('Domaine Arnoult', 'producer')], [s('Coteaux Champenois', 'app', { big: true })], [s('Blanc', 'colour')], [s('2022', 'vintage')]] },
           answer: 'app', explain: 'The appellation name says it: Coteaux Champenois is the still-wine appellation.' },
       ],
-    }, ['Coteaux Champenois and Rosé des Riceys: separate AOCs, permitted colours and grapes (their own cahiers des charges)'], ['AOC Coteaux Champenois cahier des charges', 'AOC Rosé des Riceys cahier des charges']),
+    }, [CC, RR, CDC]),
 
     draft({
       id: 'b-fr-ch-10', title: 'Champagne vs other sparkling', sub: 'Same method, different wine',
@@ -394,7 +408,7 @@
       ],
     }, ['That Crémant, Cava and Franciacorta must use the traditional method (their own regulations)'], ['Crémant, Cava and Franciacorta regulations']),
 
-    draft({
+    verified({
       id: 'b-fr-ch-check', title: 'Checkpoint: Champagne', sub: 'Labels and tasting notes from lessons 1–9',
       lesson: [],
       questions: [
@@ -419,7 +433,7 @@
         { type: 'odd', concept: 'coteaux', q: 'Which one is a still wine?', options: ['Champagne Rosé', 'Blanc de Noirs', 'Rosé des Riceys', 'Prestige cuvée'], answer: 2,
           explain: 'Rosé des Riceys is a still Pinot Noir rosé with its own appellation.' },
       ],
-    }, ['All figures from lessons 1–9']),
+    }, [CDC, EU33, RR]),
   ];
 
   D.champagneUnits = units;
