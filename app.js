@@ -129,6 +129,16 @@
       o.connect(og).connect(a.destination); o.start(t); o.stop(t + 0.16);
     } catch { /* no audio */ }
   }
+  // Soft interface sounds: a low wooden "tock" for switching tabs, a light glassy "tick" for buttons.
+  function tap(kind = 'btn') {
+    if (!S.settings.sound) return;
+    try {
+      const a = audio(), t = a.currentTime, o = a.createOscillator(), g = a.createGain();
+      if (kind === 'tab') { o.type = 'sine'; o.frequency.setValueAtTime(420, t); o.frequency.exponentialRampToValueAtTime(260, t + 0.08); g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(0.09, t + 0.006); g.gain.exponentialRampToValueAtTime(0.0001, t + 0.12); }
+      else { o.type = 'sine'; o.frequency.setValueAtTime(1650, t); o.frequency.exponentialRampToValueAtTime(1250, t + 0.05); g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(0.035, t + 0.004); g.gain.exponentialRampToValueAtTime(0.0001, t + 0.09); }
+      o.connect(g).connect(a.destination); o.start(t); o.stop(t + 0.14);
+    } catch { /* no audio */ }
+  }
   const buzz = ms => navigator.vibrate && navigator.vibrate(ms);
 
   /* ---------- seasons & week ---------- */
@@ -1121,10 +1131,16 @@
 
   /* ---------- events ---------- */
   const go = h => { if (location.hash === h) route(); else location.hash = h; };
+  // Actions that already make their own sound (right/wrong answers, tastings, swirls)
+  const SELF_SOUNDING = new Set(['choose', 'guess', 'term', 'chainpick', 'bucket', 'place', 'rjudge', 'remembered', 'forgot', 'glass-judge', 'glass-open', 'setview', 'tryreveal', 'reveal', 'sound']);
+  document.addEventListener('click', ev => {
+    if (ev.target.closest('.tab, .learn-switch a')) tap('tab');
+  });
   document.addEventListener('click', ev => {
     const b = ev.target.closest('[data-act]');
     if (!b || b.disabled) return;
     const act = b.dataset.act;
+    if (!SELF_SOUNDING.has(act)) tap('btn');
     const q = P && P.questions && P.questions[P.i];
     switch (act) {
       case 'go': go(b.dataset.h); break;

@@ -782,3 +782,11 @@ em { font-style: italic; }
 .glass-page.noted { padding-bottom: calc(130px + var(--safe-bot)); }
 .lv { white-space: nowrap; }
 .bar-row { grid-template-columns: 78px 1fr auto; }
+
+/* ---------- fixed-height app shell: content scrolls inside, the tab bar never moves ---------- */
+html, body { height: 100%; overflow: hidden; overscroll-behavior: none; }
+#app { height: 100vh; height: 100dvh; min-height: 0; overflow: hidden; }
+.tabview, .player { height: 100vh; height: 100dvh; min-height: 0; overflow-y: auto; -webkit-overflow-scrolling: touch; overscroll-behavior: contain; }
+.home { overflow: hidden; }
+.tabbar { position: absolute; }
+.lnav { background: linear-gradient(transparent, var(--paper) 30%); }
