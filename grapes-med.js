@@ -40,7 +40,7 @@
         reveal: 'Its <b>fresh acidity</b> cuts through oil, its <b>herbal</b> notes echo the basil, and its <b>salty</b> finish loves seafood.' },
     ],
     questions: [
-      { type: 'chain', wines: ['vermentino'], q: 'Read the label, step by step.',
+      { type: 'chain', wines: ['vermentino'], q: 'Read the Gallura label, step by step.',
         label: { style: 'italy', lines: [[s('Tenuta Capo Testa', 'producer')], [s('Vermentino di Gallura', 'app', { big: true })], [s('DOCG', 'docg', { small: true })], [s('2024', 'vintage')]] },
         steps: [
           { q: 'Which island?', options: ['Sardinia', 'Sicily', 'Corsica', 'Santorini'], answer: 0 },
@@ -160,7 +160,7 @@
       ] },
     ],
     questions: [
-      { type: 'chain', wines: ['greco'], q: 'Read the label, step by step.',
+      { type: 'chain', wines: ['greco'], q: 'Read the Tufo label, step by step.',
         label: { style: 'italy', lines: [[s('Cantine Sabato', 'producer')], [s('Greco di Tufo', 'app', { big: true })], [s('DOCG', 'docg', { small: true })], [s('2023', 'vintage')]] },
         steps: [
           { q: 'Which region?', options: ['Campania', 'Piedmont', 'Sardinia', 'Veneto'], answer: 0 },

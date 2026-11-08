@@ -56,13 +56,13 @@ Each chapter ends with a **Checkpoint Tasting**: a longer mixed test with a blin
 - ✦ *Checkpoint*
 
 ### 3 · LIMESTONE: The winery
-1. **Making white wine**
-2. **Making red & rosé**
-3. **The spice rack:** oak, lees, malolactic conversion
-4. **Making it sweet:** stopping fermentation, dried grapes, noble rot, ice
-5. **Making it sparkle:** traditional method vs tank method
-6. **Making it stronger:** Sherry & Port
-7. **Time in the bottle:** what ageing does, and which wines deserve it
+1. **Making white wine:** press first, settle, ferment cool, steel vs oak ✅ *built*
+2. **Making red & rosé:** fermenting on skins, the cap, rosé, carbonic maceration ✅ *built*
+3. **The spice rack:** new vs old oak, French vs American, lees, malolactic conversion ✅ *built*
+4. **Making it sweet:** stopping fermentation, dried grapes, noble rot, ice ✅ *built*
+5. **Making it sparkle:** traditional method (riddling, disgorging, dosage) vs tank method ✅ *built*
+6. **Making it stronger:** Sherry (flor, Fino vs Oloroso, solera) & Port (ruby vs tawny) ✅ *built*
+7. **Time in the bottle:** what ageing does, and which wines deserve it ✅ *built*
 - ✦ *Checkpoint*
 
 ### 4 · SCHIST: The great grapes
@@ -109,7 +109,7 @@ The four early "Tasting specials" (Winter, Loire, Barolo, Cool vs Warm) have bee
 Every Track B lesson **starts from a label** and works outwards: label → appellation → grapes → rules → taste. The Wine List tab shows it in three parts:
 
 1. **Read a label (B0):** three lessons on how labels work. Opens after Topsoil (Track A, chapter 1).
-2. **Meet the grapes:** the **big international grapes first**, in order (Chardonnay, Sauvignon Blanc, Riesling, Pinot Grigio/Gris, Pinot Noir, Merlot, Cabernet Sauvignon, Syrah/Shiraz). Once the written ones are done, four more groups open: aromatic & classic whites, Mediterranean & island whites (Vermentino, Assyrtiko, Fiano, Greco…), classic reds, and off the beaten track (Xinomavro, Agiorgitiko, Saperavi, Tannat, Furmint, Koshu…).
+2. **Meet the grapes:** the **big international grapes first**, in order (Chardonnay, Sauvignon Blanc, Riesling, Pinot Grigio/Gris, Pinot Noir, Merlot, Cabernet Sauvignon, Syrah/Shiraz). Once the written ones are done, four more groups open: aromatic & classic whites (all nine written: Chenin, Sémillon, Viognier, Gewurztraminer, Muscat, Grüner, Albariño, Melon, Marsanne & Roussanne), Mediterranean & island whites (Vermentino, Assyrtiko, Fiano and Greco written; six more to come), classic reds, and off the beaten track (Xinomavro, Agiorgitiko, Saperavi, Tannat, Furmint, Koshu…).
 3. **Travel the regions:** opens at the same point. Grouped by France · Italy · Spain & Portugal · Central & Eastern Europe · Greece & the Eastern Mediterranean · Britain · the Americas (USA in depth, Canada, Chile, Argentina, Uruguay, Brazil) · Southern Hemisphere & Asia (Australia, New Zealand, South Africa, Japan).
 
 The full list (about 70 grape lessons and 140 region lessons) lives in `labels.js`. Written so far: B0 (3), all eight big international grapes (Chardonnay, Sauvignon Blanc, Riesling, Pinot Grigio/Gris, Pinot Noir, Merlot, Cabernet Sauvignon, Syrah/Shiraz), and Champagne AOC (11). Everything else shows as "Coming soon".
@@ -179,6 +179,22 @@ Appellation rules (permitted grapes, minimum percentages, ageing minimums, sweet
 | Chablis tiers; Grand Cru "seven top vineyards on one slope" | Chablis (arrêté 11 Dec 2023), Chablis Grand Cru (arrêté 24 Oct 2024): Chardonnay only; 7 named climats | **reworded** to "seven named climats" |
 | Icewine "about −7 to −8 °C" | German Weingesetz § 20(4) no. 5: grapes frozen at picking and pressing; **no statutory temperature** | **reworded**: −7 °C described as practice, not law |
 | Barolo ≥38 months (18 in wood); Riserva ≥62 months | Full disciplinare not reachable (EU register only holds temporary amendments; the Italian ministry lists documents dynamically) | ⚠️ **still unchecked** |
+
+## Aromatic whites & the winery: verification status
+
+**Checked 2026-11-08.** Grape style isn't regulated; only the rules below are stated as rules.
+
+| Claim in the app | Official text | Result |
+|---|---|---|
+| Vouvray: Chenin Blanc (Orbois ≤ 5%); sec → demi-sec → moelleux → doux; also sparkling | Arrêté of 29 Nov 2023; EU Reg. 2019/33 Annex III B | ✅ (checked earlier) |
+| Condrieu: built on Viognier; dry, medium-dry and some sweet whites | Single document, C/2025/3459 | ✅ |
+| Alsace names the grape; Gewurztraminer among its fuller wines | Single document, C/2025/4116 | ✅ |
+| Moscato d'Asti made from Moscato Bianco | OJ C 61, 23.2.2021 | ✅ (no alcohol figure stated) |
+| Rías Baixas Albariño | Single document, C/2024/7432 | ✅ (no minimum % stated) |
+| Muscadet Sèvre et Maine: Melon; "sur lie" | Arrêté of 26 Nov 2025 | ✅ (checked earlier) |
+| Sherry: mainly Palomino; Fino aged only under flor; Oloroso aged only oxidatively once flor has gone; criaderas y solera | Jerez-Xérès-Sherry, C/2025/2129 | ✅ |
+| Icewine: grapes frozen when picked and pressed | German Weingesetz § 20(4) no. 5 | ✅ (checked earlier; no temperature stated) |
+| Côte-Rôtie: "a splash" of Viognier co-fermented with Syrah | Not checked against the cahier des charges | ⚠️ no percentage stated |
 
 ## Mediterranean whites: verification status
 

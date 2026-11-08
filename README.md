@@ -47,6 +47,7 @@ Progress is stored only in the browser on that device. Use **Settings → Backup
 | `syllabus.js` | Track A: chapters, units, lesson cards and questions |
 | `labels.js` | Track B: B0 units and the full grapes & regions list |
 | `grapes.js`, `grapes-core.js` | Track B: the eight big international grape lessons |
+| `grapes-aromatic.js` | Track B: the nine aromatic & classic whites |
 | `grapes-med.js` | Track B: Vermentino, Assyrtiko, Fiano and Greco (rules checked against EU texts) |
 | `wines.js` | The cellar's wines and their tasting profiles |
 | `scenes.js` | Artwork: the living sky, region postcards, Journey maps |
