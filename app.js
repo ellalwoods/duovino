@@ -46,7 +46,7 @@
   });
   const UNIT = Object.fromEntries(UNITS.map(r => [r.u.id, r]));
   // Draft units (rules not yet checked against official regulations) are only playable with ?drafts
-  const DRAFTS = /[?&]drafts\b/.test(location.search);
+  const DRAFTS = /[?&]drafts\b/.test(location.search) || !!S.settings.drafts;
   const playable = r => !!(r.u.questions && r.u.questions.length) && (!r.u.draft || DRAFTS);
   const done = r => !!S.units[r.u.id];
   const reqMet = r => !r.req || r.req.every(x => !playable(x) || done(x));
@@ -989,6 +989,9 @@
       <p class="set-note">The sky, vine and seasonal specials follow the vineyard calendar of your hemisphere.</p>
       <p class="set-label mono">SOUND</p>
       <div class="seg">${[true, false].map(v => `<button class="${S.settings.sound === v ? 'on' : ''}" data-act="sound" data-v="${v}">${v ? 'Clinks on' : 'Silent'}</button>`).join('')}</div>
+      <p class="set-label mono">DRAFT LESSONS</p>
+      <div class="seg">${[false, true].map(v => `<button class="${!!S.settings.drafts === v ? 'on' : ''}" data-act="drafts" data-v="${v}">${v ? 'Preview drafts' : 'Hide drafts'}</button>`).join('')}</div>
+      <p class="set-note">Drafts are written lessons whose rules haven't yet been checked against the official regulations (e.g. Champagne). Previewing unlocks them and shows a draft banner.</p>
       <p class="set-label mono">PROGRESS</p>
       <button class="link-btn danger" data-act="reset">Pour it all away (reset)</button>
     </div></div>`;
@@ -1080,6 +1083,7 @@
       case 'ask-yes': { const fn = askFn; askFn = null; overlay.innerHTML = ''; fn && fn(); break; }
       case 'settings': settings(); break;
       case 'hemi': S.settings.hemi = b.dataset.h; save(); today(); settings(); break;
+      case 'drafts': S.settings.drafts = b.dataset.v === 'true'; save(); location.reload(); break;
       case 'sound': S.settings.sound = b.dataset.v === 'true'; save(); settings(); if (S.settings.sound) clink(); break;
       case 'reset': ask('Pour it all away?', 'Your cellar, roots and vintages will be emptied. This can\'t be undone.', 'Reset everything', () => { S = defaults(); save(); go('#today'); }); break;
     }

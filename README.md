@@ -29,7 +29,7 @@ python3 -m http.server 8000
 # open http://localhost:8000
 ```
 
-Add `?drafts` to preview draft units (e.g. Champagne) that are waiting for their rule check. Add `?demo` to the URL (`http://localhost:8000/?demo`) to start with a lived-in cellar, with two units done and a cellar of ageing and corked bottles.
+Turn on **Settings → Draft lessons → Preview drafts** (or add `?drafts` to the URL) to preview draft units such as Champagne that are waiting for their rule check. Add `?demo` to the URL (`http://localhost:8000/?demo`) to start with a lived-in cellar, with two units done and a cellar of ageing and corked bottles.
 
 To use it on your phone, enable **GitHub Pages** for this repository (Settings → Pages → deploy from branch), then open the URL in Safari and tap **Share → Add to Home Screen**.
 

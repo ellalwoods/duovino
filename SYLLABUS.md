@@ -191,7 +191,7 @@ Appellation rules (permitted grapes, minimum percentages, ageing minimums, sweet
 
 ## Champagne: verification status
 
-All 11 Champagne units are written but marked `draft: true`. Drafts are locked in the app; open it with `?drafts` to preview them under a "draft" banner. Each unit lists exactly what still needs checking (`toCheck`), shown in its preview card.
+All 11 Champagne units are written but marked `draft: true`. Drafts are locked in the app. Turn on Settings → Draft lessons → Preview drafts (or open it with `?drafts`) to preview them under a "draft" banner. Each unit lists exactly what still needs checking (`toCheck`), shown in its preview card.
 
 **Why they're drafts:** the official texts couldn't be read from this session because the environment's network policy blocks `extranet.inao.gouv.fr`, `info.agriculture.gouv.fr`, `ec.europa.eu` and `eur-lex.europa.eu`. Secondary sources (searched 2026-11-07) agree with most of the spec, but flag:
 
