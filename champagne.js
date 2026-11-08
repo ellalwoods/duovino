@@ -4,7 +4,9 @@
  * charges of AOC Champagne homologated by arrêté of 31 July 2025 (JORF 5 Aug 2025, BO agri 7 Aug 2025),
  * EU Delegated Regulation 2019/33 (consolidated 8 Dec 2023: Art. 23, Annex III Part A), and the 2025
  * cahiers des charges of AOC Coteaux Champenois and AOC Rosé des Riceys.
- * Lesson 10 stays a DRAFT until the Crémant, Cava and Franciacorta rules are checked.
+ * Lesson 10 was checked against EU Reg. 2019/33 Art. 53, the 2024 Crémant de Loire cahier des charges and the
+ * Cava, Franciacorta and Prosecco single documents in the EU register. Producer-code meanings follow the
+ * Comité Champagne glossary (champagne.fr).
  * Re-check when INAO's pending amendments (comité national 11 Sept 2024 and 18 June 2026) are homologated.
  */
 (() => {
@@ -74,13 +76,13 @@
             [s('NM-27845-01 · Élaboré à Reims', 'matricule', { small: true, note: 'The producer code (matricule). NM means négociant-manipulant: a house.' })],
           ] } },
         { kind: 'facts', title: 'The producer code', body: 'The law requires a registration code on every label, issued by the Comité Champagne. Find it in the small print. The two letters tell you who made the wine:', rows: [
-          { k: 'NM', v: 'Négociant-manipulant: a house that buys grapes and makes the wine.' },
-          { k: 'RM', v: 'Récoltant-manipulant: a grower making wine from their own grapes.' },
-          { k: 'CM', v: 'Coopérative de manipulation: a co-operative.' },
-          { k: 'RC', v: 'Récoltant-coopérateur: a grower selling co-op-made wine under their own label.' },
+          { k: 'NM', v: 'Négociant-manipulant: a house that buys grapes, musts or wines (as well as using any vineyards of its own) and makes the wine on its premises.' },
+          { k: 'RM', v: 'Récoltant-manipulant: a grower who makes wine on their premises only from their own harvest.' },
+          { k: 'CM', v: 'Coopérative de manipulation: a co-operative that makes wine from its members\' grapes.' },
+          { k: 'RC', v: 'Récoltant-coopérateur: a grower who sends grapes to the co-op and takes back wine to sell under their own label.' },
           { k: 'SR', v: 'Société de récoltants: a company formed by growers.' },
-          { k: 'ND', v: 'Négociant-distributeur: buys finished wine and labels it.' },
-          { k: 'MA', v: 'Marque d\'acheteur: a buyer\'s own brand (e.g. a supermarket label).' },
+          { k: 'ND', v: 'Négociant-distributeur: buys finished bottles and puts its own label on them.' },
+          { k: 'MA', v: 'Marque d\'acheteur: a buyer\'s own brand. The maker sells finished bottles under the buyer\'s name (e.g. a supermarket label).' },
         ] },
         { kind: 'try', title: 'No year on the label', body: 'Most Champagne carries no vintage.',
           prompt: 'What does a missing year tell you?',
@@ -114,7 +116,7 @@
           options: ['The wine is faulty', 'It has had about seven years since disgorgement, so expect more developed, toasty or nutty notes', 'It was harvested in 2019', 'It is non-vintage'], answer: 1,
           explain: 'The disgorgement date isn\'t the harvest year. Time after disgorgement adds development, so this bottle will taste more mature than a freshly disgorged one.' },
       ],
-    }, [CDC, EU33], 'The cahier des charges requires the producer registration code (XII h) but the meaning of each code (NM, RM, CM…) is set by the Comité Champagne; those meanings were cross-checked with secondary sources.'),
+    }, [CDC, EU33], 'The cahier des charges requires the producer registration code (XII h). The meanings of NM, RM, CM, RC, ND and MA follow the Comité Champagne\'s official glossary (champagne.fr); SR isn\'t in that glossary and was cross-checked with secondary sources.'),
 
     verified({
       id: 'b-fr-ch-2', title: 'The place', sub: 'Chalk, cold and the crus',
@@ -324,7 +326,7 @@
         { type: 'odd', concept: 'chProducers', q: 'Which code means the bottler made the wine from grapes they grew themselves?', options: ['NM', 'MA', 'RM', 'ND'], answer: 2,
           explain: 'Only RM guarantees a grower using their own fruit.' },
       ],
-    }, [CDC], 'The cahier des charges requires the producer registration code (XII h); the meaning of each code (NM, RM, CM, RC, SR, ND, MA) is set by the Comité Champagne and was cross-checked with secondary sources.'),
+    }, [CDC], 'The cahier des charges requires the producer registration code (XII h). The meanings of NM, RM, CM, RC, ND and MA follow the Comité Champagne\'s official glossary (champagne.fr).'),
 
     verified({
       id: 'b-fr-ch-8', title: 'How it tastes & ages', sub: 'From green apple to brioche to honey',
@@ -381,14 +383,15 @@
       ],
     }, [CC, RR, CDC]),
 
-    draft({
+    verified({
       id: 'b-fr-ch-10', title: 'Champagne vs other sparkling', sub: 'Same method, different wine',
       lesson: [
         { kind: 'layers', title: 'The traditional-method family', rows: [
           { h: 'Champagne', t: 'Chardonnay, Pinot Noir, Meunier. Cool, chalky, long lees ageing.' },
-          { h: 'Crémant', t: 'French traditional method outside Champagne (Loire, Alsace, Burgundy…). Local grapes and rules.' },
-          { h: 'Cava', t: 'Spain. Mostly local grapes such as Macabeo, Xarel·lo and Parellada.' },
-          { h: 'Franciacorta, Tasmania, England', t: 'Often Champagne grapes, in different places with different rules.' },
+          { h: 'Crémant', t: 'From regions such as the Loire, Alsace and Burgundy (and Luxembourg), each with local grapes. EU law requires hand-picking and at least 9 months on the lees.' },
+          { h: 'Cava', t: 'Spain. Local grapes such as Macabeo, Xarel·lo and Parellada lead, though Chardonnay, Pinot Noir and others are allowed.' },
+          { h: 'Franciacorta', t: 'Lombardy, Italy: Chardonnay, Pinot Nero, Pinot Bianco and the local Erbamat.' },
+          { h: 'Tasmania, England', t: 'Often Champagne grapes, under their own countries\' rules.' },
         ] },
         { kind: 'compare', title: 'Bottle vs tank', cols: [
           { h: 'Traditional (bottle)', items: ['Second fermentation in the bottle', 'Lees character: brioche, toast', 'Fine, persistent mousse'] },
@@ -406,7 +409,7 @@
           options: ['Nothing, they\'re identical', 'The place, permitted grapes and rules', 'Crémant is always sweet', 'Crémant is made in tanks'], answer: 1,
           explain: 'Same method, different region, grapes and rules, and usually less time on the lees.' },
       ],
-    }, ['That Crémant, Cava and Franciacorta must use the traditional method (their own regulations)'], ['Crémant, Cava and Franciacorta regulations']),
+    }, [EU33.replace('Art. 23, Annex III Part A', 'Art. 53: "traditional method" and "Crémant"'), 'AOC Crémant de Loire cahier des charges (arrêté of 12 January 2024)', 'Cava PDO single document (OJ C/2026/241)', 'Franciacorta PDO single document (OJ C/2024/5690)', 'Prosecco PDO single document (OJ C/2025/6773)'], 'Tasmania and England are described in general terms; no rules from those countries are stated.'),
 
     verified({
       id: 'b-fr-ch-check', title: 'Checkpoint: Champagne', sub: 'Labels and tasting notes from lessons 1–9',

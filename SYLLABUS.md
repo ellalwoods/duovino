@@ -187,7 +187,17 @@ Appellation rules (permitted grapes, minimum percentages, ageing minimums, sweet
 2. **Record it in the data.** Each unit gets `sources` (official document and version/date) and `checked` (the date of the check). A unit gets `lesson` and `questions` only once both are filled in. Until then it shows as *"Still being poured"* on the Wine List.
 3. **Re-check on a schedule,** e.g. yearly, or whenever a region announces changes.
 
-**Content already in the app that needs the same check:** the original Tasting specials state some rules: Barolo 38 months and Riserva 62 months, the four Chablis tiers, Icewine picking temperatures. They should be checked against their disciplinare / cahier des charges too, or retired once Track B covers them.
+**Tasting specials (checked 2026-11-08):**
+
+| Claim | Official text | Result |
+|---|---|---|
+| White Sancerre = Sauvignon Blanc; red/rosé = Pinot Noir | Sancerre cahier des charges (décret 2011-1021) | ✅ |
+| Vouvray = "100% Chenin Blanc" | Vouvray (arrêté 29 Nov 2023): Chenin + **Orbois ≤5%** | **fixed** |
+| Vouvray sweetness Sec → Demi-Sec → Moelleux | EU Reg. 2019/33 Annex III B: also **Doux**; moelleux = medium-sweet (≤45 g/L) | **fixed** |
+| Muscadet Sèvre et Maine: Melon; "sur lie" | Arrêté 26 Nov 2025 | ✅ |
+| Chablis tiers; Grand Cru "seven top vineyards on one slope" | Chablis (arrêté 11 Dec 2023), Chablis Grand Cru (arrêté 24 Oct 2024): Chardonnay only; 7 named climats | **reworded** to "seven named climats" |
+| Icewine "about −7 to −8 °C" | German Weingesetz § 20(4) no. 5: grapes frozen at picking and pressing; **no statutory temperature** | **reworded**: −7 °C described as practice, not law |
+| Barolo ≥38 months (18 in wood); Riserva ≥62 months | Full disciplinare not reachable (EU register only holds temporary amendments; the Italian ministry lists documents dynamically) | ⚠️ **still unchecked** |
 
 ## Champagne: verification status
 
@@ -200,7 +210,7 @@ Appellation rules (permitted grapes, minimum percentages, ageing minimums, sweet
 | Unit | Status |
 |---|---|
 | 1–9 + Checkpoint | ✅ checked, live |
-| 10 Champagne vs other sparkling | 📝 draft: needs the Crémant cahiers des charges, Cava's *pliego de condiciones* and Franciacorta's *disciplinare* (Spanish and Italian official sites aren't on this environment's allowlist yet) |
+| 10 Champagne vs other sparkling | ✅ checked, live: EU Reg. 2019/33 Art. 53 ("traditional method" and "Crémant": hand-picked, ≤100 L per 150 kg, ≥9 months on lees), AOC Crémant de Loire cahier des charges (arrêté 12 Jan 2024), and the Cava (OJ C/2026/241), Franciacorta (OJ C/2024/5690) and Prosecco (OJ C/2025/6773) single documents from the EU register |
 
 **What the official texts changed or confirmed in the spec:**
 
@@ -221,7 +231,7 @@ Appellation rules (permitted grapes, minimum percentages, ageing minimums, sweet
 | Grape on label | n/a | Only if 100% that grape; small type | added to lesson 6 |
 | Village on label | n/a | 100% from that village; non-cru villages need "Vigne de" / "Vignoble de" | added to lesson 2 |
 | "AOC" on label | may omit | Reg. 2019/33 Art. 23 allows omitting "protected designation of origin" for Champagne | source recorded |
-| Producer codes | NM, RM… | Cahier des charges requires the CIVC registration code (XII h); **code meanings are set by the CIVC**, not in the official texts read | noted on lessons 1 and 7 |
+| Producer codes | NM, RM… | Cahier des charges requires the CIVC registration code (XII h). NM, RM, CM, RC, ND and MA match the **Comité Champagne's official glossary** (champagne.fr); **SR isn't in it** | definitions updated; SR noted as secondary-source only |
 | Coteaux Champenois | still red & white | Still **white, rosé and red** | lesson 9 fixed |
 | Rosé des Riceys | Pinot Noir | Still rosé, 100% Pinot Noir, commune of Les Riceys only | none |
 

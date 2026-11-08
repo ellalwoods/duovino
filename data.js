@@ -1,4 +1,16 @@
-/* Duovino content: seasons, soil strata, concepts (cellar bottles) and flights. */
+/* Duovino content: seasons, soil strata, concepts (cellar bottles) and flights.
+ *
+ * Rule check of the Tasting specials (2026-11-08), against official texts:
+ *  - Sancerre (cahier des charges, décret 2011-1021): white = Sauvignon Blanc only; red/rosé = Pinot Noir. OK.
+ *  - Vouvray (arrêté 29 Nov 2023): Chenin Blanc + Orbois (≤5% of vineyard); still, sparkling, pétillant. FIXED (was "100% Chenin").
+ *    Sweetness terms sec/demi-sec/moelleux/doux: EU Reg. 2019/33 Annex III Part B.
+ *  - Muscadet Sèvre et Maine (arrêté 26 Nov 2025): Melon only; "sur lie" is a regulated mention. OK.
+ *  - Chablis (arrêté 11 Dec 2023) and Chablis Grand Cru (arrêté 24 Oct 2024): Chardonnay only; Premier Cru mention;
+ *    Grand Cru = 7 named climats. FIXED wording ("seven named climats").
+ *  - Eiswein (German Weingesetz § 20(4) no. 5): grapes frozen at picking and pressing; no statutory temperature. FIXED.
+ *  - Barolo 38 / Riserva 62 months: NOT YET CHECKED. The full disciplinare wasn't reachable (the EU register only
+ *    holds temporary amendments; the Italian ministry lists documents dynamically). Check before relying on it.
+ */
 window.DUOVINO = (() => {
   // WSET-style colour spectrum, used to tint the UI and fill bottles
   const C = {
@@ -45,7 +57,7 @@ window.DUOVINO = (() => {
     cycle: { name: 'The growing year', short: 'Vine year', kind: 'Vineyard', wine: C.lemonGreen, style: 'white', shape: 'flute',
       q: 'Name the vine\'s growing stages in order.', a: 'Budburst → flowering → fruit set → véraison → harvest (then leaf fall and dormancy).' },
     icewine: { name: 'Icewine', short: 'Icewine', kind: 'Style', wine: C.gold, style: 'sweet', shape: 'half',
-      q: 'How is Icewine (Eiswein) made, and how does it taste?', a: 'Grapes freeze on the vine (about −7 to −8°C) and are pressed frozen, so the water stays behind as ice. The wine is very sweet, with high acidity, pure fruit and low alcohol.' },
+      q: 'How is Icewine (Eiswein) made, and how does it taste?', a: 'The grapes must be frozen when they are picked and when they are pressed (German law), so the water stays behind as ice. In practice that means about −7 °C or colder. The wine is very sweet, with high acidity, pure fruit and low alcohol.' },
     hemispheres: { name: 'Two hemispheres', short: 'Hemis.', kind: 'Vineyard', wine: C.lemon, style: 'white', shape: 'flute',
       q: 'In November, what\'s happening in Southern Hemisphere vineyards?', a: 'It\'s late spring there: shoots are growing and flowering is close. Their harvest falls around February to April.' },
 
@@ -55,7 +67,7 @@ window.DUOVINO = (() => {
     pouillyfume: { name: 'Pouilly-Fumé', short: 'Pouilly-F.', kind: 'Place', wine: C.lemonGreen, style: 'white', shape: 'flute',
       q: 'Pouilly-Fumé vs Pouilly-Fuissé?', a: 'Pouilly-Fumé is Loire Sauvignon Blanc, across the river from Sancerre. Pouilly-Fuissé is Chardonnay from Burgundy (the Mâconnais).' },
     vouvray: { name: 'Vouvray', short: 'Vouvray', kind: 'Place', wine: C.gold, style: 'white', shape: 'burgundy',
-      q: 'Vouvray: which grape, and which sweetness words appear on the label?', a: 'Chenin Blanc from Touraine. Sec (dry) → Demi-Sec (off-dry) → Moelleux (sweet), plus sparkling styles.' },
+      q: 'Vouvray: which grape, and which sweetness words appear on the label?', a: 'Chenin Blanc from Touraine (a little Orbois, up to 5% of the vineyard, is also allowed). Sec (dry) → Demi-Sec (off-dry) → Moelleux (medium-sweet) → Doux (sweet), plus sparkling styles.' },
     chenin: { name: 'Chenin Blanc', short: 'Chenin', kind: 'Grape', wine: C.lemon, style: 'white', shape: 'flute',
       q: 'What lets Chenin Blanc make dry to sweet wines that age for decades?', a: 'Its naturally high acidity, which keeps even the sweetest styles fresh.' },
     chinon: { name: 'Chinon', short: 'Chinon', kind: 'Place', wine: C.ruby, style: 'red', shape: 'bordeaux',
@@ -95,7 +107,7 @@ window.DUOVINO = (() => {
     climateorder: { name: 'Latitude & ripeness', short: 'Latitude', kind: 'Vineyard', wine: C.lemon, style: 'white', shape: 'champagne',
       q: 'Champagne, Chablis, Meursault, Napa: coolest to warmest?', a: 'Champagne → Chablis → Meursault → Napa Valley.' },
     chablisclass: { name: 'Chablis ladder', short: '1er Cru', kind: 'Label', wine: C.lemon, style: 'white', shape: 'burgundy',
-      q: 'The four Chablis quality levels?', a: 'Petit Chablis → Chablis → Chablis Premier Cru → Chablis Grand Cru (seven top vineyards on one slope).' },
+      q: 'The four Chablis quality levels?', a: 'Petit Chablis → Chablis → Chablis Premier Cru → Chablis Grand Cru (seven named climats, all in the commune of Chablis).' },
   };
 
   const flights = [
@@ -152,7 +164,7 @@ window.DUOVINO = (() => {
             [{ t: 'Appellation Vouvray Contrôlée', k: 'aoc', small: true }],
             [{ t: '2023', k: 'vintage' }, { t: 'Mis en bouteille au domaine', k: 'bottled', small: true }],
           ] }, answer: 'sweet',
-          explain: '"Demi-Sec" means off-dry. Vouvray (100% Chenin Blanc) runs from Sec to Demi-Sec to Moelleux (sweet), and there are sparkling versions too.' },
+          explain: '"Demi-Sec" means off-dry. Vouvray (Chenin Blanc, with up to 5% Orbois allowed) runs from Sec to Demi-Sec to Moelleux and Doux, and there are sparkling versions too.' },
         { type: 'choice', concept: 'chenin', q: 'What lets Chenin Blanc make everything from bone-dry to lusciously sweet, and age for decades?',
           options: ['Thick, tannic skins', 'Naturally high acidity', 'Very low natural sugar', 'Always being aged in new oak'], answer: 1,
           explain: 'Acidity is the backbone. It balances sweetness and preserves the wine. Old Vouvray turns honeyed and nutty but stays bright.' },
