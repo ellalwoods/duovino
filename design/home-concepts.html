@@ -1,0 +1,268 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Duovino · home screen concepts</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Fraunces:ital,opsz,wght,SOFT,WONK@0,9..144,300..800,0..100,0..1;1,9..144,300..800,0..100,0..1&display=swap" rel="stylesheet">
+<style>
+  :root { --ink: #2a1a1f; --serif: 'Fraunces', Georgia, serif; --mono: 'DM Mono', monospace; }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: #ede6da; font-family: var(--serif); color: var(--ink); }
+  .board { display: flex; gap: 36px; padding: 40px; align-items: flex-start; flex-wrap: wrap; }
+  .col { display: flex; flex-direction: column; align-items: center; gap: 14px; }
+  .cap { font-family: var(--mono); font-size: 12px; letter-spacing: .14em; text-transform: uppercase; color: #7b6a62; }
+  .phone { position: relative; width: 390px; height: 780px; border-radius: 44px; overflow: hidden; box-shadow: 0 30px 60px -30px rgba(60,30,20,.45), 0 0 0 10px #fbf7ef, 0 0 0 11px #e2d6c3; }
+  .phone > svg.scene { position: absolute; inset: 0; width: 100%; height: 100%; }
+  /* shared overlay UI */
+  .top { position: absolute; top: 54px; left: 0; right: 0; display: flex; justify-content: center; align-items: center; gap: 10px; }
+  .top img { width: 34px; height: 34px; border-radius: 10px; }
+  .wordmark { font-size: 24px; font-weight: 700; letter-spacing: -.02em; font-variation-settings: 'SOFT' 100, 'WONK' 1; }
+  .wordmark em { font-weight: 400; font-style: italic; }
+  .light .wordmark, .light .season { color: #fffaf1; text-shadow: 0 1px 12px rgba(80,30,20,.25); }
+  .season { position: absolute; top: 108px; left: 0; right: 0; text-align: center; font-size: 15px; font-style: italic; opacity: .92; }
+  .go { position: absolute; left: 50%; transform: translateX(-50%); width: 168px; height: 168px; display: grid; place-items: center; text-align: center; }
+  .go svg { position: absolute; inset: 0; }
+  .go .t { position: relative; display: flex; flex-direction: column; gap: 2px; }
+  .go b { font-size: 22px; font-weight: 500; }
+  .go small { font-family: var(--mono); font-size: 10px; letter-spacing: .12em; text-transform: uppercase; opacity: .75; }
+  .go-disc { position: absolute; inset: 14px; border-radius: 50%; background: rgba(255,250,241,.82); backdrop-filter: blur(6px); box-shadow: 0 10px 30px -10px rgba(80,30,20,.35); }
+  .badge { position: absolute; display: flex; align-items: center; gap: 8px; padding: 8px 14px 8px 10px; border-radius: 99px; background: rgba(255,250,241,.82); backdrop-filter: blur(6px); font-size: 15px; box-shadow: 0 6px 18px -10px rgba(80,30,20,.4); }
+  .badge svg { width: 14px; height: 30px; }
+  .tabs { position: absolute; left: 22px; right: 22px; bottom: 26px; height: 60px; display: flex; justify-content: space-around; align-items: center; border-radius: 30px; background: rgba(255,250,241,.78); backdrop-filter: blur(10px); box-shadow: 0 10px 30px -18px rgba(60,30,20,.5); color: #6d5a52; }
+  .tabs svg { width: 25px; height: 25px; }
+  .tabs .on { color: var(--ink); position: relative; }
+  .tabs .on::after { content: ''; position: absolute; left: 50%; bottom: -9px; width: 5px; height: 5px; margin-left: -2.5px; border-radius: 50%; background: #a8434e; }
+  .paper { background: #f6efe2; }
+  .chips { position: absolute; left: 0; right: 0; display: flex; gap: 12px; justify-content: center; }
+  .medal { width: 60px; height: 60px; border-radius: 50%; overflow: hidden; position: relative; box-shadow: 0 6px 16px -8px rgba(60,30,20,.5); }
+  .medal.sel { outline: 3px solid #fffaf1; outline-offset: 3px; }
+  .medal.locked { background: rgba(255,250,241,.5); border: 2px dashed rgba(255,250,241,.95); box-shadow: none; display: grid; place-items: center; color: #fffaf1; font-size: 20px; }
+  .medal svg { width: 100%; height: 100%; }
+  .pc-name { position: absolute; left: 0; right: 0; text-align: center; color: #fffaf1; text-shadow: 0 1px 10px rgba(40,30,60,.35); }
+  .pc-name b { display: block; font-size: 30px; font-weight: 500; font-style: italic; font-variation-settings: 'SOFT' 100, 'WONK' 1; }
+  .pc-name span { font-family: var(--mono); font-size: 11px; letter-spacing: .14em; text-transform: uppercase; opacity: .9; }
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute">
+  <defs>
+    <filter id="stain" x="-20%" y="-20%" width="140%" height="140%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.035" numOctaves="2" seed="7" result="n"/>
+      <feDisplacementMap in="SourceGraphic" in2="n" scale="7" xChannelSelector="R" yChannelSelector="G"/>
+    </filter>
+    <filter id="wobble" x="-5%" y="-5%" width="110%" height="110%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.02" numOctaves="2" seed="4" result="n"/>
+      <feDisplacementMap in="SourceGraphic" in2="n" scale="9"/>
+    </filter>
+    <filter id="soft"><feGaussianBlur stdDeviation="14"/></filter>
+    <filter id="paper">
+      <feTurbulence type="fractalNoise" baseFrequency=".8" numOctaves="3" result="n"/>
+      <feColorMatrix in="n" values="0 0 0 0 .45  0 0 0 0 .35  0 0 0 0 .25  0 0 0 .07 0"/>
+      <feComposite in2="SourceGraphic" operator="in"/>
+    </filter>
+  </defs>
+</svg>
+
+<div class="board" id="board1"></div>
+<div class="board" id="board2"></div>
+
+<script>
+const TABS = (on) => `<div class="tabs">
+  ${[['home','<circle cx="12" cy="12" r="4.2"/><path d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2M5.3 5.3l1.6 1.6M17.1 17.1l1.6 1.6M5.3 18.7l1.6-1.6M17.1 6.9l1.6-1.6"/>'],
+     ['roots','<path d="M12 9V3.5M3 9h18M12 9c0 4-1 6-3.5 8.5M12 9c0 4 1.2 6.5 3.8 9M12 12.5c-1.6.4-3.5.1-5.5-1.2M12 14c2 0 3.6-.8 5.5-2.3"/>'],
+     ['atlas','<circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3.2 3 14.8 0 18M12 3c-3 3.2-3 14.8 0 18"/>'],
+     ['cellar','<path d="M10.2 2.5h3.6v4.8c0 1.6 2.7 2.4 2.7 5.2v8.2c0 .5-.4.8-.8.8H8.3c-.4 0-.8-.3-.8-.8v-8.2c0-2.8 2.7-3.6 2.7-5.2z"/>']]
+   .map(([k, p]) => `<span class="${k === on ? 'on' : ''}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round">${p}</svg></span>`).join('')}
+</div>`;
+const TOP = `<div class="top"><img src="../icon.svg" alt=""><span class="wordmark">Duo<em>vino</em></span></div>`;
+const RING = (col, pct = 72) => `<svg viewBox="0 0 168 168"><g filter="url(#stain)">
+  <circle cx="84" cy="84" r="74" fill="none" stroke="${col}" stroke-width="9" opacity=".22"/>
+  <circle cx="84" cy="84" r="74" fill="none" stroke="${col}" stroke-width="8" opacity=".6" pathLength="100" stroke-dasharray="${pct} 100" transform="rotate(-80 84 84)" stroke-linecap="round"/>
+  <circle cx="84" cy="84" r="78.5" fill="none" stroke="${col}" stroke-width="1.6" opacity=".85" pathLength="100" stroke-dasharray="${pct} 100" transform="rotate(-80 84 84)"/>
+</g></svg>`;
+const GO = (top, col, title, sub, pct) => `<div class="go" style="top:${top}px">${RING(col, pct)}<div class="go-disc"></div><div class="t"><small>Continue</small><b>${title}</b><small>${sub}</small></div></div>`;
+const BOTTLE = (c) => `<svg viewBox="0 0 14 30"><path d="M5.5 1h3v7c0 2 3.5 3 3.5 6.5V28H2V14.5C2 11 5.5 10 5.5 8z" fill="${c}"/><rect x="2" y="17" width="10" height="7" fill="#fbf6ea"/></svg>`;
+
+/* ---------- living sky ---------- */
+function sky(id, p) {
+  const stars = p.stars ? Array.from({ length: 70 }, (_, i) => { const x = (i * 97) % 390, y = (i * 53) % 330 + 8, r = (i % 5 === 0) ? 1.4 : .8; return `<circle cx="${x}" cy="${y}" r="${r}" fill="#fff" opacity="${.35 + (i % 4) * .15}"/>`; }).join('') : '';
+  const rows = (cy, n, col, w) => Array.from({ length: n }, (_, i) => { const t = i - (n - 1) / 2; return `<path d="M${195 + t * 110} 800 Q${195 + t * 40} ${cy + 80} ${195 + t * 12} ${cy}" stroke="${col}" stroke-width="${w}" fill="none" stroke-linecap="round" opacity=".55"/>`; }).join('');
+  const leaf = (x, y, r, c, s = 1) => `<path transform="translate(${x} ${y}) rotate(${r}) scale(${s})" d="M0 0C-3-2-9-3-10-8-6-8-7-12-4-14-2-11 0-12 0-17 0-12 2-11 4-14 7-12 6-8 10-8 9-3 3-2 0 0Z" fill="${c}"/>`;
+  const vine = (x, flip) => {
+    let g = `<path d="M${x} 790 C${x + (flip ? -8 : 8)} 740 ${x} 700 ${x + (flip ? -30 : 30)} 680" stroke="${p.trunk}" stroke-width="9" fill="none" stroke-linecap="round"/>`;
+    p.leaves.forEach((c, i) => { g += leaf(x + (flip ? -1 : 1) * (10 + (i * 23) % 70), 690 - (i * 17) % 60, (i * 47) % 360, c, 2.2); });
+    if (p.grapes) for (let i = 0; i < 9; i++) g += `<circle cx="${x + (flip ? -28 : 28) + (i % 3) * 7 - 7}" cy="${712 + Math.floor(i / 3) * 7}" r="4" fill="${p.grapes}"/>`;
+    return g;
+  };
+  return `<svg class="scene" viewBox="0 0 390 780" preserveAspectRatio="xMidYMid slice">
+    <defs>
+      <linearGradient id="sk${id}" x1="0" y1="0" x2="0" y2="1">${p.sky.map((c, i) => `<stop offset="${i / (p.sky.length - 1)}" stop-color="${c}"/>`).join('')}</linearGradient>
+      <radialGradient id="gl${id}"><stop offset="0" stop-color="${p.glow}" stop-opacity=".9"/><stop offset="1" stop-color="${p.glow}" stop-opacity="0"/></radialGradient>
+      <linearGradient id="h1${id}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${p.hills[0]}"/><stop offset="1" stop-color="${p.hills[1]}"/></linearGradient>
+      <linearGradient id="h2${id}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${p.hills[1]}"/><stop offset="1" stop-color="${p.hills[2]}"/></linearGradient>
+      <linearGradient id="h3${id}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${p.hills[2]}"/><stop offset="1" stop-color="${p.hills[3]}"/></linearGradient>
+    </defs>
+    <rect width="390" height="780" fill="url(#sk${id})"/>
+    ${stars}
+    <circle cx="${p.sun.x}" cy="${p.sun.y}" r="170" fill="url(#gl${id})"/>
+    <circle cx="${p.sun.x}" cy="${p.sun.y}" r="${p.sun.r}" fill="${p.sun.c}"/>
+    ${p.moonCut ? `<circle cx="${p.sun.x + 9}" cy="${p.sun.y - 6}" r="${p.sun.r}" fill="${p.sky[1]}"/>` : ''}
+    <path d="M0 470 C70 440 140 452 210 432 C280 412 340 436 390 426 V780 H0Z" fill="url(#h1${id})" opacity=".9"/>
+    <path d="M0 515 C110 482 210 506 390 476 V780 H0Z" fill="url(#h2${id})"/>
+    <g clip-path="inset(0)">${rows(508, 13, p.rows, 1.6)}</g>
+    <path d="M0 600 C120 568 250 590 390 556 V780 H0Z" fill="url(#h3${id})"/>
+    ${rows(585, 9, p.rows, 4)}
+    ${vine(-6, false)}${vine(396, true)}
+  </svg>`;
+}
+const SKIES = {
+  dawn: { label: 'Dawn · spring', season: 'April · budburst', sky: ['#f9d9cf', '#fbe6d2', '#fdf1de'], glow: '#ffe7c4', sun: { x: 300, y: 380, r: 30, c: '#fff1d6' },
+    hills: ['#d9c7cf', '#c9d5b6', '#b7c995', '#a3b87c'], rows: '#8ea56a', trunk: '#8a6a52', leaves: ['#a9c56f', '#c2d98b', '#9ab960', '#b4cd7c', '#a9c56f', '#c2d98b'] },
+  sunset: { label: 'Sunset · harvest', season: 'September · harvest', sky: ['#f3a07a', '#f8c48d', '#fde0aa'], glow: '#ffd28a', sun: { x: 120, y: 410, r: 36, c: '#fff0c8' },
+    hills: ['#e2a59a', '#c99a8a', '#b58a6c', '#9e7655'], rows: '#7d5a3e', trunk: '#6f4d36', leaves: ['#d39a2d', '#b9502c', '#e0b84b', '#c06a34', '#e0b84b', '#a8562d'], grapes: '#5a1d3e' },
+  blue: { label: 'Blue hour · winter', season: 'December · the vines rest', sky: ['#9fa6cc', '#c4bcd8', '#ead3d6'], glow: '#f6e6ef', sun: { x: 290, y: 150, r: 18, c: '#fffaf0' }, moonCut: true, stars: true,
+    hills: ['#b9b3cf', '#a9a6c3', '#9c9ab8', '#8f8cab'], rows: '#7d7a9c', trunk: '#6d6585', leaves: [] },
+};
+function skyPhone(k) {
+  const p = SKIES[k];
+  return `<div class="col"><div class="cap">${p.label}</div><div class="phone light">
+    ${sky(k, p)}
+    ${TOP}
+    <div class="season">${p.season}</div>
+    ${GO(250, '#fffaf1', 'Pinot Noir', 'Lesson 7 of 8', 64)}
+    <div class="badge" style="left:50%;transform:translateX(-50%);top:452px">${BOTTLE('#e2bf5c')} 3 wines to taste</div>
+    ${TABS('home')}
+  </div></div>`;
+}
+
+/* ---------- stain map on a tasting table ---------- */
+const proj = (lon, lat) => [(lon + 11) * 10.6, (59 - lat) * 13.6];
+const poly = pts => 'M' + pts.map(([lo, la]) => proj(lo, la).map(v => v.toFixed(1)).join(' ')).join(' L') + 'Z';
+const EUROPE = [[-9,37],[-9,43],[-2,43.5],[-1.5,46],[-4.5,48],[-1,49.7],[1.5,50.5],[4,51.5],[7,53.5],[9,54],[10,54.5],[14,54],[19,54.4],[21,55.5],[21,57],[24,57.5],[28,60],[45,62],[45,44],[36,45],[33,45],[30,45.5],[29,41],[26,40.5],[23,40],[23.5,38],[22,36.5],[21,38.5],[19.5,41],[18.5,42.5],[15,45],[13.5,45.7],[12.3,45],[13,43.5],[14,42],[16,41],[18.5,40],[16,38],[15.6,38],[16,39.5],[15.7,40],[12.5,41.8],[10.5,43],[8.8,44.4],[7,43.6],[5,43.3],[3,43],[3.2,41.9],[0.5,40.5],[0,38.8],[-2,36.8],[-5.5,36],[-7,37]];
+const SCAND = [[5,58],[5,62],[10,64],[14,67],[20,70],[28,71],[30,69.5],[28,66],[25,65.5],[22,63.5],[21,61],[18,60],[19,59.5],[16,56.5],[13,55.5],[12,57.5],[11,59],[8,58]];
+const UK = [[-5.7,50],[1.5,51],[1.7,52.8],[0,53.5],[-1.8,55.5],[-2,57.5],[-4,58.6],[-5.5,58.4],[-6,56.5],[-5,55],[-3,54.5],[-4.5,53.5],[-4.8,52],[-3,51.5]];
+const IRL = [[-10,51.6],[-6,52],[-6,54],[-7.5,55.3],[-10,54.3]];
+const AFRICA = [[-17,21],[-13,27.5],[-10,29],[-9.5,32],[-6,35.8],[-1,35.5],[2,36.7],[8,37],[11,37],[10,33.8],[15,32.5],[20,30.5],[25,31.5],[32,31],[34,27],[37,21],[45,21],[45,10],[-17,10]];
+const ASIA = [[26,40.3],[29,41.2],[36,41.8],[41,41.5],[41,43],[48,42],[50,38],[50,25],[45,21],[37,21],[34,27],[34,31],[35.5,33.5],[36,36.5],[30,36.3],[27,37]];
+const SARD = [[8.4,41],[9.8,41],[9.6,39],[8.4,39]], CORS = [[8.6,43],[9.5,42.9],[9.4,41.4],[8.7,41.5]], SIC = [[12.4,38.1],[15.6,38.2],[15.1,36.7],[12.6,37.6]], CRETE = [[23.5,35.6],[26.3,35.3],[26,35],[23.6,35.2]];
+function stainMarks() {
+  const spots = [
+    { n: 'Champagne', at: [4, 49.1], done: true, c: '#c99a3a', lx: -6, ly: -58 },
+    { n: 'Mosel', at: [7, 49.9], done: true, c: '#b9b04a', lx: 34, ly: -18 },
+    { n: 'Chablis', at: [3.8, 47.8], done: true, c: '#d8c45c', lx: 10, ly: 0 },
+    { n: 'Loire', at: [0.7, 47.3], done: true, c: '#c7b858', lx: -20, ly: 0 },
+    { n: 'Rioja', at: [-2.5, 42.5], done: false, c: '#8b1a2b', now: true },
+    { n: 'Santorini', at: [25.4, 36.4], done: false, c: '#d8c45c' },
+    { n: 'Piedmont', at: [8, 44.7], done: false, c: '#7b2a2a' },
+  ];
+  return spots.map((s, i) => {
+    const [x, y] = proj(...s.at), r = s.done ? 22 + (i % 3) * 3 : 15;
+    const nm = `<text x="${x + (s.lx || 0)}" y="${y + r + 15 + (s.ly || 0)}" text-anchor="middle" font-family="Fraunces, Georgia, serif" font-style="italic" font-size="13" fill="#6d5a52">${s.n}</text>`;
+    return nm + (s.done
+      ? `<g filter="url(#stain)"><circle cx="${x}" cy="${y}" r="${r}" fill="${s.c}" opacity=".12"/><circle cx="${x}" cy="${y}" r="${r}" fill="none" stroke="${s.c}" stroke-width="3.2" opacity=".65"/><circle cx="${x + 3}" cy="${y - 2}" r="${r + 2.5}" fill="none" stroke="${s.c}" stroke-width=".9" opacity=".7"/></g>`
+      : s.now
+        ? `<g><circle cx="${x}" cy="${y}" r="22" fill="${s.c}" opacity=".12"><animate attributeName="r" values="16;26;16" dur="2.4s" repeatCount="indefinite"/></circle><circle cx="${x}" cy="${y}" r="7" fill="${s.c}"/></g>`
+        : `<circle cx="${x}" cy="${y}" r="${r}" fill="none" stroke="#9c8a74" stroke-width="1.2" stroke-dasharray="2 4" opacity=".7"/>`);
+  }).join('');
+}
+function mapPhone() {
+  const land = [EUROPE, SCAND, UK, IRL, AFRICA, ASIA, SARD, CORS, SIC, CRETE].map(p => `<path d="${poly(p)}"/>`).join('');
+  return `<div class="col"><div class="cap">Stain map · Atlas</div><div class="phone paper">
+    <svg class="scene" viewBox="0 0 390 780">
+      <defs><linearGradient id="tbl" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#efe5d4"/><stop offset="1" stop-color="#e3d4bc"/></linearGradient></defs>
+      <rect width="390" height="780" fill="url(#tbl)"/>
+      <rect width="390" height="780" filter="url(#paper)" fill="#fff"/>
+    </svg>
+    <div style="position:absolute;left:-40px;top:200px;width:470px;height:400px;transform:perspective(1100px) rotateX(20deg);transform-origin:50% 70%">
+      <svg viewBox="0 0 470 400" width="470" height="400">
+        <defs><clipPath id="mapclip"><rect x="8" y="8" width="454" height="384" rx="8"/></clipPath></defs>
+        <rect x="4" y="4" width="462" height="392" rx="10" fill="#fbf6ea" stroke="#d8c6a6"/>
+        <g clip-path="url(#mapclip)">
+          <rect x="8" y="8" width="454" height="384" fill="#dde6e3"/>
+          <g stroke="#c8d5d2" stroke-width=".7" opacity=".9">${[35, 40, 45, 50, 55].map(la => `<line x1="0" x2="470" y1="${proj(0, la)[1]}" y2="${proj(0, la)[1]}" stroke-dasharray="3 6"/>`).join('')}</g>
+          <g fill="#f8f1e0" stroke="#b39c7c" stroke-width="1.3" filter="url(#wobble)">${land}</g>
+          <rect x="8" y="8" width="454" height="384" filter="url(#paper)" fill="#fff"/>
+          ${stainMarks()}
+        </g>
+      </svg>
+    </div>
+    ${TOP}
+    <div class="season" style="color:#6d5a52">4 regions · 12 wines</div>
+    <div class="badge" style="left:50%;transform:translateX(-50%);bottom:110px;background:#fffaf1"><span style="width:10px;height:10px;border-radius:50%;background:#8b1a2b;display:inline-block"></span> Next: Rioja</div>
+    ${TABS('atlas')}
+  </div></div>`;
+}
+
+/* ---------- today's glass ---------- */
+function glassPhone() {
+  return `<div class="col"><div class="cap">Today's glass</div><div class="phone" style="background:radial-gradient(120% 70% at 50% 35%, #fbf6e6, #efe6d2)">
+    ${TOP}
+    <div class="season" style="color:#6d5a52">Today · Sauvignon Blanc</div>
+    <svg viewBox="0 0 390 520" style="position:absolute;top:150px;left:0;width:390px;height:520px">
+      <defs>
+        <clipPath id="bw"><path d="M120 40C108 180 140 270 195 280C250 270 282 180 270 40Z"/></clipPath>
+        <linearGradient id="wn" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#eee7a4"/><stop offset="1" stop-color="#d9d27a"/></linearGradient>
+      </defs>
+      <g filter="url(#stain)"><ellipse cx="195" cy="462" rx="96" ry="22" fill="none" stroke="#d9d27a" stroke-width="5" opacity=".55"/><ellipse cx="199" cy="460" rx="100" ry="24" fill="none" stroke="#c7bf5e" stroke-width="1.4" opacity=".7"/></g>
+      <g clip-path="url(#bw)">
+        <path d="M100 190 C150 172 200 205 240 186 C262 176 280 182 300 178 V300 H100Z" fill="url(#wn)"/>
+        ${[148, 170, 222, 246].map((x, i) => `<path d="M${x} 70 q2 40 -1 ${80 + i * 10}" stroke="#eae2a0" stroke-width="2" fill="none" opacity=".8"/>`).join('')}
+      </g>
+      <path d="M120 40C108 180 140 270 195 280C250 270 282 180 270 40" fill="none" stroke="#3a2a2a" stroke-width="2" opacity=".55"/>
+      <path d="M134 60C128 140 140 210 168 250" fill="none" stroke="#fff" stroke-width="5" opacity=".6" stroke-linecap="round"/>
+      <path d="M195 280V440M150 452Q195 438 240 452" fill="none" stroke="#3a2a2a" stroke-width="2" opacity=".55" stroke-linecap="round"/>
+      <text x="195" y="505" text-anchor="middle" font-family="DM Mono, monospace" font-size="11" letter-spacing="2" fill="#7b6a62">SWIRL TO BEGIN ↻</text>
+    </svg>
+    ${TABS('home')}
+  </div></div>`;
+}
+
+/* ---------- region postcards (unlockable backdrops) ---------- */
+const POSTCARDS = {
+  santorini: (id) => `
+    <defs>
+      <linearGradient id="s${id}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f4b49e"/><stop offset=".6" stop-color="#fbd3ae"/><stop offset="1" stop-color="#fde6c6"/></linearGradient>
+      <linearGradient id="sea${id}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#b5cfd9"/><stop offset="1" stop-color="#86aec6"/></linearGradient>
+      <linearGradient id="cl${id}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#c98f78"/><stop offset=".35" stop-color="#e7c7a8"/><stop offset=".5" stop-color="#9b6a5c"/><stop offset=".75" stop-color="#c4927c"/><stop offset="1" stop-color="#8a6458"/></linearGradient>
+    </defs>
+    <rect width="390" height="780" fill="url(#s${id})"/>
+    <circle cx="300" cy="390" r="160" fill="#ffe0b4" opacity=".6" filter="url(#soft)"/><circle cx="300" cy="392" r="26" fill="#fff2d8"/>
+    <path d="M190 400 C220 384 250 386 280 392 C320 380 360 386 390 394 V402 H190Z" fill="#b9a6b4" opacity=".75"/>
+    <rect y="400" width="390" height="380" fill="url(#sea${id})"/>
+    ${[430, 470, 520, 580].map((y, i) => `<path d="M${200 + i * 10} ${y} h${80 - i * 10}" stroke="#fff" stroke-width="1.2" opacity=".35" stroke-linecap="round"/>`).join('')}
+    <path d="M-10 250 C40 246 90 250 130 262 C160 272 175 300 186 340 C198 384 196 430 180 470 L170 780 H-10Z" fill="url(#cl${id})"/>
+    ${[[0,240],[22,236],[44,238],[66,240],[88,246],[108,252],[126,260],[12,254],[56,254],[98,262],[34,268],[76,266]].map(([x, y], i) => `<rect x="${x}" y="${y}" width="${i % 3 ? 18 : 22}" height="13" rx="2" fill="#fffaf2"/>${i % 5 === 2 ? `<path d="M${x + 3} ${y} a7 7 0 0 1 14 0Z" fill="#5f8fc0"/>` : ''}`).join('')}
+    <path d="M150 780 C170 700 250 660 390 650 V780Z" fill="#d9c3a2"/>
+    ${[[220,712],[285,690],[350,682],[250,752],[325,742]].map(([x, y]) => `<g><ellipse cx="${x}" cy="${y + 4}" rx="22" ry="7" fill="#8a6a50" opacity=".25"/><circle cx="${x}" cy="${y - 4}" r="13" fill="none" stroke="#7c9a4e" stroke-width="5"/><circle cx="${x}" cy="${y - 4}" r="6" fill="none" stroke="#9db86a" stroke-width="4"/></g>`).join('')}`,
+  champagne: (id) => `
+    <rect width="390" height="780" fill="#f3ead6"/><circle cx="280" cy="230" r="90" fill="#fff6dc" opacity=".8" filter="url(#soft)"/>
+    <path d="M0 470 C120 420 240 450 390 410 V780 H0Z" fill="#e9e3cf"/><path d="M0 540 C140 500 260 530 390 490 V780 H0Z" fill="#cfd8a8"/>
+    ${Array.from({ length: 11 }, (_, i) => `<path d="M${-60 + i * 50} 780 Q${40 + i * 30} 620 ${120 + i * 16} 520" stroke="#9fb06c" stroke-width="3" fill="none" opacity=".6"/>`).join('')}`,
+  mosel: (id) => `
+    <rect width="390" height="780" fill="#dfe8ec"/><path d="M0 200 L170 120 L210 640 L0 700Z" fill="#7d8a6a"/>
+    ${Array.from({ length: 14 }, (_, i) => `<path d="M0 ${230 + i * 34} L${180 + i * 2} ${150 + i * 34}" stroke="#a6b48a" stroke-width="3" opacity=".7"/>`).join('')}
+    <path d="M160 780 C200 600 260 520 390 470 V560 C300 600 260 680 250 780Z" fill="#a9c2cf"/>`,
+  mendoza: (id) => `
+    <rect width="390" height="780" fill="#e9dcd6"/>
+    <path d="M0 330 L80 230 L130 280 L210 170 L280 260 L330 210 L390 270 V420 H0Z" fill="#b9a9b8"/>
+    <path d="M80 230 L100 255 L60 255Z M210 170 L240 210 L180 210Z M330 210 L350 235 L310 235Z" fill="#fffaf2"/>
+    <path d="M0 470 H390 V780 H0Z" fill="#c8b48e"/>
+    ${Array.from({ length: 11 }, (_, i) => `<path d="M${-60 + i * 50} 780 Q${40 + i * 30} 600 ${120 + i * 16} 470" stroke="#7f8f4e" stroke-width="3" fill="none" opacity=".6"/>`).join('')}`,
+};
+const medal = (k, sel) => `<div class="medal ${sel ? 'sel' : ''}"><svg viewBox="0 120 390 520" preserveAspectRatio="xMidYMid slice">${POSTCARDS[k]('m' + k)}</svg></div>`;
+function postcardPhone() {
+  return `<div class="col"><div class="cap">Region postcards</div><div class="phone light">
+    <svg class="scene" viewBox="0 0 390 780" preserveAspectRatio="xMidYMid slice">${POSTCARDS.santorini('main')}</svg>
+    ${TOP}
+    <div class="pc-name" style="top:104px"><span>Your view</span><b>Santorini</b></div>
+    ${GO(430, '#fffaf1', 'Assyrtiko', 'Lesson 2 of 6', 30)}
+    <div class="chips" style="bottom:112px">${medal('champagne')}${medal('mosel')}${medal('santorini', true)}${medal('mendoza')}<div class="medal locked">?</div></div>
+    ${TABS('home')}
+  </div></div>`;
+}
+
+document.getElementById('board1').innerHTML = skyPhone('dawn') + skyPhone('sunset') + skyPhone('blue');
+document.getElementById('board2').innerHTML = mapPhone() + glassPhone() + postcardPhone();
+</script>
+</body>
+</html>
