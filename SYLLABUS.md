@@ -42,9 +42,9 @@ Each chapter ends with a **Checkpoint Tasting**: a longer mixed test with a blin
 1. **What is wine?** Fermentation, inside a grape, why red wine is red, ripeness, dry vs sweet ✅ *built*
 2. **The structure of wine:** sweetness, acidity, tannin, alcohol, body, balance ✅ *built*
 3. **Tasting like a pro:** look → smell → sip → think, colour and age, the three layers of aroma, finish, BLIC ✅ *built*
-4. **The styles of wine:** light vs full whites and reds, rosé, sparkling, sweet, fortified
-5. **Wine & food:** what food does to wine (sweet, umami, acid, salt, chilli, fat)
-6. **Serving & storing:** temperatures, glasses, decanting, opening sparkling, keeping bottles
+4. **The styles of wine:** light vs full whites and reds, rosé, sparkling, sweet, fortified ✅ *built*
+5. **Wine & food:** what food does to wine (sweet, umami, acid, salt, chilli, fat) ✅ *built*
+6. **Serving & storing:** temperatures, glasses, decanting, opening sparkling, keeping bottles ✅ *built*
 - ✦ *Checkpoint: The Topsoil Tasting*
 
 ### 2 · CLAY: The vine & its place
@@ -112,7 +112,7 @@ Every Track B lesson **starts from a label** and works outwards: label → appel
 2. **Meet the grapes:** the **big international grapes first**, in order (Chardonnay, Sauvignon Blanc, Riesling, Pinot Grigio/Gris, Pinot Noir, Merlot, Cabernet Sauvignon, Syrah/Shiraz). Once the written ones are done, four more groups open: aromatic & classic whites, Mediterranean & island whites (Vermentino, Assyrtiko, Fiano, Greco…), classic reds, and off the beaten track (Xinomavro, Agiorgitiko, Saperavi, Tannat, Furmint, Koshu…).
 3. **Travel the regions:** opens at the same point. Grouped by France · Italy · Spain & Portugal · Central & Eastern Europe · Greece & the Eastern Mediterranean · Britain · the Americas (USA in depth, Canada, Chile, Argentina, Uruguay, Brazil) · Southern Hemisphere & Asia (Australia, New Zealand, South Africa, Japan).
 
-The full list (about 70 grape lessons and 140 region lessons) lives in `labels.js`. Written so far: B0 (3), Chardonnay, Sauvignon Blanc, Riesling, and Champagne AOC (11). Everything else shows as "Coming soon".
+The full list (about 70 grape lessons and 140 region lessons) lives in `labels.js`. Written so far: B0 (3), all eight big international grapes (Chardonnay, Sauvignon Blanc, Riesling, Pinot Grigio/Gris, Pinot Noir, Merlot, Cabernet Sauvignon, Syrah/Shiraz), and Champagne AOC (11). Everything else shows as "Coming soon".
 
 There is no test-out: Track B requires Topsoil.
 

@@ -1,6 +1,7 @@
 /* Duovino syllabus: six chapters, one per soil stratum. Units with `lesson` are playable. */
 (() => {
   const D = window.DUOVINO, C = D.C;
+  const s = (t, k, o = {}) => ({ t, k, ...o });
 
   // Concepts (cellar bottles) introduced by the syllabus units
   Object.assign(D.concepts, {
@@ -173,9 +174,128 @@
               explain: 'Balance, Length, Intensity, Complexity. You\'ll use it all the way to Granite.' },
           ],
         },
-        { id: '1-4', title: 'The styles of wine', sub: 'Light to full, still to sparkling' },
-        { id: '1-5', title: 'Wine & food', sub: 'What food does to wine' },
-        { id: '1-6', title: 'Serving & storing', sub: 'Temperatures, glasses, decanting' },
+        {
+          id: '1-4', title: 'The styles of wine', sub: 'Light to full, still to sparkling',
+          lesson: [
+            { kind: 'text', title: 'A map of styles', big: 'Colour · body · bubbles · sweetness',
+              body: 'Almost every wine fits a handful of styles. Knowing the style tells you how it will taste, how cold to serve it and what to eat with it.' },
+            { kind: 'compare', title: 'Whites: light or full', cols: [
+              { h: 'Light & crisp', items: ['Cool climate, no oak', 'Muscadet, Pinot Grigio, Sancerre', 'Lemon, apple, high acidity'] },
+              { h: 'Full & rich', items: ['Warmer climate, often oak', 'Oaked Chardonnay, Viognier', 'Peach, tropical fruit, vanilla'] }] },
+            { kind: 'text', title: 'Aromatic whites', body: 'Some grapes are perfumed whatever you do: <b>Riesling</b>, <b>Gewurztraminer</b>, <b>Muscat</b>, <b>Sauvignon Blanc</b>. They\'re usually made without oak, so the grape\'s own aromas shine.' },
+            { kind: 'text', title: 'Rosé', body: 'Rosé is made from black grapes with only a <b>short time on the skins</b>: a few hours, rather than the days or weeks a red gets. Less skin contact means less colour and almost no tannin.' },
+            { kind: 'compare', title: 'Reds: light or full', cols: [
+              { h: 'Light & fruity', items: ['Thin skins, low tannin', 'Pinot Noir, Gamay', 'Red cherry, raspberry'] },
+              { h: 'Full & structured', items: ['Thick skins, more tannin', 'Cabernet, Syrah, Nebbiolo', 'Blackcurrant, blackberry, spice'] }] },
+            { kind: 'layers', title: 'Bubbles, sweetness & strength', rows: [
+              { h: 'Sparkling', t: 'Bubbles from a second fermentation, in the bottle (Champagne, Cava) or in a tank (Prosecco).' },
+              { h: 'Sweet', t: 'Sugar left in the wine: from late-picked, shrivelled, nobly rotten or frozen grapes, or by stopping fermentation early.' },
+              { h: 'Fortified', t: 'Grape spirit added: Port (sweet, red) and Sherry (from bone-dry to very sweet).' },
+            ] },
+          ],
+          questions: [
+            { type: 'sort', q: 'Which style is it?', buckets: ['Light white', 'Full white', 'Aromatic white'],
+              items: [{ t: 'Muscadet', b: 0 }, { t: 'Oaked Chardonnay', b: 1 }, { t: 'Gewurztraminer', b: 2 }, { t: 'Pinot Grigio', b: 0 }, { t: 'Viognier', b: 1 }, { t: 'Muscat', b: 2 }],
+              explain: 'Cool and unoaked means light; warm and oaked means full; some grapes are just naturally perfumed.' },
+            { type: 'choice', q: 'How is most rosé made?',
+              options: ['By mixing red and white wine', 'From black grapes with only a short time on the skins', 'From pink grapes only', 'By adding colouring'], answer: 1,
+              explain: 'A few hours on the skins gives a little colour and almost no tannin. (Blending red and white is rare; Champagne is a famous exception.)' },
+            { type: 'slider', q: 'Place a typical rosé on the tannin scale.', low: 'None', high: 'High', answer: 0.05, tol: 0.15,
+              explain: 'With so little skin contact, rosé has almost no tannin.' },
+            { type: 'sort', q: 'Light red or full red?', buckets: ['Light red', 'Full red'],
+              items: [{ t: 'Pinot Noir', b: 0 }, { t: 'Cabernet Sauvignon', b: 1 }, { t: 'Gamay', b: 0 }, { t: 'Syrah', b: 1 }, { t: 'Thin skins', b: 0 }, { t: 'Lots of tannin', b: 1 }],
+              explain: 'Skin thickness drives colour, tannin and body.' },
+            { type: 'odd', q: 'Which of these is NOT a fortified wine?', options: ['Port', 'Sherry', 'Madeira', 'Prosecco'], answer: 3,
+              explain: 'Prosecco is sparkling. Port, Sherry and Madeira all have grape spirit added.' },
+            { type: 'choice', q: 'A sweet wine is sweet because…',
+              options: ['It has more alcohol', 'Some grape sugar was left unfermented', 'It was aged in oak', 'It has bubbles'], answer: 1,
+              explain: 'Residual sugar: the yeast didn\'t (or wasn\'t allowed to) eat it all.' },
+          ],
+        },
+        {
+          id: '1-5', title: 'Wine & food', sub: 'What food does to wine',
+          lesson: [
+            { kind: 'text', title: 'Food changes the wine', big: 'The wine changes more than the food',
+              body: 'The same wine can taste wonderful with one dish and harsh with another. A few simple rules explain most of it.' },
+            { kind: 'compare', title: 'The troublemakers', body: 'These make wine taste harder.', cols: [
+              { h: 'Sweetness in food', items: ['Wine tastes drier, more acidic and bitter', 'Fruit seems to vanish', 'So: wine at least as sweet as the food'] },
+              { h: 'Umami (mushrooms, eggs, soy)', items: ['Wine tastes more bitter and acidic', 'Tannin feels harsher', 'So: softer, fruitier wines'] }] },
+            { kind: 'compare', title: 'The friends', body: 'These make wine taste softer.', cols: [
+              { h: 'Salt', items: ['Wine tastes less acidic and bitter', 'Fuller and smoother'] },
+              { h: 'Acidity in food', items: ['Wine tastes less sharp', 'Fruitier, rounder', 'So: pick a wine with good acidity'] }] },
+            { kind: 'try', title: 'Chilli heat', body: 'A fiery curry and a big, high-alcohol red…',
+              prompt: 'What happens?',
+              reveal: 'Chilli <b>makes alcohol burn</b> and <b>tannin taste bitter</b>. Go for lower alcohol, little tannin, and a touch of sweetness, like an off-dry Riesling.' },
+            { kind: 'layers', title: 'Two easy habits', rows: [
+              { h: 'Match the weight', t: 'Light dishes with light wines, rich dishes with fuller ones.' },
+              { h: 'Fat loves tannin and acid', t: 'Steak softens a tannic red; acidity cuts through creamy or fried food.' },
+            ] },
+          ],
+          questions: [
+            { type: 'choice', q: 'A dry wine with a sweet dessert will taste…',
+              options: ['Sweeter and fruitier', 'Thin, sour and bitter', 'Exactly the same', 'Higher in alcohol'], answer: 1,
+              explain: 'Sweetness in food strips the fruit from a dry wine. The wine should be at least as sweet as the dish.' },
+            { type: 'sort', q: 'Does it make wine taste harder or softer?', buckets: ['Harder', 'Softer'],
+              items: [{ t: 'Sweetness', b: 0 }, { t: 'Salt', b: 1 }, { t: 'Umami', b: 0 }, { t: 'Acidity in food', b: 1 }, { t: 'Chilli heat', b: 0 }],
+              explain: 'Sweetness, umami and chilli are tricky; salt and acidity are wine-friendly.' },
+            { type: 'choice', q: 'The safest wine with a fiery Thai curry?',
+              options: ['An off-dry, lower-alcohol Riesling', 'A 15% Barossa Shiraz', 'A tannic young Cabernet', 'A heavily oaked Chardonnay'], answer: 0,
+              explain: 'A little sweetness and low alcohol calm the heat; tannin and alcohol make it worse.' },
+            { type: 'choice', q: 'Why does steak soften a tannic red?',
+              options: ['Fat and protein coat the mouth and tame the tannin', 'Steak is sweet', 'Steak adds acidity', 'It doesn\'t'], answer: 0,
+              explain: 'Tannin binds to protein. With a juicy steak, it grips the food instead of your gums.' },
+            { type: 'chain', q: 'Pair a dish, step by step.',
+              label: { style: 'generic', lines: [[s('Tonight\'s dish', 'k')], [s('Fish & chips', 'dish', { big: true })], [s('Salty · fried · with lemon', 'notes', { small: true })]] },
+              steps: [
+                { q: 'How heavy is it?', options: ['Light to medium', 'Very rich'], answer: 0 },
+                { q: 'What cuts through the fried batter?', options: ['High acidity', 'High tannin'], answer: 0 },
+                { q: 'So which wine?', options: ['Crisp white like Muscadet or Champagne', 'Big tannic red', 'Sweet dessert wine', 'Port'], answer: 0 },
+              ], explain: 'Acidity slices through the fat, and the salt makes the wine taste rounder.' },
+            { type: 'odd', q: 'Which of these makes wine taste MORE bitter?', options: ['Salt', 'Acidity in food', 'Umami', 'Fat'], answer: 2,
+              explain: 'Umami (mushrooms, eggs, soy, ripe cheese) increases bitterness and the feel of tannin.' },
+          ],
+        },
+        {
+          id: '1-6', title: 'Serving & storing', sub: 'Temperatures, glasses, decanting',
+          lesson: [
+            { kind: 'scale', title: 'Serving temperature', body: 'Colder for light, sweet and sparkling; warmer for full-bodied reds.',
+              low: 'Well chilled', high: 'Room temp', marks: [{ t: 'Sparkling & sweet', at: 0.05 }, { t: 'Light whites', at: 0.3 }, { t: 'Oaked whites · light reds', at: 0.6 }, { t: 'Full reds', at: 0.95 }] },
+            { kind: 'try', title: 'Too cold, too warm', body: 'Serve a big red too warm, or a delicate white too cold…',
+              prompt: 'What goes wrong?',
+              reveal: 'Too <b>warm</b> and alcohol takes over, so the wine tastes hot and soupy. Too <b>cold</b> and the aromas shut down and tannin feels harsher.' },
+            { kind: 'layers', title: 'Opening sparkling safely', rows: [
+              { h: 'Hold the cork', t: 'Keep a thumb on it from the moment the cage loosens. Point it away from people.' },
+              { h: 'Twist the bottle', t: 'Hold the cork still and turn the bottle, easing it out with a gentle sigh rather than a pop.' },
+            ] },
+            { kind: 'compare', title: 'Why decant?', cols: [
+              { h: 'Old reds', items: ['Separate the wine from its sediment', 'Pour slowly, stop at the dregs'] },
+              { h: 'Young reds', items: ['Air helps a tight wine open up', 'Softer, more aromatic'] }] },
+            { kind: 'layers', title: 'Storing bottles', rows: [
+              { h: 'On their side', t: 'Keeps natural corks moist so they don\'t dry out and let air in.' },
+              { h: 'Cool & steady', t: 'Around 10–15 °C, without big swings.' },
+              { h: 'Dark & still', t: 'Away from light, vibration and strong smells.' },
+              { h: 'Once opened', t: 'Re-close, keep in the fridge, and finish within a few days.' },
+            ] },
+          ],
+          questions: [
+            { type: 'order', q: 'Order from coldest to warmest serving temperature.', items: ['Sparkling wine', 'Light white', 'Light red', 'Full-bodied red'],
+              explain: 'Sparkling well chilled, light whites chilled, light reds lightly chilled, full reds at room temperature.' },
+            { type: 'choice', q: 'A full-bodied red served too warm will taste…',
+              options: ['Hot, alcoholic and soupy', 'Sweeter and lighter', 'Sparkling', 'Exactly the same'], answer: 0,
+              explain: 'Warmth makes alcohol stand out. A slight chill can help a big red in summer.' },
+            { type: 'choice', q: 'Why store wine bottles with a cork on their side?',
+              options: ['So the label shows', 'To keep the cork moist and the seal tight', 'To mix the sediment', 'So they chill faster'], answer: 1,
+              explain: 'A dried-out cork can shrink and let air in, spoiling the wine.' },
+            { type: 'sort', q: 'Why decant this wine?', buckets: ['Remove sediment', 'Let it breathe'],
+              items: [{ t: '30-year-old Port', b: 0 }, { t: 'Young, tight Barolo', b: 1 }, { t: 'Old Bordeaux', b: 0 }, { t: 'Young Napa Cabernet', b: 1 }],
+              explain: 'Old wines throw sediment; young, firm reds open up with air.' },
+            { type: 'odd', q: 'Which is NOT good for storing wine?', options: ['Cool', 'Dark', 'Still', 'On top of the fridge'], answer: 3,
+              explain: 'The top of a fridge is warm and vibrates: two things wine hates.' },
+            { type: 'choice', q: 'Opening Champagne: what do you turn?',
+              options: ['The cork', 'The bottle, holding the cork still', 'Both, quickly', 'Neither: just pull'], answer: 1,
+              explain: 'Turn the bottle, not the cork, and ease it out for a gentle sigh.' },
+          ],
+        },
       ],
     },
     { id: 'clay', title: 'The vine & its place', wine: '#8a5a3c',
