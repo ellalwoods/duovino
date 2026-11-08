@@ -11,7 +11,7 @@ Five tabs (icons only):
 - **Learn:** *Roots* (how wine works, drawn as soil layers) and *Grapes & places* (read a label → meet the grapes → travel the regions), behind one switch. See [`SYLLABUS.md`](SYLLABUS.md).
 - **Today's glass:** one wine from your cellar a day. Swirl the glass, picture the wine, pour to see its tasting note, and say whether you knew it.
 - **Cellar:** the real wines you've learned, racked by style, each with a tasting profile.
-- **Journey:** a stain map of the regions you've explored (Europe / World), your days, wines and regions as ring stains, and your postcards. Finishing a region unlocks its postcard, which you can set as your home view.
+- **Journey:** a stain map of the regions you've explored (Europe / World), your days, wines and regions as ring stains, and your postcards. Every region on the map has its own postcard (35 in all). Finishing a region unlocks it, and you can set it as your home view.
 
 Each unit is a short lesson, then a tasting: sort, place on a scale, order, label decoder, label → grape → taste chain, blind deduction (swirl the glass), odd one out, multiple choice, and a wine from your cellar to recall.
 
@@ -47,6 +47,7 @@ Progress is stored only in the browser on that device. Use **Settings → Backup
 | `syllabus.js` | Track A: chapters, units, lesson cards and questions |
 | `labels.js` | Track B: B0 units and the full grapes & regions list |
 | `grapes.js`, `grapes-core.js` | Track B: the eight big international grape lessons |
+| `grapes-med.js` | Track B: Vermentino, Assyrtiko, Fiano and Greco (rules checked against EU texts) |
 | `wines.js` | The cellar's wines and their tasting profiles |
 | `scenes.js` | Artwork: the living sky, region postcards, Journey maps |
 | `champagne.js` | Track B: Champagne AOC (10 lessons + checkpoint; 1–9 and checkpoint checked against the 2025 cahier des charges, lesson 10 still a draft) |

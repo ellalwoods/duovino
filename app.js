@@ -316,7 +316,6 @@
   const postcardUnlocked = id => {
     const p = D.scenes.POSTCARDS.find(x => x.id === id);
     if (!p) return false;
-    if (p.unit) return !!(UNIT[p.unit] && done(UNIT[p.unit]));
     const rs = UNITS.filter(r => r.region && r.region.name === p.region && playable(r));
     return rs.length > 0 && rs.every(done);
   };
@@ -420,7 +419,7 @@
       <div class="j-switch seg"><button class="${view === 'europe' ? 'on' : ''}" data-act="mapview" data-v="europe">Europe</button><button class="${view === 'world' ? 'on' : ''}" data-act="mapview" data-v="world">World</button></div>
       <div class="j-map">${D.scenes.map(view, spots)}</div>
       <div class="stats">${stat(Object.keys(S.days).length, 'days', '#a8434e')}${stat(Object.keys(S.cellar).length, 'wines', '#c4842c')}${stat(regionsDone, 'regions', '#7c9a4e')}</div>
-      <h2 class="j-h">Postcards</h2>
+      <h2 class="j-h">Postcards <span class="mono">${D.scenes.POSTCARDS.filter(p => postcardUnlocked(p.id)).length}/${D.scenes.POSTCARDS.length}</span></h2>
       <div class="pcards">
         ${card('sky', 'The vineyard', D.scenes.sky(se.stage, time), true)}
         ${D.scenes.POSTCARDS.map(p => card(p.id, p.name, D.scenes.postcard(p.id, 'thumb'), postcardUnlocked(p.id))).join('')}

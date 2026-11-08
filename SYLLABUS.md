@@ -48,11 +48,11 @@ Each chapter ends with a **Checkpoint Tasting**: a longer mixed test with a blin
 - ✦ *Checkpoint: The Topsoil Tasting*
 
 ### 2 · CLAY: The vine & its place
-1. **A vine's year:** anatomy and the growing cycle, budburst to dormancy
-2. **Climate:** cool vs warm, continental vs maritime vs Mediterranean
-3. **Terroir:** latitude, altitude, slope and aspect, water bodies, soil
-4. **In the vineyard:** yields, pruning, canopy, harvest timing
-5. **Threats & friends:** frost, hail, drought, rot, and the *noble* rot
+1. **A vine's year:** how a vine makes sugar, the growing cycle, the two hemispheres ✅ *built*
+2. **Climate:** climate vs weather, cool vs hot, continental vs maritime vs Mediterranean, diurnal range ✅ *built*
+3. **Terroir:** latitude, altitude, slope and aspect, water, wind and fog, soil ✅ *built*
+4. **In the vineyard:** yields, spur vs cane pruning, bush vs trellis, canopy, hand vs machine, when to pick ✅ *built*
+5. **Threats & friends:** frost, hail, drought, mildews, grey rot, phylloxera and grafting, and the *noble* rot (Sauternes, Tokaji) ✅ *built*
 - ✦ *Checkpoint*
 
 ### 3 · LIMESTONE: The winery
@@ -179,6 +179,19 @@ Appellation rules (permitted grapes, minimum percentages, ageing minimums, sweet
 | Chablis tiers; Grand Cru "seven top vineyards on one slope" | Chablis (arrêté 11 Dec 2023), Chablis Grand Cru (arrêté 24 Oct 2024): Chardonnay only; 7 named climats | **reworded** to "seven named climats" |
 | Icewine "about −7 to −8 °C" | German Weingesetz § 20(4) no. 5: grapes frozen at picking and pressing; **no statutory temperature** | **reworded**: −7 °C described as practice, not law |
 | Barolo ≥38 months (18 in wood); Riserva ≥62 months | Full disciplinare not reachable (EU register only holds temporary amendments; the Italian ministry lists documents dynamically) | ⚠️ **still unchecked** |
+
+## Mediterranean whites: verification status
+
+**Checked 2026-11-08** against texts published by the EU (EUR-Lex and the eAmbrosia register). Only rules found there are stated in the lessons.
+
+| Claim in the app | Official text | Result |
+|---|---|---|
+| Dry white Santorini ≥ **85%** Assyrtiko, rest Athiri and Aidani | Santorini PDO, OJ C 143, 31.3.2022 | ✅ (raised from 75% in 2021; the often-quoted 75% is out of date) |
+| Santorini soils almost all sand; phylloxera never arrived; vines on own roots, some ~300 years old | Same document, link to the area | ✅ |
+| Vinsanto from sun-dried grapes, ≥ 51% Assyrtiko | Same document | ✅ |
+| Fiano di Avellino: province of Avellino, Campania; Riserva and Spumante types | Communication C/2025/298 | ✅ (no minimum % stated in the app) |
+| Greco di Tufo: eight villages around Tufo; steep slopes, soils of volcanic origin; Riserva and Spumante types | OJ C 61, 23.2.2021 | ✅ (no minimum % stated in the app) |
+| Vermentino di Gallura is Sardinia's only DOCG | EU register EUGI00000004943 | ✅ (no minimum % stated; the disciplinare itself wasn't reachable) |
 
 ## Champagne: verification status
 
