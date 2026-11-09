@@ -874,3 +874,24 @@ button.aroma:active { transform: scale(.96); }
 /* Tasting: always leave room to scroll the last item clear of the floating tab bar */
 .glass-page.noted { padding-bottom: calc(150px + var(--safe-bot)); }
 .gs-after { margin-top: 2px; }
+
+/* ---------- Practice ---------- */
+.practice { padding: calc(20px + var(--safe-top)) 18px calc(150px + var(--safe-bot)); }
+.practice .tab-head h1 { margin-bottom: 14px; }
+.pr-modes { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.pr-mode { display: flex; flex-direction: column; align-items: flex-start; gap: 4px; padding: 14px; border-radius: 20px; text-align: left; background: #fffaf2; border: 1.5px solid #ece2cf; color: var(--ink); transition: transform .12s; }
+.pr-mode:active { transform: scale(.98); }
+.pr-mode.on { border-color: var(--ink); box-shadow: 0 0 0 2px var(--ink) inset; }
+.pr-mode strong { font-size: 18px; font-weight: 500; font-style: italic; }
+.pr-mode small { font-size: 13px; color: var(--ink-soft); line-height: 1.3; }
+.pr-ic { width: 40px; height: 52px; display: grid; place-items: center; border-radius: 12px; background: color-mix(in srgb, var(--wine) 10%, #fffaf2); margin-bottom: 4px; }
+.pr-ic svg { width: 24px; height: 46px; }
+.pr-book { font-size: 26px; font-style: italic; color: #7c5a8a; }
+.pr-label { margin: 20px 4px 8px; color: var(--ink-soft); }
+.pr-areas { display: flex; flex-wrap: wrap; gap: 8px; }
+.pr-areas .aroma { padding: 8px 14px; font-size: 14.5px; }
+.pr-note { margin: 16px 4px 0; font-size: 14.5px; line-height: 1.45; color: var(--ink-soft); }
+.pr-len button { font-size: 14px; }
+.pr-go { width: 100%; margin-top: 22px; }
+.pr-entry { display: inline-flex; align-items: center; gap: 6px; margin: 6px auto 0; padding: 9px 16px; border-radius: 99px; font-size: 14.5px; background: #fffaf2; border: 1.5px solid #e4d8c2; color: var(--ink); }
+.wl-head .pr-entry, .tab-head .pr-entry { display: flex; width: fit-content; }
