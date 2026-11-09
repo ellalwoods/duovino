@@ -959,20 +959,24 @@ button.aroma:active { transform: scale(.96); }
 .wl-glass svg { width: 36px; height: 72px; }
 .welcome h1 { margin: 0; font-size: 40px; font-weight: 500; font-style: italic; font-variation-settings: 'SOFT' 100, 'WONK' 1; }
 .w-sub { margin: 0 0 6px; font-size: 16.5px; line-height: 1.4; color: var(--ink-soft); }
-.w-cards { display: grid; gap: 10px; }
-.w-card { display: flex; flex-direction: column; gap: 3px; padding: 18px; border-radius: 20px; text-align: left; background: #fffaf2; border: 1px solid #ece2cf; color: var(--ink); box-shadow: 0 8px 22px -16px rgba(60,30,20,.35); }
-.w-card strong { font-size: 19px; font-weight: 500; }
-.w-card small { font-size: 14px; color: var(--ink-soft); }
 .w-input { width: 100%; padding: 15px 16px; border-radius: 16px; border: 1.5px solid #e4d8c2; background: #fffaf2; font: inherit; font-size: 18px; color: var(--ink); }
 .w-input:focus { outline: none; border-color: var(--ink); }
-.w-code { display: flex; flex-direction: column; align-items: flex-start; gap: 4px; padding: 16px; border-radius: 18px; background: #f6e7e2; }
-.w-code .mono { color: var(--ink-soft); }
-.w-code strong { font-family: var(--mono); font-size: 22px; font-weight: 500; letter-spacing: .02em; }
-.w-code .link-btn { margin: 2px 0 0; }
-.w-note { margin: 0; font-size: 14px; color: var(--ink-soft); }
+.w-step { margin: 8px 0 -2px; color: var(--ink-soft); }
+.w-wines { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+.w-wine { display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 8px 2px 7px; border-radius: 16px; background: #fffaf2; border: 1.5px solid #ece2cf; color: var(--ink); }
+.w-wine svg { width: 30px; height: 58px; }
+.w-wine span { font-size: 12.5px; }
+.w-places { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.w-place { display: flex; flex-direction: column; align-items: flex-start; gap: 1px; padding: 10px 13px; border-radius: 14px; background: #fffaf2; border: 1.5px solid #ece2cf; color: var(--ink); text-align: left; }
+.w-place strong { font-size: 16px; font-weight: 500; }
+.w-place small { font-size: 12.5px; color: var(--ink-soft); }
+.w-wine.on, .w-place.on { border-color: #a8434e; background: #f6e7e2; box-shadow: 0 0 0 2px #a8434e inset; }
+.welcome .primary:disabled { opacity: .45; }
+.welcome .link-btn { align-self: center; }
+.ci-glass svg { width: 22px; height: 44px; display: block; }
 .w-err { margin: 0; font-size: 14.5px; color: #a8434e; }
 .welcome .primary { width: 100%; }
-.cellar-id { display: flex; justify-content: space-between; align-items: center; gap: 10px; padding: 12px 14px; border-radius: 14px; background: #fffaf2; border: 1px solid #ece2cf; }
+.cellar-id { display: flex; justify-content: flex-start; align-items: center; gap: 10px; padding: 12px 14px; border-radius: 14px; background: #fffaf2; border: 1px solid #ece2cf; }
 .cellar-id div { display: flex; flex-direction: column; gap: 3px; }
 .cellar-id .mono { font-size: 12px; text-transform: none; letter-spacing: .02em; }
 .cellar-id .link-btn { margin: 0; }

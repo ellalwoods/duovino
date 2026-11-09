@@ -69,12 +69,12 @@ To write a unit, give its entry in `syllabus.js` a `lesson` (card kinds: `text`,
 
 ## Cloud cellars (optional)
 
-Each person gets their own cellar, opened with a wine-word code like `velvet-nebbiolo-42`: no email, no password. Progress syncs to Supabase as you go, so it survives clearing Safari or changing phone.
+Each person gets their own cellar, opened by typing their name and tapping a wine and a region (say Ella + Barolo + Rioja): no email, no password, nothing to remember beyond two pictures. It keeps people's progress apart rather than locking anything away. Settings shows your wine and region, and can change them. Progress syncs to Supabase as you go, so it survives clearing Safari or changing phone.
 
 Setup (once):
 1. In the Supabase project, open **SQL Editor**, paste `supabase/duovino.sql`, and run it. It only creates `duovino_`-prefixed objects (one table, two functions) and touches nothing else.
 2. Put the project URL and the **anon public** key in `cloud-config.js`.
 
-How it stays private: codes are never stored, only their SHA-256 hash; the table has row-level security with no policies, so it can't be read or listed; the app can only call `duovino_load` and `duovino_save` for a code it knows. Anyone who knows a code can open that cellar, which is the point: keep your code to yourself.
+How it stays private: the name + wine + region is never stored, only its SHA-256 hash; the table has row-level security with no policies, so it can't be read or listed; the app can only call `duovino_load` and `duovino_save` for a cellar it knows. With 64 wine/region pairs per name it isn't a lock, just a way to keep two people's progress separate.
 
 With `cloud-config.js` left blank, the app works exactly as before, with progress on the device only.
