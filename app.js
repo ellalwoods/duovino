@@ -690,7 +690,7 @@
       <header class="wl-head">
         <nav class="learn-switch seg"><a href="#roots" class="${'list' === 'roots' ? 'on' : ''}">Roots</a><a href="#list" class="${'list' === 'list' ? 'on' : ''}">Grapes & places</a></nav>
         <h1>Grapes & places</h1>
-        ${doneB().length ? `<button class="pr-entry" data-act="go" data-h="#practice">↻ Practice what you've learned</button>` : ''}
+        ${doneB().length ? `<button class="pr-entry" data-act="go" data-h="#practice"><span class="pr-entry-ic">↻</span><span class="pr-entry-txt"><strong>Practice what you\'ve learned</strong><small>Shuffled tastings and rules, any time</small></span><span class="pr-entry-go">›</span></button>` : ''}
         <ol class="steps-row">
           ${step(1, 'Read a label', p1.every(done) ? 'done' : p1Open ? 'now' : 'locked')}
           ${step(2, 'Meet the grapes', coreDone && restOpen ? 'done' : p1.every(done) ? 'now' : 'locked')}
@@ -1175,7 +1175,7 @@
       <header class="tab-head">
         <p class="eyebrow">${entries.length} wine${entries.length === 1 ? '' : 's'}</p>
         <h1>The Cellar</h1>
-        ${entries.length ? `<button class="pr-entry" data-act="prtaste">↻ Blind-taste your cellar</button>` : ''}
+        ${entries.length ? `<button class="pr-entry" data-act="prtaste"><span class="pr-entry-ic">↻</span><span class="pr-entry-txt"><strong>Blind-taste your cellar</strong><small>A shuffled round from your wines</small></span><span class="pr-entry-go">›</span></button>` : ''}
       </header>
       ${entries.length ? `<div class="legend mono"><span class="lg ready">${counts.ready} ready</span><span class="lg corked">${counts.corked} corked</span><span class="lg resting">${counts.resting} resting</span></div>${racks}`
         : `<div class="empty-cellar">${BOTTY}<p>No wines yet.</p><button class="primary narrow" data-act="go" data-h="#list">Find your first</button></div>`}
