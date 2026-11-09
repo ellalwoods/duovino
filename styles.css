@@ -893,5 +893,11 @@ button.aroma:active { transform: scale(.96); }
 .pr-note { margin: 16px 4px 0; font-size: 14.5px; line-height: 1.45; color: var(--ink-soft); }
 .pr-len button { font-size: 14px; }
 .pr-go { width: 100%; margin-top: 22px; }
-.pr-entry { display: inline-flex; align-items: center; gap: 6px; margin: 6px auto 0; padding: 9px 16px; border-radius: 99px; font-size: 14.5px; background: #fffaf2; border: 1.5px solid #e4d8c2; color: var(--ink); }
-.wl-head .pr-entry, .tab-head .pr-entry { display: flex; width: fit-content; }
+.pr-entry { display: flex; align-items: center; gap: 14px; width: 100%; margin: 18px 0 22px; padding: 14px 16px; border-radius: 20px; text-align: left;
+  background: #fffaf2; border: 1px solid #ece2cf; color: var(--ink); box-shadow: 0 8px 22px -16px rgba(60,30,20,.35); transition: transform .12s; }
+.pr-entry:active { transform: scale(.985); }
+.pr-entry-ic { flex: none; width: 40px; height: 40px; display: grid; place-items: center; border-radius: 50%; font-size: 20px; color: #fffaf2; background: var(--wine, #a8434e); }
+.pr-entry-txt { flex: 1; display: flex; flex-direction: column; gap: 2px; }
+.pr-entry-txt strong { font-size: 17px; font-weight: 500; }
+.pr-entry-txt small { font-size: 13.5px; color: var(--ink-soft); }
+.pr-entry-go { flex: none; font-size: 26px; line-height: 1; color: var(--ink-soft); }
