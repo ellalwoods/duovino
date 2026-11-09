@@ -25,7 +25,7 @@
   // Your "passcode" is just your name + a wine + a region you pick. Easy to remember; it only keeps the two of you apart.
   const PICK_WINES = [['champagne', 'Champagne', '#e8d48a', 'flute'], ['sancerre', 'Sancerre', '#eadf9c', 'white'], ['rose', 'Rosé', '#f2a7a0', 'white'], ['barolo', 'Barolo', '#8e2f3a', 'burgundy'],
     ['malbec', 'Malbec', '#4f1530', 'bordeaux'], ['fino', 'Fino', '#e8d590', 'copita'], ['sauternes', 'Sauternes', '#d9a441', 'dessert'], ['port', 'Port', '#6b1d2a', 'dessert']];
-  const PICK_PLACES = [['burgundy', 'Burgundy', 'France'], ['rioja', 'Rioja', 'Spain'], ['tuscany', 'Tuscany', 'Italy'], ['mosel', 'Mosel', 'Germany'],
+  const PICK_PLACES = [['burgundy', 'Burgundy', 'France'], ['bordeaux', 'Bordeaux', 'France'], ['provence', 'Provence', 'France'], ['rioja', 'Rioja', 'Spain'], ['tuscany', 'Tuscany', 'Italy'], ['mosel', 'Mosel', 'Germany'],
     ['douro', 'Douro', 'Portugal'], ['napa', 'Napa', 'USA'], ['barossa', 'Barossa', 'Australia'], ['marlborough', 'Marlborough', 'New Zealand']];
   const pickCode = (name, w, r) => `p:${name.toLowerCase().trim().replace(/\s+/g, ' ')}|${w}|${r}`;
   const pickOf = code => { if (!String(code || '').startsWith('p:')) return null; const [, w, r] = code.slice(2).split('|'); return { w: PICK_WINES.find(x => x[0] === w), r: PICK_PLACES.find(x => x[0] === r) }; };
