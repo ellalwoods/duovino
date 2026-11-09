@@ -934,3 +934,21 @@ button.aroma:active { transform: scale(.96); }
 .rc-actions .cp-row { display: flex; align-items: center; justify-content: center; gap: 10px; }
 .rc-actions .cp-row .cp-badge { width: 34px; height: 34px; }
 .rc-actions { margin-bottom: 14px; }
+
+/* From your cellar: the active tasting inside lessons and cellar reviews */
+.rtaste { display: flex; flex-direction: column; gap: 12px; }
+.rt-head { display: flex; align-items: center; gap: 12px; }
+.rt-head .r-bottle { flex: none; width: 40px; }
+.rt-head .r-bottle .bottle { width: 40px; }
+.rt-ask { margin: 2px 0 0; font-size: 16px; }
+.rt-ask.small { font-size: 15px; margin-top: 4px; color: var(--ink-soft); }
+.taste.compact { gap: 6px; }
+.taste.compact .taste-row { padding: 6px 14px 4px; }
+.taste.compact .trange { height: 32px; }
+.rtaste .aroma { padding: 8px 13px; font-size: 14.5px; }
+.rtaste { text-align: left; }
+.rtaste .rt-head { justify-content: flex-start; padding: 6px 4px; }
+.rtaste .rt-head .r-bottle { width: 34px; height: auto; margin: 0; }
+.rtaste .rt-head .r-bottle svg { width: 34px !important; height: auto !important; }
+.rtaste .rt-head .r-name { margin: 0; text-align: left; font-size: 10.5px; }
+.rtaste .rt-ask { text-align: left; }
