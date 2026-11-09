@@ -1730,14 +1730,13 @@
     P = null; setWine('#a8434e'); W = { mode, wine: '', place: '' };
     const rekey = mode === 'rekey';
     app.innerHTML = `<div class="welcome">
-      <div class="wl-glass">${miniGlass('#a8434e', 'burgundy')}</div>
-      <p class="eyebrow">Duovino</p><h1>${rekey ? 'New wine & region' : 'Who\'s tasting?'}</h1>
-      <p class="w-sub">${rekey ? 'Pick a new wine and region. Use them next time you open your cellar on a phone.' : 'Your name, your wine and your region. Pick the same three on any phone to open your cellar.'}</p>
+      <div class="w-head"><div class="wl-glass">${miniGlass('#a8434e', 'burgundy')}</div><h1>${rekey ? 'New wine & region' : 'Who\'s tasting?'}</h1></div>
+      <p class="w-sub">${rekey ? 'Pick a new pair to open your cellar with next time.' : 'Pick the same three on any phone to open your cellar.'}</p>
       <input class="w-input" id="w-name" placeholder="Your name" autocomplete="off" value="${esc(localStorage.getItem(NAME_KEY) || '')}" ${rekey ? 'disabled' : ''}>
       <p class="w-step mono">YOUR WINE</p>
       <div class="w-wines">${PICK_WINES.map(([id, n, c, k]) => `<button class="w-wine" data-act="w-wine" data-id="${id}">${miniGlass(c, k)}<span>${n}</span></button>`).join('')}</div>
       <p class="w-step mono">YOUR REGION</p>
-      <div class="w-places">${PICK_PLACES.map(([id, n, c]) => `<button class="w-place" data-act="w-place" data-id="${id}"><strong>${n}</strong><small>${c}</small></button>`).join('')}</div>
+      <div class="w-places">${PICK_PLACES.map(([id, n, c]) => `<button class="w-place" data-act="w-place" data-id="${id}"><strong>${n}</strong><small>${c === 'New Zealand' ? 'NZ' : c}</small></button>`).join('')}</div>
       ${msg ? `<p class="w-err">${msg}</p>` : ''}
       <button class="primary" data-act="w-go" disabled>${rekey ? 'Save' : 'Open my cellar'}</button>
       ${rekey ? '<button class="link-btn" data-act="w-cancel">Cancel</button>' : ''}
