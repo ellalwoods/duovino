@@ -291,7 +291,8 @@
     </svg>`;
   }
 
-  const BOTTY = `<svg class="botty" viewBox="0 0 64 64" aria-hidden="true">
+  /* Botty, and the things you can dress him in */
+  const BOTTY_BASE = `
     <circle cx="32" cy="38" r="20" fill="#d9a441"/><circle cx="25" cy="31" r="6" fill="#f1cf7a" opacity=".6"/>
     <path d="M20 46 q4 3 6 0 M42 44 q3 2 4 -1" stroke="#b07c25" stroke-width="1.2" fill="none"/>
     <g fill="#b9b3a8"><circle cx="24" cy="20" r="5"/><circle cx="31" cy="16" r="6"/><circle cx="39" cy="18" r="5"/><circle cx="44" cy="23" r="3.5"/><circle cx="19" cy="25" r="3"/></g>
@@ -299,7 +300,32 @@
     <circle cx="26" cy="37" r="2.4" fill="#2a1a1f"/><circle cx="38" cy="37" r="2.4" fill="#2a1a1f"/>
     <circle cx="26.8" cy="36.2" r=".8" fill="#fff"/><circle cx="38.8" cy="36.2" r=".8" fill="#fff"/>
     <path class="mouth" d="M27 44 q5 4 10 0" stroke="#2a1a1f" stroke-width="1.8" fill="none" stroke-linecap="round"/>
-  </svg>`;
+  `;
+  const WARDROBE = {
+    hat: [
+      ['beret', 'Beret', `<g transform="rotate(-12 31 14)"><ellipse cx="31" cy="15" rx="14" ry="5.5" fill="#a8434e"/><circle cx="31" cy="9.5" r="1.8" fill="#a8434e"/></g>`],
+      ['straw', 'Straw hat', `<ellipse cx="32" cy="19" rx="19" ry="4" fill="#e3c27a" stroke="#c9a253" stroke-width=".6"/><path d="M23 19 V11 Q23 7 32 7 Q41 7 41 11 V19 Z" fill="#e3c27a" stroke="#c9a253" stroke-width=".6"/><rect x="23" y="14.5" width="18" height="3" fill="#a8434e"/>`],
+      ['party', 'Party hat', `<path d="M23 20 L32 2.5 L41 20 Z" fill="#7c5a8a"/><path d="M27.5 11.5 L36.5 11.5 M25.5 16 L38.5 16" stroke="#f0c76a" stroke-width="1.6"/><circle cx="32" cy="2.8" r="2.4" fill="#f0c76a"/>`],
+      ['tophat', 'Top hat', `<rect x="17" y="16.5" width="30" height="3.2" rx="1.6" fill="#2a1a1f"/><rect x="23" y="2" width="18" height="15" rx="1.5" fill="#2a1a1f"/><rect x="23" y="12.5" width="18" height="3" fill="#a8434e"/>`],
+      ['wreath', 'Vine wreath', `<g fill="#7c9a4e">${[[18, 22, -40], [22, 16, -25], [28, 12, -8], [36, 12, 8], [42, 16, 25], [46, 22, 40]].map(([x, y, r]) => `<ellipse cx="${x}" cy="${y}" rx="4.6" ry="2.6" transform="rotate(${r} ${x} ${y})"/>`).join('')}</g><g fill="#6b2a4a">${[[31, 10], [34, 10], [32.5, 12.6], [25, 13.5], [39.5, 13.5]].map(([x, y]) => `<circle cx="${x}" cy="${y}" r="1.7"/>`).join('')}</g>`, 'cellar10', 'Have 10 wines in your cellar'],
+      ['crown', 'Crown', `<path d="M20 20 L21.5 7 L27 13 L32 3.5 L37 13 L42.5 7 L44 20 Z" fill="#e0b23c" stroke="#b07c25" stroke-width=".8" stroke-linejoin="round"/><circle cx="32" cy="14.5" r="1.8" fill="#a8434e"/><circle cx="25.5" cy="16" r="1.2" fill="#7c9a4e"/><circle cx="38.5" cy="16" r="1.2" fill="#7c9a4e"/>`, 'cp3', 'Pass 3 checkpoints'],
+    ],
+    eyes: [
+      ['specs', 'Round glasses', `<g fill="none" stroke="#2a1a1f" stroke-width="1.2"><circle cx="26" cy="37" r="4.6"/><circle cx="38" cy="37" r="4.6"/><path d="M30.6 36.6 Q32 35.4 33.4 36.6 M21.4 36 L14 34 M42.6 36 L50 34"/></g>`],
+      ['shades', 'Sunglasses', `<g fill="#2a1a1f"><rect x="20.5" y="33.5" width="11" height="7" rx="3"/><rect x="32.5" y="33.5" width="11" height="7" rx="3"/></g><path d="M31.5 35.5 H32.5 M20.5 35 L13.5 33.5 M43.5 35 L50.5 33.5" stroke="#2a1a1f" stroke-width="1.2"/><path d="M22.5 35 L25 35" stroke="#fff" stroke-width=".9" opacity=".7"/>`],
+      ['monocle', 'Monocle', `<circle cx="38" cy="37" r="4.8" fill="#fff" fill-opacity=".18" stroke="#c9a24a" stroke-width="1.3"/><path d="M42.4 39 Q46 46 44 52" stroke="#c9a24a" stroke-width=".8" fill="none"/>`, 'days7', 'Learn on 7 different days'],
+    ],
+    neck: [
+      ['bowtie', 'Bow tie', `<path d="M32 53 L24.5 49 L24.5 57 Z M32 53 L39.5 49 L39.5 57 Z" fill="#a8434e"/><circle cx="32" cy="53" r="2" fill="#7d2a35"/>`],
+      ['scarf', 'Scarf', `<path d="M14.5 49 Q32 57 49.5 49 L50 53.5 Q32 61.5 14 53.5 Z" fill="#4f7a8f"/><path d="M41 54 L45 63 L49 61 L44.5 53" fill="#4f7a8f"/><path d="M42.5 58 L46.5 56.5" stroke="#f0e6d2" stroke-width=".8"/>`],
+      ['tastevin', 'Tastevin', `<path d="M18 43 Q24 52 32 53 Q40 52 46 43" stroke="#a8434e" stroke-width="1" fill="none"/><circle cx="32" cy="55.5" r="4.2" fill="#d5d9dc" stroke="#9aa1a6" stroke-width=".7"/><circle cx="32" cy="55.5" r="1.6" fill="none" stroke="#9aa1a6" stroke-width=".5"/>`, 'cp1', 'Pass a checkpoint'],
+    ],
+  };
+  const SLOT_NAMES = { hat: 'Hats', eyes: 'Eyes', neck: 'Neck' };
+  const wearable = need => !need ? true : need === 'cellar10' ? Object.keys(S.cellar).length >= 10 : need === 'days7' ? Object.keys(S.days).length >= 7
+    : need === 'cp1' ? Object.keys(S.checkpoints || {}).length >= 1 : need === 'cp3' ? Object.keys(S.checkpoints || {}).length >= 3 : false;
+  const outfit = (o = S.botty || {}) => ['neck', 'eyes', 'hat'].map(slot => { const it = WARDROBE[slot].find(x => x[0] === o[slot]); return it && wearable(it[3]) ? it[2] : ''; }).join('');
+  const botty = (o, cls = '') => `<svg class="botty ${cls}" viewBox="0 0 64 64" aria-hidden="true">${BOTTY_BASE}${outfit(o)}</svg>`;
 
   function vineSVG(stage) {
     const green = '#5f7d3a', leafCols = { fall: ['#d39a2d', '#b9502c', '#e0b84b', '#8d3a2a'] };
@@ -612,6 +638,38 @@
   }
 
   /* ---------- JOURNEY: the stain map, a few stains of numbers, and postcards ---------- */
+  /* ---------- profile: who you are, and Botty's wardrobe ---------- */
+  function profile() {
+    setWine('#a8434e');
+    const name = (cloudOn && localStorage.getItem(NAME_KEY)) || S.name || '';
+    const pk = cloudOn && myCode() ? pickOf(myCode()) : null;
+    const ks = Object.values(S.cellar).map(knowPct).filter(k => k != null);
+    const o = S.botty || {};
+    const scroll = app.querySelector('.tabview.profile')?.scrollTop || 0;
+    app.innerHTML = `<div class="tabview profile">
+      <header class="pf-head"><button class="icon-btn" data-act="go" data-h="#journey" aria-label="Back">${backIcon()}</button><span class="mono">Profile</span><span class="pf-gap"></span></header>
+      <div class="pf-hero"><div class="pf-botty">${botty(o, 'big')}</div>
+        ${cloudOn ? `<h1>${esc(name || 'You')}</h1>` : `<input class="pf-name" id="pf-name" placeholder="Your name" value="${esc(name)}" autocomplete="off">`}
+        ${pk ? `<div class="pf-login"><span class="pf-chip">${miniGlass(pk.w[2], pk.w[3])}<span><small class="mono">Wine</small>${pk.w[1]}</span></span><span class="pf-chip"><span><small class="mono">Region</small>${pk.r[1]}</span><small class="pf-country">${pk.r[2]}</small></span></div>` : ''}
+      </div>
+      <div class="pf-stats">
+        <div><b>${Object.keys(S.days).length}</b><span>days</span></div><div><b>${Object.keys(S.cellar).length}</b><span>wines</span></div>
+        <div><b>${ks.length ? Math.round(ks.reduce((a, b) => a + b, 0) / ks.length) + '%' : '–'}</b><span>known</span></div><div><b>${Object.keys(S.checkpoints || {}).length}</b><span>checkpoints</span></div>
+      </div>
+      <h2 class="j-h">Dress Botty</h2>
+      ${Object.keys(WARDROBE).map(slot => `<p class="pf-slot mono">${SLOT_NAMES[slot]}</p>
+        <div class="pf-items">
+          <button class="pf-item ${!o[slot] ? 'on' : ''}" data-act="dress" data-slot="${slot}" data-v=""><span class="pf-none">—</span><small>None</small></button>
+          ${WARDROBE[slot].map(([id, label, , need, hint]) => { const ok = wearable(need); return `<button class="pf-item ${o[slot] === id ? 'on' : ''} ${ok ? '' : 'locked'}" data-act="dress" data-slot="${slot}" data-v="${id}" ${ok ? '' : `data-hint="${esc(hint)}"`}>
+            ${botty({ [slot]: ok ? id : '' }, 'mini')}${ok ? '' : '<i class="pf-lock">🔒</i>'}<small>${label}</small></button>`; }).join('')}
+        </div>`).join('')}
+      <p class="pf-hint mono" hidden></p>
+      ${pk ? `<div class="seg pf-acts"><button data-act="w-rekey">Change wine & region</button></div>` : ''}
+    </div>${tabbar('journey')}`;
+    app.querySelector('.tabview.profile').scrollTop = scroll;
+    const f = app.querySelector('#pf-name');
+    if (f) f.addEventListener('change', () => { S.name = f.value.trim(); save(); });
+  }
   function journey() {
     const view = S.mapView || 'europe';
     const nextB = nextUnit('B');
@@ -628,7 +686,7 @@
     const card = (id, name, art, open) => `<button class="pcard ${open ? '' : 'locked'} ${cur === id ? 'sel' : ''}" ${open ? `data-act="setview" data-v="${id}"` : 'disabled'} aria-label="${name}">
       <span class="pcard-art">${open ? art : '<i>?</i>'}</span><span class="pcard-name">${name}</span></button>`;
     app.innerHTML = `<div class="tabview journey">
-      <header class="j-head"><h1>Journey</h1></header>
+      <header class="j-head"><h1>Journey</h1><button class="icon-btn j-profile" data-act="go" data-h="#profile" aria-label="Your profile">${profileIcon()}</button></header>
       <div class="j-switch seg"><button class="${view === 'europe' ? 'on' : ''}" data-act="mapview" data-v="europe">Europe</button><button class="${view === 'world' ? 'on' : ''}" data-act="mapview" data-v="world">World</button></div>
       <div class="j-map">${D.scenes.map(view, spots)}</div>
       <div class="stats">${stat(Object.keys(S.days).length, 'days', '#a8434e')}${stat(Object.keys(S.cellar).length, 'wines', '#c4842c')}${stat(regionsDone, 'regions', '#7c9a4e')}</div>
@@ -796,6 +854,8 @@
   }
 
   const gearIcon = () => `<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="3.2"/><path d="M12 2.5v3M12 18.5v3M2.5 12h3M18.5 12h3M5.3 5.3l2.1 2.1M16.6 16.6l2.1 2.1M5.3 18.7l2.1-2.1M16.6 7.4l2.1-2.1"/></svg>`;
+  const backIcon = () => `<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg>`;
+  const profileIcon = () => `<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><circle cx="12" cy="9" r="3.6"/><path d="M5 20c1.2-3.6 4-5.4 7-5.4s5.8 1.8 7 5.4"/></svg>`;
   const closeIcon = () => `<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>`;
 
   /* ---------- player: unit (lesson → tasting) ---------- */
@@ -908,7 +968,7 @@
         ${glassFill(1, P.wine)}
       </header>
       <div class="il-body">
-        ${BOTTY}
+        ${botty()}
         <p class="eyebrow">Lesson poured</p>
         <h2>Now, taste it.</h2>
         <p>${n} questions on what you just learned${rc ? ', plus one wine from your cellar to taste from memory' : ''}. You'll sort, place things on scales, put things in order and pick answers.</p>
@@ -1206,7 +1266,7 @@
     const sheet = document.createElement('div');
     sheet.className = `sheet ${ok ? 'ok' : 'bad'}`;
     sheet.innerHTML = `<div class="sheet-in">
-      <div class="sheet-head">${BOTTY}<div><h3>${ok ? pick(D.botty.good) : pick(D.botty.bad)}</h3>${extra}</div></div>
+      <div class="sheet-head">${botty()}<div><h3>${ok ? pick(D.botty.good) : pick(D.botty.bad)}</h3>${extra}</div></div>
       ${correction ? `<p class="correction">${correction}</p>` : ''}
       <p>${q.explain}</p>
       <button class="primary" data-act="next">${P.i + 1 < P.questions.length ? 'Next' : 'Finish'}</button>
@@ -1289,7 +1349,7 @@
         ${entries.length ? `<button class="pr-entry" data-act="prtaste"><span class="pr-entry-ic">↻</span><span class="pr-entry-txt"><strong>Blind-taste your cellar</strong><small>A shuffled round from your wines</small></span><span class="pr-entry-go">›</span></button>` : ''}
       </header>
       ${entries.length ? `<div class="legend mono"><span class="lg ready">${counts.ready} ready</span><span class="lg corked">${counts.corked} corked</span><span class="lg-know">${(() => { const ks = entries.map(([, e]) => knowPct(e)).filter(k => k != null); return ks.length ? `${Math.round(ks.reduce((a, b) => a + b, 0) / ks.length)}% known` : ''; })()}</span></div>${racks}`
-        : `<div class="empty-cellar">${BOTTY}<p>No wines yet.</p><button class="primary narrow" data-act="go" data-h="#list">Find your first</button></div>`}
+        : `<div class="empty-cellar">${botty()}<p>No wines yet.</p><button class="primary narrow" data-act="go" data-h="#list">Find your first</button></div>`}
     </div>${tabbar('cellar')}`;
   }
   // How well you know a wine: your recent tasting accuracy, fading a little if it's been left too long (corked).
@@ -1324,7 +1384,7 @@
   const closeModal = () => {
     overlay.innerHTML = '';
     const h = location.hash.slice(1) || 'today';
-    if (h === 'cellar') cellar(); else if (h === 'roots') roots(false); else if (h === 'list') wineList(false); else if (h === 'journey') journey(); else if (h === 'glass') glassPage(); else if (h === 'today' || h === 'home') home();
+    if (h === 'cellar') cellar(); else if (h === 'roots') roots(false); else if (h === 'list') wineList(false); else if (h === 'journey') journey(); else if (h === 'profile') profile(); else if (h === 'glass') glassPage(); else if (h === 'today' || h === 'home') home();
   };
   function ageBottle(id, ok, score = ok ? 1 : 0) {
     const e = S.cellar[id];
@@ -1423,7 +1483,7 @@
   function ask(title, text, yes, fn) {
     askFn = fn;
     overlay.innerHTML = `<div class="modal" role="dialog" aria-modal="true"><div class="modal-card ask">
-      ${BOTTY}<h2>${title}</h2><p class="review-q">${text}</p>
+      ${botty()}<h2>${title}</h2><p class="review-q">${text}</p>
       <div class="judge"><button class="opt" data-act="close-ask">Stay</button><button class="primary" data-act="ask-yes">${yes}</button></div>
     </div></div>`;
   }
@@ -1513,6 +1573,9 @@
       case 'close-ask': askFn = null; overlay.innerHTML = ''; break;
       case 'ask-yes': { const fn = askFn; askFn = null; overlay.innerHTML = ''; fn && fn(); break; }
       case 'settings': settings(); break;
+      case 'dress': {
+        if (b.dataset.hint) { const h = app.querySelector('.pf-hint'); h.textContent = `🔒 ${b.dataset.hint} to unlock this`; h.hidden = false; b.after(h); buzz(5); break; }
+        S.botty = { ...(S.botty || {}), [b.dataset.slot]: b.dataset.v }; save(); buzz(8); profile(); break; }
       case 'hemi': S.settings.hemi = b.dataset.h; save(); home(); settings(); break;
       case 'drafts': S.settings.drafts = b.dataset.v === 'true'; save(); location.reload(); break;
       case 'sound': S.settings.sound = b.dataset.v === 'true'; save(); settings(); if (S.settings.sound) clink(); break;
@@ -1878,6 +1941,7 @@
     else if (h === 'cellar') { lastTab = 'cellar'; cellar(); }
     else if (h === 'glass') { lastTab = 'glass'; glassPage(); }
     else if (h === 'journey') { lastTab = 'journey'; journey(); }
+    else if (h === 'profile') { lastTab = 'journey'; profile(); }
     else if (h === 'practice') { lastTab = 'practice'; practicePage(); }
     else { lastTab = 'home'; home(); }
   }
