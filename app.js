@@ -690,6 +690,7 @@
       <header class="wl-head">
         <nav class="learn-switch seg"><a href="#roots" class="${'list' === 'roots' ? 'on' : ''}">Roots</a><a href="#list" class="${'list' === 'list' ? 'on' : ''}">Grapes & places</a></nav>
         <h1>Grapes & places</h1>
+        ${doneB().length ? `<button class="pr-entry" data-act="go" data-h="#practice">↻ Practice what you've learned</button>` : ''}
         <ol class="steps-row">
           ${step(1, 'Read a label', p1.every(done) ? 'done' : p1Open ? 'now' : 'locked')}
           ${step(2, 'Meet the grapes', coreDone && restOpen ? 'done' : p1.every(done) ? 'now' : 'locked')}
@@ -1111,6 +1112,7 @@
   }
 
   function finish() {
+    if (P.kind === 'practice') return finishPractice();
     const n = scoredCount(), pct = Math.round((P.correct / n) * 100), now = Date.now();
     S.days[todayKey()] = (S.days[todayKey()] || 0) + 1;
     const rec = S.units[P.id], first = !rec;
@@ -1173,6 +1175,7 @@
       <header class="tab-head">
         <p class="eyebrow">${entries.length} wine${entries.length === 1 ? '' : 's'}</p>
         <h1>The Cellar</h1>
+        ${entries.length ? `<button class="pr-entry" data-act="prtaste">↻ Blind-taste your cellar</button>` : ''}
       </header>
       ${entries.length ? `<div class="legend mono"><span class="lg ready">${counts.ready} ready</span><span class="lg corked">${counts.corked} corked</span><span class="lg resting">${counts.resting} resting</span></div>${racks}`
         : `<div class="empty-cellar">${BOTTY}<p>No wines yet.</p><button class="primary narrow" data-act="go" data-h="#list">Find your first</button></div>`}
@@ -1324,7 +1327,7 @@
       case 'quit': {
         const back = '#' + lastTab;
         const started = P && ((P.phase === 'lesson' && P.card > 0) || P.phase === 'interlude' || (P.phase === 'practice' && P.i > 0));
-        if (started) ask('Leave this unit?', 'Your progress in it won\'t be saved.', 'Leave', () => go(back)); else go(back);
+        if (started) ask(P.kind === 'practice' ? 'Leave this practice?' : 'Leave this unit?', P.kind === 'practice' ? 'This round won\'t be counted.' : 'Your progress in it won\'t be saved.', 'Leave', () => go(back)); else go(back);
         break;
       }
       case 'replay': go(`#unit-${P.id}`); break;
@@ -1387,6 +1390,11 @@
       case 'drafts': S.settings.drafts = b.dataset.v === 'true'; save(); location.reload(); break;
       case 'sound': S.settings.sound = b.dataset.v === 'true'; save(); settings(); if (S.settings.sound) clink(); break;
       case 'glass-open': clink(); glassPage('name'); break;
+      case 'prmode': S.practice.mode = b.dataset.v; save(); practicePage(); break;
+      case 'prarea': S.practice.area = b.dataset.v; save(); practicePage(); break;
+      case 'prlen': S.practice.n = +b.dataset.v; save(); practicePage(); break;
+      case 'prstart': startPractice(); break;
+      case 'prtaste': S.practice = { ...(S.practice || { area: 'all', n: 10 }), mode: 'taste' }; save(); go('#practice'); break;
       case 'glass-pour': glassPage('taste'); break;
       case 'glass-notes': glassPage('notes'); break;
       case 'gnote': { const n = b.dataset.n; GT.picks.has(n) ? GT.picks.delete(n) : GT.picks.add(n); b.classList.toggle('on'); buzz(5);
@@ -1410,6 +1418,120 @@
   });
 
   let lastTab = 'home';
+  /* ---------- PRACTICE: unlimited shuffles of what you've learned in Track B ---------- */
+  // Two kinds: blind-tasting questions generated from the wines in your cellar, and the real questions
+  // from the Track B lessons you've finished (filterable to appellation rules or an area). Never touches unit progress.
+  const COLOUR_WORD = () => ({ [D.C.lemonGreen]: 'Pale lemon, green tints', [D.C.lemon]: 'Lemon', [D.C.gold]: 'Gold', [D.C.amber]: 'Amber',
+    [D.C.pink]: 'Pink', [D.C.salmon]: 'Pale salmon', [D.C.purple]: 'Deep purple', [D.C.ruby]: 'Ruby', [D.C.garnet]: 'Garnet', [D.C.tawny]: 'Tawny' });
+  const rangeWord = (v, L) => { const [a, b] = Array.isArray(v) ? v : [v, v]; return a === b ? L[a] : `${L[a]} to ${L[b]}`; };
+  const learnedWines = () => Object.keys(S.cellar).filter(id => D.wines[id]);
+  const doneB = () => UNITS.filter(r => r.track === 'B' && playable(r) && S.units[r.u.id]);
+  function practiceAreas() {
+    const B = doneB(), areas = [['all', 'Everything', B]];
+    const rules = B.filter(r => (r.u.sources && r.u.sources.length) || /^b-fr-ch/.test(r.u.id));
+    if (rules.length) areas.push(['rules', 'Appellation rules', rules]);
+    const labels = B.filter(r => r.part === 1); if (labels.length) areas.push(['labels', 'Reading labels', labels]);
+    const grapes = B.filter(r => r.part === 2); if (grapes.length) areas.push(['grapes', 'Grapes', grapes]);
+    const byCountry = {};
+    B.filter(r => r.part === 3 && r.country).forEach(r => { const k = /^b-fr-ch/.test(r.u.id) ? 'Champagne' : r.country.name; (byCountry[k] = byCountry[k] || []).push(r); });
+    Object.entries(byCountry).forEach(([k, rs]) => areas.push(['c:' + k, k, rs]));
+    return areas;
+  }
+  function wineQuestion(id, pool) {
+    const w = D.wines[id], cat = wineCat(w);
+    const dist = o => TASTE_DIMS.reduce((sum, [k]) => sum + Math.abs((midOf(o.profile[k]) ?? 0) - (midOf(w.profile[k]) ?? 0)), 0);
+    const nearest = (ids, n) => ids.filter(o => o !== id).sort((a, b) => (wineCat(D.wines[b]) === cat) - (wineCat(D.wines[a]) === cat) || dist(D.wines[a]) - dist(D.wines[b])).slice(0, n);
+    const others = nearest(pool.length >= 4 ? pool : Object.keys(D.wines), 3).length === 3 ? nearest(pool.length >= 4 ? pool : Object.keys(D.wines), 3) : nearest(Object.keys(D.wines), 3);
+    const dims = TASTE_DIMS.filter(([k]) => w.profile[k] != null);
+    const ao = aromaOptions(id);
+    const kinds = ['blind', 'blind', 'scale', 'aroma'];
+    if (w.kind !== 'Grape' && w.kind !== 'Style') kinds.push('grape');
+    const kind = pick(kinds);
+    const explain = `${w.name}: ${w.grapes}, from ${w.origin.split(' · ')[0]}. ${dims.map(([k, n, L]) => `${n} ${rangeWord(w.profile[k], L).toLowerCase()}`).join(', ')}.`;
+    if (kind === 'blind') {
+      const opts = shuffle([id, ...others]);
+      return { type: 'blind', wines: [id], q: 'Which wine is in the glass?', explain,
+        clues: [
+          { stage: 'Look', text: `${COLOUR_WORD()[w.wine] || 'Clear'}${w.shape === 'champagne' ? ', with fine bubbles' : ''}.` },
+          { stage: 'Smell', text: `${ao.truths.slice(0, 3).join(', ')}.` },
+          { stage: 'Sip', text: `${dims.map(([k, n, L]) => k === 'sweetness' ? rangeWord(w.profile[k], L) : `${rangeWord(w.profile[k], L).toLowerCase()} ${n.toLowerCase()}`).join(', ')}.` },
+        ],
+        options: opts.map(o => D.wines[o].name), answer: opts.indexOf(id) };
+    }
+    if (kind === 'scale') {
+      const [k, n, L] = pick(dims.filter(([k]) => !(k === 'sweetness' && midOf(w.profile[k]) === 1 && Math.random() < .6)));
+      const v = w.profile[k], [a, b] = Array.isArray(v) ? v : [v, v];
+      return { type: 'slider', wines: [id], q: `${w.name}: where does its ${n.toLowerCase()} sit?`, low: L[1], high: L[5],
+        answer: ((a + b) / 2 - 1) / 4, tol: Math.max(.14, (b - a) / 8 + .11), explain: `${n}: ${rangeWord(v, L)}. ${explain}` };
+    }
+    if (kind === 'aroma') {
+      const decoys = shuffle(ao.options.filter(o => !ao.truths.includes(o))).slice(0, 3);
+      if (decoys.length === 3 && ao.truths.length) return { type: 'choice', wines: [id], q: `Which aroma is typical of ${w.name}?`,
+        options: [pick(ao.truths), ...decoys], answer: 0, explain: `Typical: ${ao.truths.join(', ')}. ${explain}` };
+    }
+    const grapes = [...new Set(Object.values(D.wines).filter(o => o !== w && wineCat(o) === cat && o.grapes !== w.grapes).map(o => o.grapes))];
+    return { type: 'choice', wines: [id], q: `What is ${w.name} made from?`, options: [w.grapes, ...shuffle(grapes).slice(0, 3)], answer: 0, explain };
+  }
+  function practiceQuestions() {
+    const n = S.practice.n;
+    if (S.practice.mode === 'taste') {
+      const pool = learnedWines(); if (!pool.length) return [];
+      // favour wines that are due or corked, but keep it random
+      const weighted = pool.flatMap(id => { const e = S.cellar[id], st = bottleState(e); return st === 'corked' ? [id, id, id] : st === 'ready' ? [id, id] : [id]; });
+      const qs = []; let guard = 0;
+      while (qs.length < n && guard++ < n * 6) { const id = pick(weighted); if (qs.filter(q => q.wines[0] === id).length < 2) qs.push(wineQuestion(id, pool)); }
+      return qs;
+    }
+    const area = practiceAreas().find(a => a[0] === S.practice.area) || practiceAreas()[0];
+    const all = area[2].flatMap(r => r.u.questions.filter(q => q.type !== 'recall').map(q => ({ ...q, from: r.u.title })));
+    return shuffle(all).slice(0, n);
+  }
+  function practicePage() {
+    S.practice = S.practice || { mode: 'taste', area: 'all', n: 10 };
+    setWine('#7c5a8a');
+    const wines = learnedWines(), areas = practiceAreas(), cur = S.practice;
+    if (!areas.find(a => a[0] === cur.area)) cur.area = 'all';
+    const qCount = (areas.find(a => a[0] === cur.area) || [, , []])[2].reduce((t, r) => t + r.u.questions.length, 0);
+    const ready = cur.mode === 'taste' ? wines.length > 0 : qCount > 0;
+    app.innerHTML = `<div class="tabview practice">
+      <header class="tab-head"><p class="eyebrow">Any time · as often as you like</p><h1>Practice</h1></header>
+      <div class="pr-modes">
+        <button class="pr-mode ${cur.mode === 'taste' ? 'on' : ''}" data-act="prmode" data-v="taste"><span class="pr-ic">${miniGlass('#a8434e', 'bordeaux')}</span>
+          <strong>Blind tasting</strong><small>${wines.length ? `${wines.length} wine${wines.length === 1 ? '' : 's'} from your cellar` : 'Learn a wine first'}</small></button>
+        <button class="pr-mode ${cur.mode === 'rules' ? 'on' : ''}" data-act="prmode" data-v="rules"><span class="pr-ic pr-book">§</span>
+          <strong>Rules & labels</strong><small>${doneB().length ? `From ${doneB().length} Track B lesson${doneB().length === 1 ? '' : 's'}` : 'Finish a Track B lesson first'}</small></button>
+      </div>
+      ${cur.mode === 'rules' && areas[0][2].length ? `<p class="pr-label mono">Focus</p><div class="pr-areas">${areas.map(([k, t]) => `<button class="aroma ${cur.area === k ? 'on' : ''}" data-act="prarea" data-v="${esc(k)}">${t}</button>`).join('')}</div>` : ''}
+      <p class="pr-label mono">Length</p>
+      <div class="seg pr-len">${[5, 10, 20].map(n => `<button class="${cur.n === n ? 'on' : ''}" data-act="prlen" data-v="${n}">${n} questions</button>`).join('')}</div>
+      <button class="primary pr-go" data-act="prstart" ${ready ? '' : 'disabled'}>Shuffle & start</button>
+      ${cur.mode === 'taste' ? `<p class="pr-note">Identify wines from their clues, place them on a scale, pick their aromas. Wines you miss come back sooner in your cellar.</p>` : `<p class="pr-note">Shuffled questions from the lessons you've finished. Appellation rules covers the lessons checked against official texts.</p>`}
+    </div>${tabbar('list')}`;
+  }
+  function startPractice() {
+    const qs = practiceQuestions();
+    if (!qs.length) { practicePage(); return; }
+    const taste = S.practice.mode === 'taste';
+    P = { kind: 'practice', id: 'practice', title: taste ? 'Blind tasting' : 'Rules & labels', tag: 'Practice', wine: taste ? '#a8434e' : '#7c5a8a',
+      lesson: [], questions: qs, card: 0, i: 0, correct: 0, results: [], phase: 'practice' };
+    setWine(P.wine); renderQ();
+  }
+  function finishPractice() {
+    const n = scoredCount(), pct = Math.round((P.correct / n) * 100), now = Date.now();
+    S.days[todayKey()] = (S.days[todayKey()] || 0) + 1;
+    S.practice.rounds = (S.practice.rounds || 0) + 1;
+    const missed = [...new Set(P.results.filter(r => !r.ok).flatMap(r => r.wines).filter(id => S.cellar[id]))];
+    missed.forEach(id => { S.cellar[id].due = Math.min(S.cellar[id].due, now); });
+    save(); pop(); buzz([20, 60, 20]);
+    app.innerHTML = `<div class="player result" style="--fw:${P.wine}"><div class="tint"></div><div class="res">
+      <p class="eyebrow">Practice · round ${S.practice.rounds}</p><h2>${P.title}</h2>
+      <div class="big-ring">${ring(pct, P.wine, 200)}<div class="big-num"><strong>${pct}%</strong><span class="mono">${P.correct} of ${n} correct</span></div></div>
+      ${missed.length ? `<div class="laid"><p class="mono">Coming back sooner in your cellar</p><p class="laid-names">${missed.map(id => D.wines[id].name).join(' · ')}</p></div>` : ''}
+      <button class="primary" data-act="prstart">Another round</button>
+      <button class="link-btn" data-act="go" data-h="#practice">Change practice</button>
+    </div></div>`;
+  }
+
   function route() {
     overlay.innerHTML = '';
     window.scrollTo(0, 0);
@@ -1420,6 +1542,7 @@
     else if (h === 'cellar') { lastTab = 'cellar'; cellar(); }
     else if (h === 'glass') { lastTab = 'glass'; glassPage(); }
     else if (h === 'journey') { lastTab = 'journey'; journey(); }
+    else if (h === 'practice') { lastTab = 'practice'; practicePage(); }
     else { lastTab = 'home'; home(); }
   }
   window.addEventListener('hashchange', route);
