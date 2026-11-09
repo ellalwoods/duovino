@@ -954,24 +954,28 @@ button.aroma:active { transform: scale(.96); }
 .rtaste .rt-ask { text-align: left; }
 
 /* ---------- Who's tasting? ---------- */
-.welcome { min-height: 100dvh; display: flex; flex-direction: column; justify-content: center; gap: 12px; max-width: 440px; margin: 0 auto; padding: calc(30px + var(--safe-top)) 22px calc(30px + var(--safe-bot)); }
-.wl-glass { width: 64px; height: 84px; margin-bottom: 4px; display: grid; place-items: center; border-radius: 20px; background: #f6e7e2; }
-.wl-glass svg { width: 36px; height: 72px; }
-.welcome h1 { margin: 0; font-size: 40px; font-weight: 500; font-style: italic; font-variation-settings: 'SOFT' 100, 'WONK' 1; }
-.w-sub { margin: 0 0 6px; font-size: 16.5px; line-height: 1.4; color: var(--ink-soft); }
-.w-input { width: 100%; padding: 15px 16px; border-radius: 16px; border: 1.5px solid #e4d8c2; background: #fffaf2; font: inherit; font-size: 18px; color: var(--ink); }
+.welcome { height: 100dvh; overflow-y: auto; -webkit-overflow-scrolling: touch; display: flex; flex-direction: column; gap: 9px; max-width: 440px; margin: 0 auto; padding: calc(14px + var(--safe-top)) 18px calc(14px + var(--safe-bot)); }
+.welcome > :first-child { margin-top: auto; }
+.welcome > :last-child { margin-bottom: auto; }
+.w-head { display: flex; align-items: center; gap: 12px; }
+.wl-glass { flex: none; width: 46px; height: 58px; display: grid; place-items: center; border-radius: 15px; background: #f6e7e2; }
+.wl-glass svg { width: 24px; height: 50px; }
+.welcome h1 { margin: 0; font-size: 34px; line-height: 1.05; font-weight: 500; font-style: italic; font-variation-settings: 'SOFT' 100, 'WONK' 1; }
+.w-sub { margin: 0; font-size: 15px; line-height: 1.4; color: var(--ink-soft); }
+.w-input { width: 100%; padding: 12px 15px; border-radius: 16px; border: 1.5px solid #e4d8c2; background: #fffaf2; font: inherit; font-size: 18px; color: var(--ink); }
 .w-input:focus { outline: none; border-color: var(--ink); }
-.w-step { margin: 8px 0 -2px; color: var(--ink-soft); }
-.w-wines { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
-.w-wine { display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 8px 2px 7px; border-radius: 16px; background: #fffaf2; border: 1.5px solid #ece2cf; color: var(--ink); }
-.w-wine svg { width: 30px; height: 58px; }
-.w-wine span { font-size: 12.5px; }
-.w-places { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-.w-place { display: flex; flex-direction: column; align-items: flex-start; gap: 1px; padding: 10px 13px; border-radius: 14px; background: #fffaf2; border: 1.5px solid #ece2cf; color: var(--ink); text-align: left; }
-.w-place strong { font-size: 16px; font-weight: 500; }
-.w-place small { font-size: 12.5px; color: var(--ink-soft); }
+.w-step { margin: 4px 0 -3px; color: var(--ink-soft); }
+.w-wines { display: grid; grid-template-columns: repeat(4, 1fr); gap: 7px; }
+.w-wine { display: flex; flex-direction: column; align-items: center; gap: 1px; padding: 6px 2px 5px; border-radius: 14px; background: #fffaf2; border: 1.5px solid #ece2cf; color: var(--ink); }
+.w-wine svg { width: 22px; height: 42px; }
+.w-wine span { font-size: 12px; }
+.w-places { display: grid; grid-template-columns: 1fr 1fr; gap: 7px; }
+.w-place { display: flex; align-items: baseline; gap: 6px; padding: 9px 12px; border-radius: 13px; white-space: nowrap; overflow: hidden; background: #fffaf2; border: 1.5px solid #ece2cf; color: var(--ink); text-align: left; }
+.w-place strong { font-size: 15px; font-weight: 500; }
+.w-place small { font-size: 11.5px; color: var(--ink-soft); overflow: hidden; text-overflow: ellipsis; }
 .w-wine.on, .w-place.on { border-color: #a8434e; background: #f6e7e2; box-shadow: 0 0 0 2px #a8434e inset; }
 .welcome .primary:disabled { opacity: .45; }
+.welcome .primary { margin-top: 4px; }
 .welcome .link-btn { align-self: center; }
 .ci-glass svg { width: 22px; height: 44px; display: block; }
 .w-err { margin: 0; font-size: 14.5px; color: #a8434e; }
