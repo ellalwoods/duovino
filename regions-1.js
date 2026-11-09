@@ -67,7 +67,7 @@
         explain: 'Lake vs mountains.' },
       { type: 'choice', q: 'Lavaux\'s "three suns" are…', options: ['The sun, the lake\'s reflection, and warm stone walls', 'Three hot months', 'Three valleys', 'Three grapes'], answer: 0,
         explain: 'Every bit of warmth counts.' },
-      { type: 'choice', q: 'Why is Swiss wine hard to find abroad?', options: ['The Swiss drink almost all of it', 'It\'s banned', 'It doesn\'t travel', 'It\'s all sweet'], answer: 0,
+      { type: 'choice', q: 'Why is Swiss wine hard to find abroad?', options: ['Locals drink almost all of it', 'It\'s banned', 'It doesn\'t travel', 'It\'s all sweet'], answer: 0,
         explain: 'Very little is exported.' },
     ]),
 
@@ -273,7 +273,7 @@
         explain: 'From the 1870s.' },
       { type: 'choice', q: 'Why grow vines on high pergolas here?', options: ['Airflow in a humid climate', 'To dodge snow', 'To protect from sun', 'Tradition only'], answer: 0,
         explain: 'Air fights rot.' },
-      { type: 'choice', q: 'Why does a rainy climate suit sparkling wine?', options: ['Sparkling bases want early-picked, high-acid grapes', 'Rain adds bubbles', 'It doesn\'t', 'Rain makes grapes sweeter'], answer: 0,
+      { type: 'choice', q: 'Why does a rainy climate suit sparkling wine?', options: ['Its base wines want early-picked, high-acid grapes', 'Rain adds bubbles', 'It doesn\'t', 'Rain makes grapes sweeter'], answer: 0,
         explain: 'Freshness matters more than ripeness.' },
     ]),
 

@@ -339,7 +339,7 @@
     ], [
       q('choice', 'Margaret River\'s climate is most like…', ['Bordeaux', 'The Mosel', 'Mendoza', 'The Sahara'], 0, 'Maritime and mild.', { wines: ['cabernet'] }),
       q('choice', 'Margaret River is famous for…', ['Cabernet and Chardonnay', 'Fortified Muscat', 'Icewine', 'Riesling only'], 0, 'Plus Sémillon–Sauvignon blends.'),
-      q('choice', 'Which ocean shapes Margaret River?', ['The Indian Ocean', 'The Atlantic', 'The Arctic', 'The Pacific'], 0, 'On three sides.'),
+      q('choice', 'Which ocean shapes Margaret River?', ['The Indian Ocean', 'The Atlantic Ocean', 'The Arctic Ocean', 'The Pacific Ocean'], 0, 'On three sides.'),
     ]),
 
     'au-hunter': R('au-hunter', 'Hunter Valley', 'Semillon', [
@@ -441,7 +441,7 @@
         body: 'North of Cape Town, the Swartland is hot and dry, with old, <b>unirrigated bush vines</b>. From the 2000s, young winemakers here started a "revolution": natural, low-intervention <b>Chenin Blanc</b> and Rhône-style blends.' },
     ], [
       q('choice', 'The Swartland is known for…', ['Old-vine Chenin and Rhône blends', 'Icewine', 'Port', 'Pinot Noir only'], 0, 'The "Swartland revolution".', { wines: ['chenin'] }),
-      q('choice', 'Swartland vines are often…', ['Old, unirrigated bush vines', 'Young and irrigated', 'Trellised high on pergolas', 'Grown under glass'], 0, 'Dry-farmed.'),
+      q('choice', 'Swartland vines are often…', ['Old, unirrigated bush vines', 'Young, irrigated vines', 'Vines trellised high on pergolas', 'Vines grown under glass'], 0, 'Dry-farmed.'),
       q('choice', 'The Swartland\'s climate is…', ['Hot and dry', 'Cool and foggy', 'Alpine', 'Tropical'], 0, 'Tough conditions, intense wines.'),
     ]),
 

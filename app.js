@@ -1675,7 +1675,13 @@
         options: [pick(ao.truths), ...decoys], answer: 0, explain: `Typical: ${ao.truths.join(', ')}. ${explain}` };
     }
     const grapes = [...new Set(Object.values(D.wines).filter(o => o !== w && wineCat(o) === cat && o.grapes !== w.grapes).map(o => o.grapes))];
-    return { type: 'choice', wines: [id], q: `What is ${w.name} made from?`, options: [w.grapes, ...shuffle(grapes).slice(0, 3)], answer: 0, explain };
+    // Don't name the wine if its name gives the grape away ("Marlborough Sauvignon Blanc"): describe it by style and place instead.
+    const gWords = (w.grapes.match(/\p{L}{4,}/gu) || []).map(x => x.toLowerCase());
+    const named = gWords.some(x => w.name.toLowerCase().includes(x));
+    const place = w.origin.split(' · ')[0].replace(/\s*\([^)]*\)/g, '');
+    const styleWord = { Sparkling: 'sparkling wine', Red: 'red', 'Rosé': 'rosé', Sweet: 'sweet wine', White: 'white' }[cat];
+    const q = named ? `A classic ${styleWord} from ${place}. Which grape is it made from?` : `What is ${w.name} made from?`;
+    return { type: 'choice', wines: [id], q, options: [w.grapes, ...shuffle(grapes).slice(0, 3)], answer: 0, explain };
   }
   // A made-up label for a wine, with every word that names it blacked out.
   const RED_STOP = new Set(['valley', 'the', 'and', 'style', 'blend', 'white', 'red', 'rouge', 'old', 'vine', 'non', 'vintage', 'brut', 'grape', 'grapes', 'wine', 'di', 'de', 'des', 'du', 'del', 'la', 'le', 'les', 'from', 'with']);

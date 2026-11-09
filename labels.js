@@ -110,7 +110,7 @@
             options: ['It\'s an error', 'It\'s an IGP from southern France, where grape-named labels are the norm', 'All French wines name the grape', 'Merlot is the name of the village'], answer: 1,
             explain: 'IGP Pays d\'Oc is one of Europe\'s big exceptions. Grape-named labels help it sell alongside New World wines.' },
           { type: 'choice', concept: 'germanlabel', q: '"Wehlener Sonnenuhr" on a German label means…',
-            options: ['A grape variety', 'The Sonnenuhr vineyard in the village of Wehlen', 'A sweetness level', 'The producer\'s family name'], answer: 1,
+            options: ['A grape variety called Wehlener', 'The Sonnenuhr vineyard in the village of Wehlen', 'Sonnenuhr: a sweetness level', 'The Wehlener family\'s estate'], answer: 1,
             explain: 'Village + "-er", then vineyard: Wehlener Sonnenuhr, Piesporter Goldtröpfchen. It\'s like an address.' },
         ],
       },

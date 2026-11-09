@@ -81,7 +81,7 @@
       ] },
     ], [
       q('choice', 'Gavi is made from…', ['Cortese', 'Arneis', 'Moscato', 'Chardonnay'], 0, 'Also called Cortese di Gavi.', { wines: ['gavi'] }),
-      q('choice', '"Gavi di Gavi" means…', ['From the village of Gavi itself', 'Extra sweet', 'Aged 10 years', 'Sparkling'], 0, 'The heart of the zone.'),
+      q('choice', '"Gavi di Gavi" means…', ['From the village of Gavi itself', 'Gavi aged twice as long', 'Aged 10 years', 'Sparkling'], 0, 'The heart of the zone.'),
       q('choice', 'What keeps Gavi fresh?', ['Breezes from nearby Liguria', 'High altitude in the Alps', 'Glaciers', 'Fog from the Po'], 0, 'Close to the sea.'),
     ], ['Gavi DOCG: OJ C 470, 2021']),
 
@@ -190,7 +190,7 @@
     ], [
       q('choice', 'Soave\'s best wines come from…', ['The volcanic Classico hills', 'The flat plain', 'The coast', 'The Alps'], 0, 'Deeper, longer-lived.', { wines: ['soave'] }),
       q('choice', 'How are Soave vines traditionally trained?', ['On the Veronese pergola', 'As bush vines', 'On walls', 'Under glass'], 0, 'High and airy.'),
-      q('choice', 'Soave\'s sweet Recioto is…', ['Sweet, from dried grapes', 'Sparkling', 'Red', 'Fortified'], 0, 'Like Recioto della Valpolicella.'),
+      q('choice', 'Soave\'s sweet Recioto is…', ['Made from dried grapes', 'Sparkling', 'Red', 'Fortified'], 0, 'Like Recioto della Valpolicella.'),
     ], ['Soave DOC: OJ C 72, 2020']),
 
     'it-prosecco': R('it-prosecco', 'Prosecco', 'DOC vs DOCG', [
@@ -365,7 +365,7 @@
         { k: 'Cerasuolo d\'Abruzzo', v: 'A deep cherry-pink rosé from Montepulciano.' },
       ] },
     ], [
-      q('choice', 'Montepulciano d\'Abruzzo is made from…', ['The Montepulciano grape', 'Sangiovese', 'Nebbiolo', 'Primitivo'], 0, 'The grape, not the town.', { wines: ['montepulciano'] }),
+      q('choice', 'Montepulciano d\'Abruzzo is made from…', ['The Montepulciano grape', 'Sangiovese, as in Vino Nobile di Montepulciano', 'Nebbiolo', 'Primitivo'], 0, 'The grape, not the town.', { wines: ['montepulciano'] }),
       q('choice', 'Cerasuolo d\'Abruzzo is…', ['A deep pink rosé', 'A white', 'A sparkling red', 'A sweet wine'], 0, 'From Montepulciano.'),
       q('choice', 'Montepulciano d\'Abruzzo is usually…', ['Deep, soft and plummy', 'Pale and tannic', 'Sweet', 'Sparkling'], 0, 'Great value.'),
     ], ['Montepulciano d\'Abruzzo DOC: OJ C 220, 2023']),

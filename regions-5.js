@@ -226,7 +226,7 @@
         body: 'Most Bordeaux isn\'t a famous château: it\'s good-value <b>Bordeaux</b> and <b>Bordeaux Supérieur</b> from across the region. Supérieur reds have stricter rules than basic Bordeaux and are rounder and more structured: red fruit turning to spice.' },
       { kind: 'text', title: 'Petits châteaux', body: 'Thousands of small family "châteaux" make these wines. "Château" on a label just means a wine estate.' },
     ], [
-      q('choice', 'Bordeaux Supérieur is…', ['A step up from basic Bordeaux', 'Sweet', 'White only', 'A Grand Cru'], 0, 'Value with more structure.', { wines: ['merlot'] }),
+      q('choice', 'Bordeaux Supérieur is…', ['A step up from basic Bordeaux', 'Sweet', 'White only', 'Bordeaux\'s Grand Cru level'], 0, 'Value with more structure.', { wines: ['merlot'] }),
       q('choice', '"Château" on a Bordeaux label means…', ['A wine estate', 'A castle must exist', 'A first growth', 'Organic'], 0, 'Often a farmhouse.'),
       q('choice', 'Bordeaux Supérieur\'s main grapes?', ['Merlot and Cabernet', 'Pinot Noir', 'Syrah', 'Gamay'], 0, 'Round and generous.'),
     ], ['Bordeaux Supérieur: OJ C 88, 2022']),
