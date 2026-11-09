@@ -588,6 +588,9 @@
       <div class="j-switch seg"><button class="${view === 'europe' ? 'on' : ''}" data-act="mapview" data-v="europe">Europe</button><button class="${view === 'world' ? 'on' : ''}" data-act="mapview" data-v="world">World</button></div>
       <div class="j-map">${D.scenes.map(view, spots)}</div>
       <div class="stats">${stat(Object.keys(S.days).length, 'days', '#a8434e')}${stat(Object.keys(S.cellar).length, 'wines', '#c4842c')}${stat(regionsDone, 'regions', '#7c9a4e')}</div>
+      ${(() => { const defs = checkpointDefs(), passed = defs.filter(d => cpPassed(d.key)); return `<h2 class="j-h">Checkpoints <span class="mono">${passed.length}/${defs.length}</span></h2>
+        <div class="cp-shelf">${(passed.length ? passed : defs.slice(0, 4)).map(d => `<button class="cp-tile ${cpPassed(d.key) ? 'on' : ''}" data-act="checkpoint" data-k="${d.key}">${cpBadge(d, cpPassed(d.key))}<span>${d.short}</span></button>`).join('')}
+        ${passed.length ? '' : '<p class="cp-hint">Finish a chapter or a country, then pass its checkpoint to fill this shelf.</p>'}</div>`; })()}
       <h2 class="j-h">Postcards <span class="mono">${D.scenes.POSTCARDS.filter(p => postcardUnlocked(p.id)).length}/${D.scenes.POSTCARDS.length}</span></h2>
       <div class="pcards">
         ${card('sky', 'The vineyard', D.scenes.sky(se.stage, time), true)}
@@ -633,9 +636,9 @@
             ${solid ? `<path class="p-solid" d="${solid}" filter="url(#wobble)"/>` : ''}
           </svg>
           <ol>${rows}
-            <li class="node checkpoint ${fullyDone ? 'current' : 'locked'}" style="top:${ROW * rs.length}px">
-              <button class="node-btn" style="left:50%" data-act="checkpoint" aria-label="Checkpoint tasting"><span class="nb-num">✦</span></button>
-              <div class="node-label right" style="left:calc(50% + 40px)"><span class="mono">Checkpoint</span><strong>The ${st.name} Tasting</strong><span>Break through to the next stratum</span></div>
+            <li class="node checkpoint ${cpPassed('A:' + ch.id) ? 'done' : fullyDone ? 'current' : 'locked'}" style="top:${ROW * rs.length}px">
+              <button class="node-btn" style="left:50%" data-act="checkpoint" data-k="A:${ch.id}" aria-label="Checkpoint tasting"><span class="nb-num">${cpPassed('A:' + ch.id) ? '✓' : '✦'}</span></button>
+              <div class="node-label right" style="left:calc(50% + 40px)"><span class="mono">Checkpoint${S.checkpoints && S.checkpoints['A:' + ch.id] ? ` · best ${S.checkpoints['A:' + ch.id].best}%` : ''}</span><strong>The ${st.name} Tasting</strong><span>${cpPassed('A:' + ch.id) ? 'Passed' : 'A mixed tasting with a blind finale'}</span></div>
             </li>
           </ol>
         </div>
@@ -646,6 +649,7 @@
       <header class="roots-head">
         <nav class="learn-switch seg"><a href="#roots" class="${'roots' === 'roots' ? 'on' : ''}">Roots</a><a href="#list" class="${'roots' === 'list' ? 'on' : ''}">Grapes & places</a></nav>
         <h1>How wine works</h1>
+        ${doneAll().length ? `<button class="pr-entry" data-act="go" data-h="#practice"><span class="pr-entry-ic">↻</span><span class="pr-entry-txt"><strong>Practice what you've learned</strong><small>Shuffled questions from both tracks, any time</small></span><span class="pr-entry-go">›</span></button>` : ''}
       </header>
       <div class="vine-top">${vineSVG(season().stage)}</div>
       ${chaptersHTML}
@@ -684,6 +688,8 @@
       return `<details class="wl-group" ${rs.some(r => unitState(r) === 'current') ? 'open' : ''}>
         <summary><span class="wl-gname">${c.name}</span><span class="mono wl-count">${stats(rs)}</span></summary>
         ${c.regions.map(rg => `${multi ? `<h4 class="wl-region">${rg.name}</h4>` : ''}<ul class="wl-rows">${rs.filter(r => r.region === rg).map(row).join('')}</ul>`).join('')}
+        ${(() => { const cp = cpDef('B:' + c.name); if (!cp) return ''; const ok = cpPassed(cp.key), rec = S.checkpoints && S.checkpoints[cp.key];
+          return `<button class="cp-line ${ok ? 'done' : cpOpen(cp) ? 'ready' : 'locked'}" data-act="checkpoint" data-k="${cp.key}">${cpBadge(cp, ok)}<span><strong>${cp.title}</strong><small>${ok ? `Passed · best ${rec.best}%` : cpOpen(cp) ? 'Ready: a mixed tasting with a blind finale' : 'Opens when every lesson above is done'}</small></span></button>`; })()}
       </details>`;
     };
     app.innerHTML = `<div class="tabview winelist">
@@ -1113,6 +1119,7 @@
 
   function finish() {
     if (P.kind === 'practice') return finishPractice();
+    if (P.kind === 'checkpoint') return finishCheckpoint();
     const n = scoredCount(), pct = Math.round((P.correct / n) * 100), now = Date.now();
     S.days[todayKey()] = (S.days[todayKey()] || 0) + 1;
     const rec = S.units[P.id], first = !rec;
@@ -1323,11 +1330,13 @@
     switch (act) {
       case 'go': go(b.dataset.h); break;
       case 'preview': preview(b.dataset.id); break;
-      case 'checkpoint': ask('Checkpoint tastings', 'At the end of each chapter there will be a longer mixed tasting with a blind finale. Pass it to break through to the next stratum. Coming soon.', 'Lovely', () => {}); break;
+      case 'checkpoint': closeModal(); startCheckpoint(b.dataset.k); break;
+      case 'region': regionSheet(decodeURIComponent(b.dataset.r)); break;
+      case 'prregion': S.practice = { ...(S.practice || { n: 10 }), mode: 'rules', area: 'r:' + decodeURIComponent(b.dataset.r) }; save(); closeModal(); go('#practice'); break;
       case 'quit': {
         const back = '#' + lastTab;
         const started = P && ((P.phase === 'lesson' && P.card > 0) || P.phase === 'interlude' || (P.phase === 'practice' && P.i > 0));
-        if (started) ask(P.kind === 'practice' ? 'Leave this practice?' : 'Leave this unit?', P.kind === 'practice' ? 'This round won\'t be counted.' : 'Your progress in it won\'t be saved.', 'Leave', () => go(back)); else go(back);
+        if (started) ask(P.kind === 'practice' ? 'Leave this practice?' : P.kind === 'checkpoint' ? 'Leave this checkpoint?' : 'Leave this unit?', P.kind !== 'unit' ? 'This round won\'t be counted.' : 'Your progress in it won\'t be saved.', 'Leave', () => go(back)); else go(back);
         break;
       }
       case 'replay': go(`#unit-${P.id}`); break;
@@ -1402,7 +1411,7 @@
       case 'glass-check': glassPage('reveal'); break;
       case 'glass-judge': { const g = glassToday(); ageBottle(g.wine, b.dataset.ok === '1'); g.done = true; g.ok = b.dataset.ok === '1'; save(); GT = null; glassPage(); break; }
       case 'mapview': S.mapView = b.dataset.v; save(); journey(); break;
-      case 'setview': S.settings.view = b.dataset.v; save(); clink(); journey(); break;
+      case 'setview': S.settings.view = b.dataset.v; save(); clink(); closeModal(); journey(); break;
       case 'export': exportBackup(); break;
       case 'import': importBackup(); break;
       case 'restore': restoreBackup(); break;
@@ -1426,8 +1435,11 @@
   const rangeWord = (v, L) => { const [a, b] = Array.isArray(v) ? v : [v, v]; return a === b ? L[a] : `${L[a]} to ${L[b]}`; };
   const learnedWines = () => Object.keys(S.cellar).filter(id => D.wines[id]);
   const doneB = () => UNITS.filter(r => r.track === 'B' && playable(r) && S.units[r.u.id]);
+  const doneAll = () => UNITS.filter(r => playable(r) && S.units[r.u.id]);
   function practiceAreas() {
-    const B = doneB(), areas = [['all', 'Everything', B]];
+    const B = doneB(), areas = [['all', 'Everything', doneAll()]];
+    // Roots: one focus per chapter you've started
+    D.chapters.forEach((ch, ci) => { const rs = UNITS.filter(r => r.track === 'A' && r.ci === ci && playable(r) && S.units[r.u.id]); if (rs.length) areas.push(['a:' + ch.id, `Roots: ${D.strata[ci].name}`, rs]); });
     const rules = B.filter(r => (r.u.sources && r.u.sources.length) || /^b-fr-ch/.test(r.u.id));
     if (rules.length) areas.push(['rules', 'Appellation rules', rules]);
     const labels = B.filter(r => r.part === 1); if (labels.length) areas.push(['labels', 'Reading labels', labels]);
@@ -1435,6 +1447,11 @@
     const byCountry = {};
     B.filter(r => r.part === 3 && r.country).forEach(r => { const k = /^b-fr-ch/.test(r.u.id) ? 'Champagne' : r.country.name; (byCountry[k] = byCountry[k] || []).push(r); });
     Object.entries(byCountry).forEach(([k, rs]) => areas.push(['c:' + k, k, rs]));
+    // a single region (from the Journey map)
+    if (S.practice && /^r:/.test(S.practice.area)) {
+      const name = S.practice.area.slice(2), rs = B.filter(r => r.region && r.region.name === name);
+      if (rs.length) areas.push([S.practice.area, `Map: ${name}`, rs]);
+    }
     return areas;
   }
   function wineQuestion(id, pool) {
@@ -1499,20 +1516,20 @@
         <button class="pr-mode ${cur.mode === 'taste' ? 'on' : ''}" data-act="prmode" data-v="taste"><span class="pr-ic">${miniGlass('#a8434e', 'bordeaux')}</span>
           <strong>Blind tasting</strong><small>${wines.length ? `${wines.length} wine${wines.length === 1 ? '' : 's'} from your cellar` : 'Learn a wine first'}</small></button>
         <button class="pr-mode ${cur.mode === 'rules' ? 'on' : ''}" data-act="prmode" data-v="rules"><span class="pr-ic pr-book">§</span>
-          <strong>Rules & labels</strong><small>${doneB().length ? `From ${doneB().length} Track B lesson${doneB().length === 1 ? '' : 's'}` : 'Finish a Track B lesson first'}</small></button>
+          <strong>Lessons & rules</strong><small>${doneAll().length ? `From ${doneAll().length} lesson${doneAll().length === 1 ? '' : 's'} you've finished` : 'Finish a lesson first'}</small></button>
       </div>
       ${cur.mode === 'rules' && areas[0][2].length ? `<p class="pr-label mono">Focus</p><div class="pr-areas">${areas.map(([k, t]) => `<button class="aroma ${cur.area === k ? 'on' : ''}" data-act="prarea" data-v="${esc(k)}">${t}</button>`).join('')}</div>` : ''}
       <p class="pr-label mono">Length</p>
       <div class="seg pr-len">${[5, 10, 20].map(n => `<button class="${cur.n === n ? 'on' : ''}" data-act="prlen" data-v="${n}">${n} questions</button>`).join('')}</div>
       <button class="primary pr-go" data-act="prstart" ${ready ? '' : 'disabled'}>Shuffle & start</button>
-      ${cur.mode === 'taste' ? `<p class="pr-note">Identify wines from their clues, place them on a scale, pick their aromas. Wines you miss come back sooner in your cellar.</p>` : `<p class="pr-note">Shuffled questions from the lessons you've finished. Appellation rules covers the lessons checked against official texts.</p>`}
+      ${cur.mode === 'taste' ? `<p class="pr-note">Identify wines from their clues, place them on a scale, pick their aromas. Wines you miss come back sooner in your cellar.</p>` : `<p class="pr-note">Shuffled questions from the lessons you've finished, in both tracks. Appellation rules covers the lessons checked against official texts.</p>`}
     </div>${tabbar('list')}`;
   }
   function startPractice() {
     const qs = practiceQuestions();
     if (!qs.length) { practicePage(); return; }
     const taste = S.practice.mode === 'taste';
-    P = { kind: 'practice', id: 'practice', title: taste ? 'Blind tasting' : 'Rules & labels', tag: 'Practice', wine: taste ? '#a8434e' : '#7c5a8a',
+    P = { kind: 'practice', id: 'practice', title: taste ? 'Blind tasting' : 'Lessons & rules', tag: 'Practice', wine: taste ? '#a8434e' : '#7c5a8a',
       lesson: [], questions: qs, card: 0, i: 0, correct: 0, results: [], phase: 'practice' };
     setWine(P.wine); renderQ();
   }
@@ -1530,6 +1547,89 @@
       <button class="primary" data-act="prstart">Another round</button>
       <button class="link-btn" data-act="go" data-h="#practice">Change practice</button>
     </div></div>`;
+  }
+
+  /* ---------- CHECKPOINTS: a longer mixed tasting with a blind finale, per Roots chapter and per country ---------- */
+  const CP_PASS = 80;
+  const cpPassed = k => !!(S.checkpoints && S.checkpoints[k] && S.checkpoints[k].passed);
+  function checkpointDefs() {
+    const defs = [];
+    D.chapters.forEach((ch, ci) => {
+      const rs = UNITS.filter(r => r.track === 'A' && r.ci === ci);
+      defs.push({ key: 'A:' + ch.id, title: `The ${D.strata[ci].name} Tasting`, short: D.strata[ci].name, units: rs, colour: ch.wine });
+    });
+    const byC = new Map();
+    UNITS.filter(r => r.track === 'B' && r.part === 3 && r.country).forEach(r => { const k = r.country.name; if (!byC.has(k)) byC.set(k, { c: r.country, units: [] }); byC.get(k).units.push(r); });
+    byC.forEach(({ c, units }, name) => { if (units.filter(playable).length >= 2) defs.push({ key: 'B:' + name, title: `The ${name} Tasting`, short: name, units, colour: c.wine }); });
+    return defs;
+  }
+  const cpDef = k => checkpointDefs().find(d => d.key === k);
+  const cpOpen = d => d && d.units.filter(playable).length && d.units.filter(playable).every(done);
+  function startCheckpoint(k) {
+    const d = cpDef(k);
+    if (!cpOpen(d)) { ask(d ? d.title : 'Checkpoint', `Finish every lesson ${k.startsWith('A:') ? 'in this chapter' : 'in ' + d.short} to open its checkpoint: a longer mixed tasting with a blind finale.`, 'Lovely', () => {}); return; }
+    const pool = d.units.filter(playable).flatMap(r => r.u.questions.filter(q => q.type !== 'recall' && q.type !== 'blind'));
+    const qs = shuffle(pool).slice(0, 11);
+    // the finale: a blind glass from a wine this chapter/country taught (or any wine you've learned)
+    const taught = [...new Set(d.units.flatMap(r => (r.u.questions || []).flatMap(q => q.wines || [])))].filter(id => D.wines[id]);
+    const finalePool = taught.length ? taught : learnedWines();
+    if (finalePool.length) {
+      const id = pick(finalePool); let fq = null;
+      for (let i = 0; i < 12 && (!fq || fq.type !== 'blind'); i++) fq = wineQuestion(id, finalePool.length >= 4 ? finalePool : Object.keys(D.wines));
+      if (fq && fq.type === 'blind') qs.push({ ...fq, q: 'The finale: which wine is in the glass?' });
+    }
+    P = { kind: 'checkpoint', id: k, title: d.title, tag: 'Checkpoint', wine: d.colour, lesson: [], questions: qs, card: 0, i: 0, correct: 0, results: [], phase: 'practice' };
+    setWine(P.wine); renderQ();
+  }
+  function finishCheckpoint() {
+    const n = scoredCount(), pct = Math.round((P.correct / n) * 100), now = Date.now(), d = cpDef(P.id);
+    S.days[todayKey()] = (S.days[todayKey()] || 0) + 1;
+    S.checkpoints = S.checkpoints || {};
+    const prev = S.checkpoints[P.id], passed = pct >= CP_PASS, first = passed && !(prev && prev.passed);
+    S.checkpoints[P.id] = { best: Math.max(prev ? prev.best : 0, pct), passed: !!(passed || (prev && prev.passed)), at: prev && prev.at || (passed ? now : null) };
+    P.results.filter(r => !r.ok).flatMap(r => r.wines).forEach(id => { if (S.cellar[id]) S.cellar[id].due = Math.min(S.cellar[id].due, now); });
+    save(); pop(); buzz(passed ? [20, 60, 20, 60, 40] : [20, 60, 20]);
+    const back = P.id.startsWith('A:') ? '#roots' : '#list';
+    app.innerHTML = `<div class="player result" style="--fw:${P.wine}"><div class="tint"></div><div class="res">
+      <p class="eyebrow">Checkpoint</p><h2>${P.title}</h2>
+      <div class="big-ring">${ring(pct, P.wine, 200)}<div class="big-num"><strong>${pct}%</strong><span class="mono">${P.correct} of ${n} correct</span></div></div>
+      ${passed ? `<div class="unlock cp-pass">${cpBadge(d, true)}<div><span class="mono">${first ? 'Checkpoint passed' : 'Passed again'}</span><strong>${first ? 'A new stain ring on your Journey' : `Best ${S.checkpoints[P.id].best}%`}</strong></div></div>`
+        : `<div class="unlock"><span class="mono">Pass mark ${CP_PASS}%</span><strong>So close. Try again any time</strong><p>The questions shuffle each time.</p></div>`}
+      <button class="primary" data-act="checkpoint" data-k="${P.id}">${passed ? 'Taste it again' : 'Try again'}</button>
+      <button class="link-btn" data-act="go" data-h="${back}">Back to ${P.id.startsWith('A:') ? 'Roots' : 'Grapes & places'}</button>
+    </div></div>`;
+  }
+  function cpBadge(d, on) {
+    return `<svg class="cp-badge" viewBox="0 0 80 80" aria-hidden="true"><g filter="url(#stain)" opacity="${on ? 1 : .35}">
+      <circle cx="40" cy="40" r="30" fill="${d.colour}" opacity=".16"/><circle cx="40" cy="40" r="30" fill="none" stroke="${d.colour}" stroke-width="3.2" opacity=".75"/>
+      <circle cx="42" cy="38.5" r="33.5" fill="none" stroke="${d.colour}" stroke-width=".9" opacity=".7"/></g>
+      <text x="40" y="47" text-anchor="middle" font-size="22" fill="${on ? d.colour : '#b5a48c'}">${on ? '✦' : '·'}</text></svg>`;
+  }
+
+  /* ---------- Journey map: tap a region ---------- */
+  function regionSheet(name) {
+    let found = null;
+    TB.continents.forEach(ct => ct.countries.forEach(c => c.regions.forEach(rg => { if (rg.name === name) found = { c, rg }; })));
+    if (!found) return;
+    const { c, rg } = found, rs = UNITS.filter(r => r.region === rg), w = rs.filter(playable), d = w.filter(done);
+    const pc = D.scenes.POSTCARDS.find(x => x.region === name), open = pc && postcardUnlocked(pc.id);
+    const nextR = w.find(r => !done(r) && unitState(r) === 'current');
+    const cp = cpDef('B:' + c.name);
+    const pill = r => { const st = unitState(r), rec = S.units[r.u.id]; return st === 'done' ? `<span class="pill done">✓ ${rec.best}%</span>` : st === 'current' ? '<span class="pill start">Start</span>' : st === 'locked' ? '<span class="pill">Locked</span>' : '<span class="pill soon">Soon</span>'; };
+    overlay.innerHTML = `<div class="modal" role="dialog" aria-modal="true"><div class="modal-card region-card" style="--fw:${c.wine}">
+      <button class="icon-btn close" data-act="close" aria-label="Close">${closeIcon()}</button>
+      <div class="rc-top"><span class="rc-pc ${open ? '' : 'locked'}">${open ? D.scenes.postcard(pc.id, 'thumb') : '<i>?</i>'}</span>
+        <div><p class="eyebrow">${c.name === rg.name ? 'Region' : c.name}</p><h2>${pc ? pc.name : rg.name}</h2>
+        <p class="rc-prog mono">${d.length} of ${w.length} lessons${open ? ' · postcard earned' : w.length ? ' · finish them all for the postcard' : ''}</p></div></div>
+      <div class="rc-actions">
+        ${nextR ? `<button class="primary" data-act="go" data-h="#unit-${nextR.u.id}">${d.length ? 'Next lesson' : 'Start here'}: ${nextR.u.title}</button>` : ''}
+        ${d.length ? `<button class="opt" data-act="prregion" data-r="${encodeURIComponent(name)}">↻ Practise ${pc ? pc.name : name}</button>` : ''}
+        ${open ? `<button class="opt" data-act="setview" data-v="${pc.id}">Use the postcard on Home</button>` : ''}
+        ${cp ? `<button class="opt cp-row" data-act="checkpoint" data-k="${cp.key}">${cpBadge(cp, cpPassed(cp.key))}<span>${cp.title}${cpPassed(cp.key) ? ' · passed' : cpOpen(cp) ? ' · ready' : ''}</span></button>` : ''}
+      </div>
+      <ul class="wl-rows rc-list">${rs.map(r => `<li><button class="wl-row ${unitState(r)}" data-act="preview" data-id="${r.u.id}"><span class="wl-name">${r.u.title}${r.u.sub ? `<small>${r.u.sub}</small>` : ''}</span>${pill(r)}</button></li>`).join('')}</ul>
+    </div></div>`;
+    overlay.querySelector('.modal').addEventListener('click', ev => { if (ev.target.classList.contains('modal')) closeModal(); });
   }
 
   function route() {

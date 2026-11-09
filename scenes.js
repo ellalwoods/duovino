@@ -270,10 +270,15 @@
     const marks = spots.map((s, i) => {
       const [x, y] = P(...s.at), r = (s.state === 'done' ? 22 : 17) * V.ring;
       if (x < -20 || x > V.w + 20 || y < -20 || y > V.h + 20) return '';
+      // a generous invisible hit area, so every region can be tapped
+      const hit = `<circle class="spot-hit" cx="${x}" cy="${y}" r="${Math.max(16, 24 * V.ring)}" fill="transparent" data-act="region" data-r="${encodeURIComponent(s.name)}"><title>${s.name}</title></circle>`;
+      return mark(s, x, y, r) + hit;
+    }).join('');
+    function mark(s, x, y, r) {
       if (s.state === 'done' || s.state === 'some') return `<g filter="url(#stain)" opacity="${s.state === 'done' ? 1 : .7}"><circle cx="${x}" cy="${y}" r="${r}" fill="${s.colour}" opacity=".14"/><circle cx="${x}" cy="${y}" r="${r}" fill="none" stroke="${s.colour}" stroke-width="${3 * V.ring + .4}" opacity=".7"/><circle cx="${x + 2}" cy="${y - 1.5}" r="${r + 2.5 * V.ring}" fill="none" stroke="${s.colour}" stroke-width=".9" opacity=".7"/></g>`;
       if (s.state === 'next') return `<g><circle cx="${x}" cy="${y}" r="${20 * V.ring}" fill="#a8434e" opacity=".14"><animate attributeName="r" values="${14 * V.ring};${24 * V.ring};${14 * V.ring}" dur="2.4s" repeatCount="indefinite"/></circle><circle cx="${x}" cy="${y}" r="${6 * V.ring + 1}" fill="#a8434e"/></g>`;
       return `<circle cx="${x}" cy="${y}" r="${3 * V.ring + 1.5}" fill="#b5a48c" opacity=".55"/>`;
-    }).join('');
+    }
     return `<svg class="map-svg" viewBox="0 0 ${V.w} ${V.h}" role="img" aria-label="Map of the regions you've explored">
       <defs><clipPath id="${id}"><rect x="6" y="6" width="${V.w - 12}" height="${V.h - 12}" rx="10"/></clipPath></defs>
       <rect x="2" y="2" width="${V.w - 4}" height="${V.h - 4}" rx="12" fill="#fbf6ea" stroke="#d8c6a6"/>

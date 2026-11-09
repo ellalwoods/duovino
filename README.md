@@ -7,7 +7,9 @@ See [`CONCEPT.md`](CONCEPT.md) for the full product concept.
 
 Five tabs (icons only):
 
-- **Practice:** unlimited shuffled rounds, any time. *Blind tasting* generates questions from the wines in your cellar (identify from clues, place on a scale, pick the aroma, name the grape); wines you miss come back sooner. *Rules & labels* shuffles questions from the Track B lessons you've finished, filterable to appellation rules, labels, grapes, or a country. Open it from Grapes & places or the Cellar.
+- **Practice:** unlimited shuffled rounds, any time. *Blind tasting* generates questions from the wines in your cellar (identify from clues, place on a scale, pick the aroma, name the grape); wines you miss come back sooner. *Lessons & rules* shuffles questions from the lessons you've finished in both tracks, filterable to a Roots chapter, appellation rules, labels, grapes, a country, or a region from the map. Open it from Roots, Grapes & places or the Cellar.
+- **Checkpoints:** one per Roots chapter and per country (with two or more lessons). Once every lesson in it is done: a mixed tasting of up to 11 shuffled questions plus a blind finale. Pass at 80% for a stain-ring badge on Journey. Retake any time.
+- **Journey map:** tap any region for its postcard, progress, lessons, a focused practice, and its country's checkpoint.
 - **Today's glass:** one wine from your cellar a day. Swirl the glass, drag sliders for sweetness, acidity, tannin, body and alcohol, pick the aromas from a shuffled list with deliberate lookalikes, then compare with the real profile.
 - **Home:** one living scene (the vineyard by season and time of day: dawn, day, sunset, blue hour, or a postcard you've earned) and one **Continue** button.
 - **Learn:** *Roots* (how wine works, drawn as soil layers) and *Grapes & places* (read a label → meet the grapes → travel the regions), behind one switch. See [`SYLLABUS.md`](SYLLABUS.md).
