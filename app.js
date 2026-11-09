@@ -1731,7 +1731,7 @@
     const rekey = mode === 'rekey';
     app.innerHTML = `<div class="welcome">
       <div class="w-head"><div class="wl-glass">${miniGlass('#a8434e', 'burgundy')}</div><h1>${rekey ? 'New wine & region' : 'Who\'s tasting?'}</h1></div>
-      <p class="w-sub">${rekey ? 'Pick a new pair to open your cellar with next time.' : 'Pick the same three on any phone to open your cellar.'}</p>
+      <p class="w-sub">${rekey ? 'Pick a new wine and region for your login.' : 'Your name, wine and region make up your login, so your progress stays yours.'}</p>
       <input class="w-input" id="w-name" placeholder="Your name" autocomplete="off" value="${esc(localStorage.getItem(NAME_KEY) || '')}" ${rekey ? 'disabled' : ''}>
       <p class="w-step mono">YOUR WINE</p>
       <div class="w-wines">${PICK_WINES.map(([id, n, c, k]) => `<button class="w-wine" data-act="w-wine" data-id="${id}">${miniGlass(c, k)}<span>${n}</span></button>`).join('')}</div>
