@@ -643,7 +643,7 @@
     setWine('#a8434e');
     const name = (cloudOn && localStorage.getItem(NAME_KEY)) || S.name || '';
     const pk = cloudOn && myCode() ? pickOf(myCode()) : null;
-    const ks = Object.values(S.cellar).map(knowPct).filter(k => k != null);
+    const grapeUnits = UNITS.filter(r => r.part === 2); // one lesson per grape; a finished lesson = a grape you know
     const o = S.botty || {};
     const scroll = app.querySelector('.tabview.profile')?.scrollTop || 0;
     app.innerHTML = `<div class="tabview profile">
@@ -654,7 +654,7 @@
       </div>
       <div class="pf-stats">
         <div><b>${Object.keys(S.days).length}</b><span>days</span></div><div><b>${Object.keys(S.cellar).length}</b><span>wines</span></div>
-        <div><b>${ks.length ? Math.round(ks.reduce((a, b) => a + b, 0) / ks.length) + '%' : '–'}</b><span>known</span></div><div><b>${Object.keys(S.checkpoints || {}).length}</b><span>checkpoints</span></div>
+        <div><b>${grapeUnits.filter(done).length}<small>/${grapeUnits.length}</small></b><span>grapes</span></div><div><b>${Object.keys(S.checkpoints || {}).length}</b><span>checkpoints</span></div>
       </div>
       <h2 class="j-h">Dress Botty</h2>
       ${Object.keys(WARDROBE).map(slot => `<p class="pf-slot mono">${SLOT_NAMES[slot]}</p>

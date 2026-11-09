@@ -1049,3 +1049,4 @@ button.aroma:active { transform: scale(.96); }
 .pf-hint { grid-column: 1 / -1; margin: 2px 2px 0; padding: 8px 12px; border-radius: 12px; background: #f6e7e2; color: #a8434e; font-size: 11px; text-transform: none; letter-spacing: .02em; }
 .pf-acts { margin-top: 24px; }
 .profile { padding: calc(14px + var(--safe-top)) 18px calc(110px + var(--safe-bot)); }
+.pf-stats b small { font-size: 13px; color: var(--ink-soft); font-weight: 400; }
