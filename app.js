@@ -32,7 +32,7 @@
   }
   async function rpc(fn, args) {
     const r = await fetch(`${CLOUD.url.replace(/\/$/, '')}/rest/v1/rpc/${fn}`, { method: 'POST',
-      headers: { apikey: CLOUD.key, Authorization: `Bearer ${CLOUD.key}`, 'Content-Type': 'application/json' }, body: JSON.stringify(args) });
+      headers: { apikey: CLOUD.key, ...(CLOUD.key.startsWith('eyJ') ? { Authorization: `Bearer ${CLOUD.key}` } : {}), 'Content-Type': 'application/json' }, body: JSON.stringify(args) });
     if (!r.ok) throw new Error(`cloud ${fn} ${r.status}`);
     return r.json();
   }

@@ -4,6 +4,6 @@
  *      duovino_ functions (see supabase/duovino.sql), so it can't read anything else.
  */
 window.DUOVINO_CLOUD = window.DUOVINO_CLOUD || {
-  url: '',
-  key: '',
+  url: 'https://qjmefypqidheyuzkrlqu.supabase.co',
+  key: 'sb_publishable__QoKgDZSuerubzX-TOEh2A_bBLSsmwc',
 };
