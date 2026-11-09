@@ -66,3 +66,15 @@ Progress is stored only in the browser on that device. Use **Settings → Backup
 | `sw.js`, `manifest.webmanifest`, `icon.svg` | Offline support and home-screen install |
 
 To write a unit, give its entry in `syllabus.js` a `lesson` (card kinds: `text`, `try`, `compare`, `scale`, `layers`, `label`, `facts`) and `questions` (types: `choice`, `odd`, `sort`, `slider`, `order`, `label`, `chain`, `blind`), and add its concepts to `D.concepts`.
+
+## Cloud cellars (optional)
+
+Each person gets their own cellar, opened with a wine-word code like `velvet-nebbiolo-42`: no email, no password. Progress syncs to Supabase as you go, so it survives clearing Safari or changing phone.
+
+Setup (once):
+1. In the Supabase project, open **SQL Editor**, paste `supabase/duovino.sql`, and run it. It only creates `duovino_`-prefixed objects (one table, two functions) and touches nothing else.
+2. Put the project URL and the **anon public** key in `cloud-config.js`.
+
+How it stays private: codes are never stored, only their SHA-256 hash; the table has row-level security with no policies, so it can't be read or listed; the app can only call `duovino_load` and `duovino_save` for a code it knows. Anyone who knows a code can open that cellar, which is the point: keep your code to yourself.
+
+With `cloud-config.js` left blank, the app works exactly as before, with progress on the device only.
