@@ -15,7 +15,47 @@
     catch { return defaults(); }
   };
   let S = load();
-  const save = () => { try { localStorage.setItem(STORE, JSON.stringify(S)); } catch { /* private mode */ } };
+  const save = () => { S._updated = Date.now(); try { localStorage.setItem(STORE, JSON.stringify(S)); } catch { /* private mode */ } cloudPush(); };
+
+  /* ---------- cloud cellars (optional): a wine-word code per person, synced to Supabase ---------- */
+  const CLOUD = window.DUOVINO_CLOUD || {};
+  const cloudOn = !!(CLOUD.url && CLOUD.key);
+  const CODE_KEY = 'duovino.code', NAME_KEY = 'duovino.name';
+  const myCode = () => localStorage.getItem(CODE_KEY);
+  const CODE_A = ['velvet', 'crisp', 'golden', 'ruby', 'garnet', 'flinty', 'silky', 'smoky', 'honeyed', 'zesty', 'amber', 'rosy', 'mellow', 'bold', 'misty', 'sunny'];
+  const CODE_B = ['merlot', 'syrah', 'riesling', 'malbec', 'gamay', 'chenin', 'nebbiolo', 'viognier', 'grenache', 'furmint', 'albarino', 'pinot', 'cabernet', 'muscat', 'tannat', 'assyrtiko'];
+  const newCode = () => `${CODE_A[Math.floor(Math.random() * CODE_A.length)]}-${CODE_B[Math.floor(Math.random() * CODE_B.length)]}-${10 + Math.floor(Math.random() * 90)}`;
+  const normCode = c => String(c || '').toLowerCase().trim().replace(/[\s_]+/g, '-').replace(/[^a-z0-9-]/g, '');
+  async function codeId(code) {
+    const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode('duovino:' + normCode(code)));
+    return [...new Uint8Array(buf)].map(b => b.toString(16).padStart(2, '0')).join('');
+  }
+  async function rpc(fn, args) {
+    const r = await fetch(`${CLOUD.url.replace(/\/$/, '')}/rest/v1/rpc/${fn}`, { method: 'POST',
+      headers: { apikey: CLOUD.key, Authorization: `Bearer ${CLOUD.key}`, 'Content-Type': 'application/json' }, body: JSON.stringify(args) });
+    if (!r.ok) throw new Error(`cloud ${fn} ${r.status}`);
+    return r.json();
+  }
+  let pushTimer = null, pushing = Promise.resolve();
+  function cloudPush(now) {
+    if (!cloudOn || !myCode()) return;
+    clearTimeout(pushTimer);
+    const go = () => { pushing = pushing.then(async () => { try { await rpc('duovino_save', { p_id: await codeId(myCode()), p_name: localStorage.getItem(NAME_KEY) || '', p_state: S, p_create: false }); } catch { /* offline: next save retries */ } }); return pushing; };
+    if (now) return go();
+    pushTimer = setTimeout(go, 1500);
+  }
+  document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'hidden') cloudPush(true); });
+  async function cloudPull() {
+    if (!cloudOn || !myCode()) return;
+    try {
+      const res = await rpc('duovino_load', { p_id: await codeId(myCode()) });
+      if (res && res.state && (res.state._updated || 0) > (S._updated || 0)) {
+        S = { ...defaults(), ...res.state, settings: { ...defaults().settings, ...res.state.settings } };
+        try { localStorage.setItem(STORE, JSON.stringify(S)); } catch { /* ignore */ }
+        if (!P) route();
+      }
+    } catch { /* offline: carry on with this device's copy */ }
+  }
 
   const key = d => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
   const todayKey = () => key(new Date());
@@ -1283,6 +1323,10 @@
       <p class="set-label mono">DRAFT LESSONS</p>
       <div class="seg">${[false, true].map(v => `<button class="${!!S.settings.drafts === v ? 'on' : ''}" data-act="drafts" data-v="${v}">${v ? 'Preview drafts' : 'Hide drafts'}</button>`).join('')}</div>
       <p class="set-note">Drafts are written lessons whose rules haven't yet been checked against the official regulations (e.g. Champagne). Previewing unlocks them and shows a draft banner.</p>
+      ${cloudOn && myCode() ? `<p class="set-label mono">YOUR CELLAR</p>
+      <div class="cellar-id"><div><strong>${esc(localStorage.getItem(NAME_KEY) || 'My')}'s cellar</strong><span class="mono">${myCode()}</span></div><button class="link-btn" data-act="w-copy">Copy code</button></div>
+      <p class="set-note">Saved to the cloud as you go. Open it on another phone with this code.</p>
+      <div class="seg"><button data-act="w-switch">Switch cellar</button></div>` : ''}
       <p class="set-label mono">BACKUP</p>
       <div class="seg"><button data-act="export">Export backup</button><button data-act="import">Import backup</button></div>
       <p class="set-note">Your progress lives only in this browser. Export a backup now and then, and import it on a new phone or after clearing Safari.</p>
@@ -1433,6 +1477,14 @@
       case 'drafts': S.settings.drafts = b.dataset.v === 'true'; save(); location.reload(); break;
       case 'sound': S.settings.sound = b.dataset.v === 'true'; save(); settings(); if (S.settings.sound) clink(); break;
       case 'glass-open': clink(); glassPage('name'); break;
+      case 'w-open': welcome('open'); break;
+      case 'w-new': welcome('new'); break;
+      case 'w-back': welcome(); break;
+      case 'w-regen': app.querySelector('#w-gen').textContent = newCode(); break;
+      case 'w-open-go': welcomeOpen(); break;
+      case 'w-new-go': welcomeCreate(); break;
+      case 'w-switch': ask('Switch cellar?', 'Your progress is saved to your cellar. You can open it again with your code.', 'Switch', () => switchCellar()); break;
+      case 'w-copy': { try { navigator.clipboard.writeText(myCode()); b.textContent = 'Copied'; } catch { /* ignore */ } break; }
       case 'prmode': S.practice.mode = b.dataset.v; save(); practicePage(); break;
       case 'prarea': S.practice.area = b.dataset.v; save(); practicePage(); break;
       case 'prlen': S.practice.n = +b.dataset.v; save(); practicePage(); break;
@@ -1670,8 +1722,71 @@
     overlay.querySelector('.modal').addEventListener('click', ev => { if (ev.target.classList.contains('modal')) closeModal(); });
   }
 
+  /* ---------- Who's tasting? (cloud cellars) ---------- */
+  function welcome(mode = 'pick', msg = '') {
+    P = null; setWine('#a8434e');
+    const carry = Object.keys(S.units || {}).length || Object.keys(S.cellar || {}).length;
+    app.innerHTML = `<div class="welcome">
+      <div class="wl-glass">${miniGlass('#a8434e', 'burgundy')}</div>
+      <p class="eyebrow">Duovino</p><h1>Who's tasting?</h1>
+      ${mode === 'pick' ? `<p class="w-sub">Each of you has your own cellar, opened with a wine-word code. No email, no password.</p>
+        <div class="w-cards">
+          <button class="w-card" data-act="w-open"><strong>I have a cellar code</strong><small>Open your cellar on this phone</small></button>
+          <button class="w-card" data-act="w-new"><strong>Start a new cellar</strong><small>${carry ? 'Brings the progress already on this phone' : 'Begin from the first lesson'}</small></button>
+        </div>`
+      : mode === 'open' ? `<p class="w-sub">Type your cellar code.</p>
+        <input class="w-input" id="w-code" placeholder="e.g. velvet-nebbiolo-42" autocapitalize="none" autocorrect="off" spellcheck="false" autocomplete="off">
+        ${msg ? `<p class="w-err">${msg}</p>` : ''}
+        <button class="primary" data-act="w-open-go">Open my cellar</button><button class="link-btn" data-act="w-back">Back</button>`
+      : `<p class="w-sub">Your name, and your new cellar code.</p>
+        <input class="w-input" id="w-name" placeholder="Your name" autocomplete="off" value="${esc(localStorage.getItem(NAME_KEY) || '')}">
+        <div class="w-code"><span class="mono">Your cellar code</span><strong id="w-gen">${newCode()}</strong><button class="link-btn" data-act="w-regen">↻ Another one</button></div>
+        <p class="w-note">Write it down or screenshot it: it's how you open your cellar on another phone.</p>
+        ${msg ? `<p class="w-err">${msg}</p>` : ''}
+        <button class="primary" data-act="w-new-go">Create my cellar</button><button class="link-btn" data-act="w-back">Back</button>`}
+    </div>`;
+    const f = app.querySelector('.w-input'); if (f) f.focus();
+    app.querySelectorAll('.w-input').forEach(i => i.addEventListener('keydown', e => { if (e.key === 'Enter') app.querySelector('.welcome .primary')?.click(); }));
+  }
+  async function welcomeOpen() {
+    const code = normCode(app.querySelector('#w-code').value);
+    if (!code) return welcome('open', 'Type your code first.');
+    const btn = app.querySelector('[data-act="w-open-go"]'); btn.disabled = true; btn.textContent = 'Opening…';
+    try {
+      const res = await rpc('duovino_load', { p_id: await codeId(code) });
+      if (!res) return welcome('open', 'No cellar with that code. Check the spelling?');
+      localStorage.setItem(CODE_KEY, code); localStorage.setItem(NAME_KEY, res.name || '');
+      S = { ...defaults(), ...(res.state || {}), settings: { ...defaults().settings, ...((res.state || {}).settings || {}) } };
+      try { localStorage.setItem(STORE, JSON.stringify(S)); } catch { /* ignore */ }
+      pop(); if (location.hash !== '#home') history.replaceState(null, '', '#home'); route();
+    } catch { welcome('open', 'Couldn\'t reach the cellar. Are you online?'); }
+  }
+  async function welcomeCreate() {
+    const name = app.querySelector('#w-name').value.trim(), code = normCode(app.querySelector('#w-gen').textContent);
+    if (!name) return welcome('new', 'Add your name first.');
+    const btn = app.querySelector('[data-act="w-new-go"]'); btn.disabled = true; btn.textContent = 'Creating…';
+    try {
+      S._updated = Date.now();
+      const ok = await rpc('duovino_save', { p_id: await codeId(code), p_name: name, p_state: S, p_create: true });
+      if (!ok) return welcome('new', 'That code is taken. Here\'s another one.');
+      localStorage.setItem(CODE_KEY, code); localStorage.setItem(NAME_KEY, name);
+      save(); pop();
+      if (location.hash !== '#home') history.replaceState(null, '', '#home');
+      route();
+      ask(`Welcome, ${esc(name)}`, `Your cellar code is <b>${code}</b>. Keep it somewhere safe: it opens your cellar on any phone. You can find it again in Settings.`, 'Got it', () => {});
+    } catch { welcome('new', 'Couldn\'t reach the cellar. Are you online?'); }
+  }
+  async function switchCellar() {
+    await cloudPush(true);
+    localStorage.removeItem(CODE_KEY);
+    S = defaults();
+    try { localStorage.setItem(STORE, JSON.stringify(S)); } catch { /* ignore */ }
+    closeModal(); welcome();
+  }
+
   function route() {
     overlay.innerHTML = '';
+    if (cloudOn && !myCode()) return welcome();
     window.scrollTo(0, 0);
     const h = location.hash.slice(1);
     if (h.startsWith('unit-')) return startUnit(h.slice(5));
@@ -1685,6 +1800,7 @@
   }
   window.addEventListener('hashchange', route);
   route();
+  cloudPull();
 
   if ('serviceWorker' in navigator && location.protocol === 'https:') navigator.serviceWorker.register('sw.js').catch(() => {});
 })();
