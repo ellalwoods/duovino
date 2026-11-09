@@ -75,6 +75,6 @@ Setup (once):
 1. In the Supabase project, open **SQL Editor**, paste `supabase/duovino.sql`, and run it. It only creates `duovino_`-prefixed objects (one table, two functions) and touches nothing else.
 2. Put the project URL and the **anon public** key in `cloud-config.js`.
 
-How it stays private: the name + wine + region is never stored, only its SHA-256 hash; the table has row-level security with no policies, so it can't be read or listed; the app can only call `duovino_load` and `duovino_save` for a cellar it knows. With 64 wine/region pairs per name it isn't a lock, just a way to keep two people's progress separate.
+How it stays private: the name + wine + region is never stored, only its SHA-256 hash; the table has row-level security with no policies, so it can't be read or listed; the app can only call `duovino_load` and `duovino_save` for a cellar it knows. With 80 wine/region pairs per name it isn't a lock, just a way to keep two people's progress separate.
 
 With `cloud-config.js` left blank, the app works exactly as before, with progress on the device only.
