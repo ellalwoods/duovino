@@ -532,22 +532,33 @@
     const wrap = app.querySelector('[data-glass]');
     if (wrap) {
       const ringC = wrap.querySelector('.swirl-ring circle'), wine = wrap.querySelector('.bg-wine'), body = wrap.querySelector('.glass-body'), NEED = Math.PI * 2 * 1.5;
-      let acc = 0, done = false;
-      const clamp = (v, m) => Math.max(-m, Math.min(m, v));
-      trackSwirl(wrap, (d, dx, dy) => {
+      // The glass orbits on a small circle (flattened, like a glass swirled on a table), in the
+      // direction you swirl. The circle grows with momentum; let go and it slows to a stop.
+      const R = 22, FLAT = .42;
+      let acc = 0, done = false, theta = -Math.PI / 2, r = 0, spin = 0, held = false, touched = false, last = performance.now();
+      const draw = () => {
+        const x = r * Math.cos(theta), y = r * Math.sin(theta) * FLAT;
+        body.style.transform = `translate(${x.toFixed(2)}px, ${y.toFixed(2)}px) rotate(${(x * .12).toFixed(2)}deg)`;
+        // the wine is thrown outwards: it leans the way the glass is heading, a little behind it
+        if (wine) wine.style.transform = `rotate(${(-Math.sin(theta - .6) * r * .55).toFixed(2)}deg)`;
+      };
+      const frame = now => {
+        if (!body.isConnected) return;
+        const dt = Math.min(50, now - last); last = now;
+        if (!touched) { theta -= dt * .004; r = 9 + 3 * Math.sin(now / 900); }          // idle: a gentle hint circle
+        else if (!held) { theta += spin * dt; spin *= .94; r *= .955; }                  // released: coast and settle
+        draw(); requestAnimationFrame(frame);
+      };
+      requestAnimationFrame(frame);
+      trackSwirl(wrap, d => {
         if (done) return;
-        acc += Math.abs(d);
-        // the glass follows the finger in a small circle and tilts; the wine swings the other way
-        const tx = clamp(dx * .6, 30), ty = clamp(dy * .4, 16);
-        body.style.transition = 'none'; if (wine) wine.style.transition = 'none';
-        body.style.transform = `translate(${tx}px, ${ty}px) rotate(${tx * .18}deg)`;
-        if (wine) wine.style.transform = `rotate(${clamp(-tx * .6 + Math.sin(acc * 2.2) * 6, 16)}deg)`;
+        if (!touched) { touched = true; r = 0; }
+        held = true; acc += Math.abs(d);
+        theta += d * 1.15; spin = d * 1.15 / 16;                                          // follow your direction
+        r = Math.min(R, r + Math.abs(d) * 9);
         ringC.setAttribute('stroke-dasharray', `${Math.min(100, acc / NEED * 100)} 100`);
-        if (acc >= NEED) { done = true; clink(); buzz(12); setTimeout(() => glassPage('name'), 260); }
-      }, () => {
-        body.style.transition = 'transform .5s cubic-bezier(.3,1.6,.5,1)'; body.style.transform = '';
-        if (wine) { wine.style.transition = 'transform .7s cubic-bezier(.3,1.8,.5,1)'; wine.style.transform = ''; }
-      });
+        if (acc >= NEED) { done = true; held = false; clink(); buzz(12); setTimeout(() => glassPage('name'), 650); }
+      }, () => { held = false; });
     }
     app.querySelectorAll('.trange').forEach(r => {
       const upd = () => { const k = r.dataset.k, v = +r.value; GT.marks[k] = v; app.querySelector(`[data-lv="${k}"]`).textContent = TASTE_DIMS.find(x => x[0] === k)[2][v]; };
