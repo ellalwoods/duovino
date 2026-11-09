@@ -931,7 +931,7 @@
     </div>`;
   }
 
-  const TYPE_LABEL = { odd: 'Odd one out', chain: 'Label → appellation → grape → taste', choice: 'Question', blind: 'Blind · mystery glass', label: 'Label decoder', order: 'Put in order', sort: 'Sort it', slider: 'Place it on the scale', recall: 'From your cellar' };
+  const TYPE_LABEL = { odd: 'Odd one out', chain: 'Label → appellation → grape → taste', choice: 'Question', blind: 'Blind · mystery glass', label: 'Label decoder', order: 'Put in order', sort: 'Sort it', slider: 'Place it on the scale', recall: 'From your cellar', redact: 'Redacted label' };
   function renderQ() {
     const q = P.questions[P.i];
     P.locked = false; P.phase = 'practice';
@@ -946,6 +946,7 @@
     if (q.type === 'sort') { P.sort = { items: shuffle(q.items), k: 0, placed: [] }; body += sortUI(q); }
     if (q.type === 'slider') body += sliderUI(q);
     if (q.type === 'recall') body += recallUI(q);
+    if (q.type === 'redact') { P.red = { k: 0, misses: 0, fills: [] }; body += redactUI(q); }
     app.innerHTML = playerShell(body);
     window.scrollTo(0, 0);
     if (q.type === 'blind') initSwirl(q);
@@ -1037,6 +1038,33 @@
     </div>`;
   }
   function labelUI(q) { return labelHTML(q.label, 'term') + '<p class="hint mono">Tap a word on the label</p>'; }
+
+  /* Redacted label: the giveaway words are blacked out; fill in the blanks from what's left */
+  function redactUI(q) {
+    const R = P.red, bar = t => `<span class="redact" aria-label="hidden">${'▇'.repeat(Math.max(3, Math.min(9, Math.round(t.length * .7))))}</span>`;
+    const part = x => x.blank != null
+      ? `<span class="term static blank ${x.big ? 'big' : ''} ${x.small ? 'small' : ''} ${x.blank === R.k ? 'now' : ''} ${R.fills[x.blank] ? 'filled ' + R.fills[x.blank].cls : ''}">${R.fills[x.blank] ? R.fills[x.blank].t : `<i>${x.blank + 1}</i>`}</span>`
+      : `<span class="term static ${x.big ? 'big' : ''} ${x.small ? 'small' : ''}">${x.parts.map(([t, hide]) => hide ? bar(t) : esc(t)).join('')}</span>`;
+    const st = q.blanks[R.k];
+    return `<div class="redact-q">
+      <div class="wine-label label-${q.style}"><div class="lbl-border">${q.lines.map(line => `<div class="lbl-line">${line.map(part).join('')}</div>`).join('')}</div></div>
+      ${st ? `<p class="chain-q">${q.blanks.length > 1 ? `<span class="mono">Blank ${R.k + 1} of ${q.blanks.length}</span> ` : ''}${st.q}</p>
+      <div class="options">${st.order.map(i => `<button class="opt" data-act="redpick" data-i="${i}">${st.options[i]}</button>`).join('')}</div>` : ''}
+    </div>`;
+  }
+  function redactPick(q, btn) {
+    if (P.locked || P.redWait) return;
+    const R = P.red, st = q.blanks[R.k], i = +btn.dataset.i, ok = i === 0;
+    app.querySelectorAll('.redact-q .opt').forEach(o => { if (+o.dataset.i === 0) o.classList.add('right'); });
+    if (!ok) { btn.classList.add('wrong'); R.misses++; thud(); } else { clink(); buzz(8); }
+    R.fills[R.k] = { t: st.options[0], cls: ok ? 'ok' : 'bad' };
+    P.redWait = true;
+    setTimeout(() => {
+      P.redWait = false; R.k++;
+      app.querySelector('.redact-q').outerHTML = redactUI(q);
+      if (R.k >= q.blanks.length) answer(!R.misses, R.misses ? 'The right answers are filled in on the label.' : '');
+    }, ok ? 550 : 1300);
+  }
 
   /* Chain drill: label → appellation → grape → taste, one step at a time */
   function chainUI(q) {
@@ -1452,6 +1480,7 @@
       case 'reveal': revealClue(q); break;
       case 'lnote': { const n = app.querySelector('.lnote'); n.textContent = b.dataset.note; n.classList.add('on'); app.querySelectorAll('.term.picked').forEach(t => t.classList.remove('picked')); b.classList.add('picked'); buzz(5); break; }
       case 'chainpick': chainPick(q, b); break;
+      case 'redpick': redactPick(q, b); break;
       case 'term': {
         if (P.locked) return;
         const ok = b.dataset.k === q.answer;
@@ -1556,7 +1585,7 @@
     const others = nearest(pool.length >= 4 ? pool : Object.keys(D.wines), 3).length === 3 ? nearest(pool.length >= 4 ? pool : Object.keys(D.wines), 3) : nearest(Object.keys(D.wines), 3);
     const dims = TASTE_DIMS.filter(([k]) => w.profile[k] != null);
     const ao = aromaOptions(id);
-    const kinds = ['blind', 'blind', 'scale', 'aroma'];
+    const kinds = ['blind', 'blind', 'scale', 'aroma', 'redact'];
     if (w.kind !== 'Grape' && w.kind !== 'Style') kinds.push('grape');
     const kind = pick(kinds);
     const explain = `${w.name}: ${w.grapes}, from ${w.origin.split(' · ')[0]}. ${dims.map(([k, n, L]) => `${n} ${rangeWord(w.profile[k], L).toLowerCase()}`).join(', ')}.`;
@@ -1570,6 +1599,7 @@
         ],
         options: opts.map(o => D.wines[o].name), answer: opts.indexOf(id) };
     }
+    if (kind === 'redact') return redactQuestion(id, others, explain);
     if (kind === 'scale') {
       const [k, n, L] = pick(dims.filter(([k]) => !(k === 'sweetness' && midOf(w.profile[k]) === 1 && Math.random() < .6)));
       const v = w.profile[k], [a, b] = Array.isArray(v) ? v : [v, v];
@@ -1583,6 +1613,39 @@
     }
     const grapes = [...new Set(Object.values(D.wines).filter(o => o !== w && wineCat(o) === cat && o.grapes !== w.grapes).map(o => o.grapes))];
     return { type: 'choice', wines: [id], q: `What is ${w.name} made from?`, options: [w.grapes, ...shuffle(grapes).slice(0, 3)], answer: 0, explain };
+  }
+  // A made-up label for a wine, with every word that names it blacked out.
+  const RED_STOP = new Set(['valley', 'the', 'and', 'style', 'blend', 'white', 'red', 'rouge', 'old', 'vine', 'non', 'vintage', 'brut', 'grape', 'grapes', 'wine', 'di', 'de', 'des', 'du', 'del', 'la', 'le', 'les', 'from', 'with']);
+  function redactQuestion(id, others, explain) {
+    const w = D.wines[id], cat = wineCat(w), o = w.origin;
+    const words = [...new Set(w.name.split(/[^\p{L}]+/u).filter(x => x.length >= 3 && !RED_STOP.has(x.toLowerCase())))];
+    // whole words only, so "Port" hides "Port" but not the start of "Portugal"
+    const hideRe = words.length ? new RegExp(`(?<!\\p{L})(${words.join('|')})(?!\\p{L})`, 'giu') : null;
+    const parts = t => { if (!hideRe) return [[t, false]]; const out = []; let last = 0; t.replace(hideRe, (m, _g, at) => { if (at > last) out.push([t.slice(last, at), false]); out.push([m, true]); last = at + m.length; return m; }); if (last < t.length) out.push([t.slice(last), false]); return out; };
+    const has = r => r.test(o + ' ' + w.name);
+    const style = w.shape === 'champagne' || /Champagne/.test(o) ? 'champagne' : has(/Italy|Sicily|Piedmont|Tuscany|Veneto|Campania/) ? 'italy' : has(/Spain|Rioja|Jerez/) ? 'spain'
+      : has(/Germany|Austria|Mosel/) ? 'germany' : has(/France|Burgundy|Loire|Rhône|Provence|Languedoc|Roussillon|Alsace|Bordeaux|Corsica|Beaujolais/) ? 'burgundy' : 'generic';
+    const producer = { champagne: 'Maison Botty', italy: 'Tenuta Botty', spain: 'Bodega Botty', germany: 'Weingut Botty', burgundy: 'Domaine Botty' }[style] || (has(/Portugal|Douro|Madeira/) ? 'Quinta do Botty' : 'Botty Estate');
+    const dims = TASTE_DIMS.filter(([k]) => w.profile[k] != null);
+    const taste = `${aromaOptions(id).truths.slice(0, 3).join(' · ')}. ${dims.filter(([k]) => k !== 'alcohol').map(([k, n, L]) => k === 'sweetness' ? rangeWord(w.profile[k], L) : `${rangeWord(w.profile[k], L).toLowerCase()} ${n.toLowerCase()}`).join(', ')}.`;
+    const blanks = [];
+    const nameGrape = w.kind === 'Grape' || words.some(x => new RegExp(`(?<!\\p{L})${x}(?!\\p{L})`, 'iu').test(w.grapes)) || /varies|blends|grapes only|^black|^white/i.test(w.grapes);
+    if (!nameGrape) {
+      const gs = [...new Set(Object.values(D.wines).filter(x => x !== w && wineCat(x) === cat && x.grapes !== w.grapes && !/varies|blends|grapes only|^black|^white/i.test(x.grapes)).map(x => x.grapes))];
+      if (gs.length >= 3) blanks.push({ q: 'Which grapes go here?', options: [w.grapes, ...shuffle(gs).slice(0, 3)] });
+    }
+    blanks.push({ q: blanks.length ? 'And which wine is it?' : 'Which wine is it?', options: [w.name, ...others.map(x => D.wines[x].name)] });
+    blanks.forEach(b => { b.order = shuffle(b.options.map((_, i) => i)); });
+    const gi = nameGrape ? null : 0, ni = blanks.length - 1;
+    const lines = [
+      [{ parts: [[producer, false]], small: true }],
+      [{ blank: ni, big: true }],
+      [gi != null ? { blank: gi, small: true } : { parts: parts(w.grapes), small: true }],
+      [{ parts: parts(o), small: true }],
+      [{ parts: parts(taste) }],
+      [{ parts: [[String(2015 + Math.floor(Math.random() * 9)), false]], small: true }],
+    ];
+    return { type: 'redact', wines: [id], q: 'Fill in the label', style, lines, blanks, explain };
   }
   function practiceQuestions() {
     const n = S.practice.n;
