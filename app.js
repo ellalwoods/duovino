@@ -567,7 +567,7 @@
             <div class="aroma-picks result">${GT.options.map(n => { const t = GT.truths.includes(n), p = GT.picks.has(n);
               return `<span class="aroma ${t && p ? 'hit' : t ? 'miss' : p ? 'wrong' : 'idle'}">${n}</span>`; }).join('')}</div>
             <p class="gs-key"><i class="k-hit"></i>right<i class="k-miss"></i>missed<i class="k-wrong"></i>not in its profile</p></section>
-          <div class="gs-act"><button class="primary" data-act="glass-judge" data-ok="${ok ? 1 : 0}">${ok ? 'Lovely. Done' : 'Done. It\'ll come round again'}</button></div>
+          <div class="gs-act"><button class="primary" data-act="glass-judge" data-ok="${ok ? 1 : 0}" data-s="${(struct * .5 + aroma * .5).toFixed(2)}">${ok ? 'Lovely. Done' : 'Done. It\'ll come round again'}</button></div>
           <section class="gs-card gs-after"><h2 class="gs-h">With time</h2><p class="gs-text">${w.ages}</p></section>`;
         action = '';
       }
@@ -1154,8 +1154,8 @@
         <span class="lv">${lo === hi ? L[lo] : L[lo] + ' to ' + L[hi]}</span><span class="cmp-mark">${off === 0 ? '✓' : off === 1 ? '≈' : '✗'}</span></div>` };
     });
     const hits = R.truths.filter(t => R.picks.has(t)).length, wrong = [...R.picks].filter(x => !R.truths.includes(x)).length;
-    const ok = (rows.reduce((t, r) => t + r.pts, 0) / rows.length) * .5 + (Math.max(0, hits - wrong) / R.truths.length) * .5 >= .6;
-    ageBottle(q.wine, ok);
+    const score = (rows.reduce((t, r) => t + r.pts, 0) / rows.length) * .5 + (Math.max(0, hits - wrong) / R.truths.length) * .5, ok = score >= .6;
+    ageBottle(q.wine, ok, score);
     const box = app.querySelector('.rtaste');
     box.innerHTML = `<div class="rt-head"><span class="r-bottle">${bottleSVG(q.wine, S.cellar[q.wine])}</span><div><p class="mono r-name">${w.grapes}</p><p class="rt-ask">${ok ? 'Lovely, you knew it.' : 'It\'ll come round again soon.'}</p></div></div>
       <section class="gs-card"><h2 class="gs-h">Structure <span>${rows.filter(r => r.pts === 1).length}/${rows.length}</span></h2><div class="bars cmp">${rows.map(r => r.html).join('')}</div>
@@ -1252,7 +1252,7 @@
       if (!rs.length) return '';
       const rows = [];
       for (let i = 0; i < rs.length; i += 4) rows.push(rs.slice(i, i + 4));
-      return `<section class="rack-section"><h2 class="rack-plate">${cat}</h2>${rows.map(r => `<div class="shelf">${r.map(([id, e]) => `<button class="slot-b" data-act="bottle" data-id="${id}">${bottleSVG(id, e)}<span class="slot-name">${D.wines[id].name}</span><span class="mono">${bottleState(e) === 'resting' ? restLabel(e) : bottleState(e)}</span></button>`).join('')}</div>`).join('')}</section>`;
+      return `<section class="rack-section"><h2 class="rack-plate">${cat}</h2>${rows.map(r => `<div class="shelf">${r.map(([id, e]) => `<button class="slot-b" data-act="bottle" data-id="${id}">${bottleSVG(id, e)}<span class="slot-name">${D.wines[id].name}</span>${knowBar(e)}</button>`).join('')}</div>`).join('')}</section>`;
     }).join('');
     app.innerHTML = `<div class="tabview cellar">
       <header class="tab-head">
@@ -1260,13 +1260,18 @@
         <h1>The Cellar</h1>
         ${entries.length ? `<button class="pr-entry" data-act="prtaste"><span class="pr-entry-ic">↻</span><span class="pr-entry-txt"><strong>Blind-taste your cellar</strong><small>A shuffled round from your wines</small></span><span class="pr-entry-go">›</span></button>` : ''}
       </header>
-      ${entries.length ? `<div class="legend mono"><span class="lg ready">${counts.ready} ready</span><span class="lg corked">${counts.corked} corked</span><span class="lg resting">${counts.resting} resting</span></div>${racks}`
+      ${entries.length ? `<div class="legend mono"><span class="lg ready">${counts.ready} ready</span><span class="lg corked">${counts.corked} corked</span><span class="lg-know">${(() => { const ks = entries.map(([, e]) => knowPct(e)).filter(k => k != null); return ks.length ? `${Math.round(ks.reduce((a, b) => a + b, 0) / ks.length)}% known` : ''; })()}</span></div>${racks}`
         : `<div class="empty-cellar">${BOTTY}<p>No wines yet.</p><button class="primary narrow" data-act="go" data-h="#list">Find your first</button></div>`}
     </div>${tabbar('cellar')}`;
   }
-  const restLabel = e => { const d = Math.ceil((e.due - Date.now()) / DAY); return d <= 1 ? 'tomorrow' : `${d} days`; };
+  // How well you know a wine: your recent tasting accuracy, fading a little if it's been left too long (corked).
+  const knowPct = e => { const k = e.know != null ? e.know : e.reviews ? Math.round(e.stage / 5 * 100) : null; return k == null ? null : Math.round(k * (bottleState(e) === 'corked' ? .8 : 1)); };
+  const KNOW_WORDS = [[85, 'Know it well'], [65, 'Know it'], [40, 'Getting there'], [0, 'Shaky']];
+  const knowWord = k => k == null ? 'Not tasted yet' : KNOW_WORDS.find(([m]) => k >= m)[1];
+  const knowBar = (e, big) => { const k = knowPct(e); return `<span class="know ${big ? 'know-wide' : ''}"><span class="know-bar"><i style="width:${k || 0}%"></i></span>${big ? '' : `<span class="mono">${k == null ? 'new' : k + '%'}</span>`}</span>`; };
   const AGE_NAMES = ['Young', 'Developing', 'Mature', 'Aged', 'Venerable', 'Legendary'];
 
+  const knowLine = e => { const k = knowPct(e); return `<div class="know-line"><div class="know-top"><span class="mono">How well you know it</span><b>${knowWord(k)}${k == null ? '' : ` · ${k}%`}</b></div>${knowBar(e, true)}</div>`; };
   function openBottle(id) {
     const w = D.wines[id], e = S.cellar[id], st = bottleState(e);
     overlay.innerHTML = `<div class="modal" role="dialog" aria-modal="true">
@@ -1275,11 +1280,11 @@
         <div class="mb-bottle">${bottleSVG(id, e)}</div>
         <p class="eyebrow mb-eyebrow">${w.kind} · ${AGE_NAMES[e.stage]} · ${e.reviews} tasting${e.reviews === 1 ? '' : 's'}</p>
         <h2>${w.name}</h2>
-        <p class="review-q">${st === 'resting' ? 'Resting in the rack.' : 'Taste it from memory: what are its grapes, its style and its aromas?'}</p>
+        <p class="review-q">Taste it from memory: what are its grapes, its style and its aromas?</p>
         <div class="review-a" hidden>${profileHTML(w)}</div>
         ${st === 'resting'
-          ? `<p class="mono resting-note">Ready to taste again in ${restLabel(e)}</p><button class="link-btn" data-act="peek">Read the tasting note</button>`
-          : `<p class="mono resting-note">${st === 'corked' ? 'Corked! Taste it to rescue it.' : 'Ready to taste.'}</p><button class="primary" data-act="rtaste" data-id="${id}">Taste it</button><button class="link-btn" data-act="peek">or just read the tasting note</button>`}
+          ? `${knowLine(e)}<button class="primary" data-act="rtaste" data-id="${id}">Taste it</button><button class="link-btn" data-act="peek">or just read the tasting note</button>`
+          : `${knowLine(e)}<p class="mono resting-note">${st === 'corked' ? 'Corked! Taste it to rescue it.' : 'Ready to taste.'}</p><button class="primary" data-act="rtaste" data-id="${id}">Taste it</button><button class="link-btn" data-act="peek">or just read the tasting note</button>`}
         <div class="judge" hidden>
           <button class="opt" data-act="forgot" data-id="${id}">I'd forgotten</button>
           <button class="primary" data-act="remembered" data-id="${id}">I knew it</button>
@@ -1293,9 +1298,11 @@
     const h = location.hash.slice(1) || 'today';
     if (h === 'cellar') cellar(); else if (h === 'roots') roots(false); else if (h === 'list') wineList(false); else if (h === 'journey') journey(); else if (h === 'glass') glassPage(); else if (h === 'today' || h === 'home') home();
   };
-  function ageBottle(id, ok) {
+  function ageBottle(id, ok, score = ok ? 1 : 0) {
     const e = S.cellar[id];
     if (!e) return;
+    const pct = Math.round(Math.max(0, Math.min(1, score)) * 100);
+    e.know = e.know == null ? pct : Math.round(e.know * .5 + pct * .5); // recent tastings count most
     if (ok) { e.stage = Math.min(INTERVALS.length - 1, e.stage + 1); e.reviews++; clink(); buzz(15); }
     else { e.stage = 0; thud(); }
     e.due = Date.now() + INTERVALS[e.stage] * DAY;
@@ -1311,7 +1318,7 @@
     card.querySelector('.mb-bottle').classList.add('aged');
     card.querySelector('.mb-eyebrow').textContent = `${D.wines[id].kind} · ${AGE_NAMES[e.stage]} · ${e.reviews} tasting${e.reviews === 1 ? '' : 's'}`;
     card.querySelector('.resting-note')?.remove();
-    card.querySelector('.judge').outerHTML = `<p class="mono resting-note">${ok ? `Aged to ${AGE_NAMES[e.stage].toLowerCase()} · back in ${INTERVALS[e.stage]} days` : 'Back to young. Ready again tomorrow.'}</p><button class="primary" data-act="close">Back to the racks</button>`;
+    card.querySelector('.judge').outerHTML = `<p class="mono resting-note">${knowWord(knowPct(e))} · ${knowPct(e)}%</p><button class="primary" data-act="close">Back to the racks</button>`;
   }
 
   /* ---------- settings ---------- */
@@ -1497,7 +1504,7 @@
       case 'gnote': { const n = b.dataset.n; GT.picks.has(n) ? GT.picks.delete(n) : GT.picks.add(n); b.classList.toggle('on'); buzz(5);
         const c = app.querySelector('[data-act="glass-check"]'); if (c) c.disabled = !GT.picks.size; break; }
       case 'glass-check': glassPage('reveal'); break;
-      case 'glass-judge': { const g = glassToday(); ageBottle(g.wine, b.dataset.ok === '1'); g.done = true; g.ok = b.dataset.ok === '1'; save(); GT = null; glassPage(); break; }
+      case 'glass-judge': { const g = glassToday(); ageBottle(g.wine, b.dataset.ok === '1', b.dataset.s != null ? +b.dataset.s : undefined); g.done = true; g.ok = b.dataset.ok === '1'; save(); GT = null; glassPage(); break; }
       case 'mapview': S.mapView = b.dataset.v; save(); journey(); break;
       case 'setview': S.settings.view = b.dataset.v; save(); clink(); closeModal(); journey(); break;
       case 'export': exportBackup(); break;
