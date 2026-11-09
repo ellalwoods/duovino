@@ -891,7 +891,7 @@
   function renderQ() {
     const q = P.questions[P.i];
     P.locked = false; P.phase = 'practice';
-    const title = q.type === 'recall' ? `What do you remember about ${D.wines[q.wine].name}?` : q.q;
+    const title = q.type === 'recall' ? `How does ${D.wines[q.wine].name} taste?` : q.q;
     let body = `<p class="eyebrow">${TYPE_LABEL[q.type]}</p><h2 class="q">${title}</h2>`;
     if (q.type === 'odd') body += `<div class="options grid2">${shuffle(q.options.map((_, i) => i)).map(i => `<button class="opt" data-act="choose" data-i="${i}">${q.options[i]}</button>`).join('')}</div>`;
     if (q.type === 'chain') { P.chain = { k: 0, misses: 0 }; body += chainUI(q); }
@@ -905,6 +905,10 @@
     app.innerHTML = playerShell(body);
     window.scrollTo(0, 0);
     if (q.type === 'blind') initSwirl(q);
+    if (q.type === 'recall') app.querySelectorAll('.trange').forEach(r => {
+      const upd = () => { const k = r.dataset.k, v = +r.value; P.rt.marks[k] = v; app.querySelector(`[data-lv="${k}"]`).textContent = TASTE_DIMS.find(x => x[0] === k)[2][v]; };
+      r.addEventListener('input', upd); r.addEventListener('change', () => { upd(); buzz(4); });
+    });
   }
 
   /* Blind: swirl the glass to reveal clues */
@@ -1080,16 +1084,43 @@
   }
 
   /* Taste a wine from your cellar, from memory (not scored; ages the bottle) */
+  /* From your cellar: an active tasting, like Today's glass. Drag the sliders, pick the aromas, then compare. */
   function recallUI(q) {
     const w = D.wines[q.wine], e = S.cellar[q.wine];
-    return `<div class="recall" style="--fw:${w.wine}">
-      <div class="r-bottle">${bottleSVG(q.wine, e)}</div>
-      <p class="mono r-name">${w.kind} · ${w.origin}</p>
-      <p class="hint mono">Picture it first: grapes, style, aromas. Then pour.</p>
-      <div class="review-a" hidden>${profileHTML(w)}</div>
-      <button class="primary" data-act="rpeek">Pour (reveal the tasting note)</button>
-      <div class="judge" hidden><button class="opt" data-act="rjudge" data-ok="0">I'd forgotten</button><button class="primary" data-act="rjudge" data-ok="1">I knew it</button></div>
+    const ao = aromaOptions(q.wine);
+    P.rt = { marks: {}, picks: new Set(), ...ao };
+    const dims = TASTE_DIMS.filter(([k]) => w.profile[k] != null);
+    return `<div class="recall rtaste" style="--fw:${w.wine}">
+      <div class="rt-head"><span class="r-bottle">${bottleSVG(q.wine, e)}</span><div><p class="mono r-name">${w.kind} · ${w.origin.split(' · ')[0]}</p><p class="rt-ask">Taste it from memory.</p></div></div>
+      <div class="taste compact">${dims.map(([k, n, L]) => `<div class="taste-row"><div class="taste-head"><span class="mono">${n}</span><b class="taste-lv" data-lv="${k}">${L[3]}</b></div>
+        <input type="range" class="range trange" min="1" max="5" step="1" value="3" data-k="${k}" aria-label="${n}"><div class="taste-ends mono"><span>${L[1]}</span><span>${L[5]}</span></div></div>`).join('')}</div>
+      <p class="rt-ask small">Pick the ${P.rt.truths.length} aromas you'd expect</p>
+      <div class="aroma-picks">${P.rt.options.map(n => `<button class="aroma" data-act="rnote" data-n="${esc(n)}">${n}</button>`).join('')}</div>
+      <button class="primary" data-act="rcheck" disabled>Check</button>
     </div>`;
+  }
+  function recallCheck(q) {
+    if (P.locked) return;
+    P.locked = true;
+    const w = D.wines[q.wine], R = P.rt;
+    const rows = TASTE_DIMS.filter(([k]) => w.profile[k] != null).map(([k, n, L]) => {
+      const v = w.profile[k], [lo, hi] = Array.isArray(v) ? v : [v, v], m = R.marks[k] || 3;
+      const off = m < lo ? lo - m : m > hi ? m - hi : 0, pts = off === 0 ? 1 : off === 1 ? .5 : 0;
+      return { pts, html: `<div class="bar-row cmp-row ${off === 0 ? 'ok' : off === 1 ? 'near' : 'off'}"><span class="mono">${n}</span>${meter(lo, hi, m)}
+        <span class="lv">${lo === hi ? L[lo] : L[lo] + ' to ' + L[hi]}</span><span class="cmp-mark">${off === 0 ? '✓' : off === 1 ? '≈' : '✗'}</span></div>` };
+    });
+    const hits = R.truths.filter(t => R.picks.has(t)).length, wrong = [...R.picks].filter(x => !R.truths.includes(x)).length;
+    const ok = (rows.reduce((t, r) => t + r.pts, 0) / rows.length) * .5 + (Math.max(0, hits - wrong) / R.truths.length) * .5 >= .6;
+    ageBottle(q.wine, ok);
+    const box = app.querySelector('.rtaste');
+    box.innerHTML = `<div class="rt-head"><span class="r-bottle">${bottleSVG(q.wine, S.cellar[q.wine])}</span><div><p class="mono r-name">${w.grapes}</p><p class="rt-ask">${ok ? 'Lovely, you knew it.' : 'It\'ll come round again soon.'}</p></div></div>
+      <section class="gs-card"><h2 class="gs-h">Structure <span>${rows.filter(r => r.pts === 1).length}/${rows.length}</span></h2><div class="bars cmp">${rows.map(r => r.html).join('')}</div>
+        <p class="gs-key"><i class="k-fill"></i>the wine<i class="k-dot"></i>your mark</p></section>
+      <section class="gs-card"><h2 class="gs-h">Aromas <span>${hits}/${R.truths.length}</span></h2>
+        <div class="aroma-picks result">${R.options.map(n => { const t = R.truths.includes(n), p = R.picks.has(n); return `<span class="aroma ${t && p ? 'hit' : t ? 'miss' : p ? 'wrong' : 'idle'}">${n}</span>`; }).join('')}</div>
+        <p class="gs-key"><i class="k-hit"></i>right<i class="k-miss"></i>missed<i class="k-wrong"></i>not in its profile</p></section>
+      <button class="primary" data-act="next">${P.i + 1 < P.questions.length ? 'Next' : 'Finish'}</button>`;
+    box.scrollIntoView({ block: 'start' });
   }
 
   /* Answer & feedback */
@@ -1120,6 +1151,7 @@
   function finish() {
     if (P.kind === 'practice') return finishPractice();
     if (P.kind === 'checkpoint') return finishCheckpoint();
+    if (P.kind === 'review') { pop(); go('#cellar'); return; }
     const n = scoredCount(), pct = Math.round((P.correct / n) * 100), now = Date.now();
     S.days[todayKey()] = (S.days[todayKey()] || 0) + 1;
     const rec = S.units[P.id], first = !rec;
@@ -1203,7 +1235,7 @@
         <div class="review-a" hidden>${profileHTML(w)}</div>
         ${st === 'resting'
           ? `<p class="mono resting-note">Ready to taste again in ${restLabel(e)}</p><button class="link-btn" data-act="peek">Read the tasting note</button>`
-          : `<p class="mono resting-note">${st === 'corked' ? 'Corked! Taste it to rescue it.' : 'Ready to taste. Picture it first.'}</p><button class="primary" data-act="peek">Pour (reveal the tasting note)</button>`}
+          : `<p class="mono resting-note">${st === 'corked' ? 'Corked! Taste it to rescue it.' : 'Ready to taste.'}</p><button class="primary" data-act="rtaste" data-id="${id}">Taste it</button><button class="link-btn" data-act="peek">or just read the tasting note</button>`}
         <div class="judge" hidden>
           <button class="opt" data-act="forgot" data-id="${id}">I'd forgotten</button>
           <button class="primary" data-act="remembered" data-id="${id}">I knew it</button>
@@ -1377,8 +1409,10 @@
       case 'unslot': if (!P.locked && P.seq[+b.dataset.i]) { P.seq.splice(+b.dataset.i, 1); refreshOrder(); } break;
       case 'bucket': sortTap(q, +b.dataset.b); break;
       case 'place': place(q); break;
-      case 'rpeek': { const r = b.closest('.recall'); r.querySelector('.review-a').hidden = false; r.querySelector('.judge').hidden = false; r.querySelector('.hint').remove(); b.remove(); break; }
-      case 'rjudge': ageBottle(q.wine, b.dataset.ok === '1'); next(); break;
+      case 'rnote': { const n = b.dataset.n; P.rt.picks.has(n) ? P.rt.picks.delete(n) : P.rt.picks.add(n); b.classList.toggle('on'); buzz(5);
+        app.querySelector('[data-act="rcheck"]').disabled = !P.rt.picks.size; break; }
+      case 'rcheck': recallCheck(q); break;
+      case 'rtaste': { const id = b.dataset.id; closeModal(); startReview(id); break; }
       case 'next': next(); break;
       case 'bottle': openBottle(b.dataset.id); break;
       case 'peek': {
@@ -1531,6 +1565,10 @@
     const taste = S.practice.mode === 'taste';
     P = { kind: 'practice', id: 'practice', title: taste ? 'Blind tasting' : 'Lessons & rules', tag: 'Practice', wine: taste ? '#a8434e' : '#7c5a8a',
       lesson: [], questions: qs, card: 0, i: 0, correct: 0, results: [], phase: 'practice' };
+    setWine(P.wine); renderQ();
+  }
+  function startReview(id) {
+    P = { kind: 'review', id: 'review', title: D.wines[id].name, tag: 'From your cellar', wine: D.wines[id].wine, lesson: [], questions: [{ type: 'recall', wine: id }], card: 0, i: 0, correct: 0, results: [], phase: 'practice' };
     setWine(P.wine); renderQ();
   }
   function finishPractice() {
