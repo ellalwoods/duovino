@@ -870,3 +870,7 @@ button.aroma:active { transform: scale(.96); }
 .big-glass .bubble:nth-of-type(3n) { animation-duration: 3.6s; animation-delay: -2s; }
 .glass-wrap.big { background: none; padding: 0; border-radius: 0; font-size: inherit; text-align: initial; }
 .swirl-ring circle[stroke-dasharray="0 100"] { opacity: 0; }
+
+/* Tasting: always leave room to scroll the last item clear of the floating tab bar */
+.glass-page.noted { padding-bottom: calc(150px + var(--safe-bot)); }
+.gs-after { margin-top: 2px; }

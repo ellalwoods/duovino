@@ -523,10 +523,11 @@
             <div class="aroma-picks result">${GT.options.map(n => { const t = GT.truths.includes(n), p = GT.picks.has(n);
               return `<span class="aroma ${t && p ? 'hit' : t ? 'miss' : p ? 'wrong' : 'idle'}">${n}</span>`; }).join('')}</div>
             <p class="gs-key"><i class="k-hit"></i>right<i class="k-miss"></i>missed<i class="k-wrong"></i>not in its profile</p></section>
-          <section class="gs-card"><h2 class="gs-h">With time</h2><p class="gs-text">${w.ages}</p></section>`;
-        action = `<button class="primary" data-act="glass-judge" data-ok="${ok ? 1 : 0}">${ok ? 'Lovely. Done' : 'Done. It\'ll come round again'}</button>`;
+          <div class="gs-act"><button class="primary" data-act="glass-judge" data-ok="${ok ? 1 : 0}">${ok ? 'Lovely. Done' : 'Done. It\'ll come round again'}</button></div>
+          <section class="gs-card gs-after"><h2 class="gs-h">With time</h2><p class="gs-text">${w.ages}</p></section>`;
+        action = '';
       }
-      body = `<div class="glass-sheet" style="--fw:${w.wine}">${head}<div class="gs-body">${inner}</div><div class="gs-act">${action}</div></div>`;
+      body = `<div class="glass-sheet" style="--fw:${w.wine}">${head}<div class="gs-body">${inner}</div>${action ? `<div class="gs-act">${action}</div>` : ''}</div>`;
     }
     app.innerHTML = `<div class="tabview glass-page ${['taste', 'notes', 'reveal'].includes(phase) && w && !g.done ? 'noted' : ''}" style="--fw:${w ? w.wine : '#a8434e'}">${body}</div>${tabbar('glass')}`;
     const wrap = app.querySelector('[data-glass]');
