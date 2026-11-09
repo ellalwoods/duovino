@@ -25,8 +25,8 @@
   // Your "passcode" is just your name + a wine + a region you pick. Easy to remember; it only keeps the two of you apart.
   const PICK_WINES = [['champagne', 'Champagne', '#e8d48a', 'flute'], ['sancerre', 'Sancerre', '#eadf9c', 'white'], ['rose', 'Rosé', '#f2a7a0', 'white'], ['barolo', 'Barolo', '#8e2f3a', 'burgundy'],
     ['malbec', 'Malbec', '#4f1530', 'bordeaux'], ['fino', 'Fino', '#e8d590', 'copita'], ['sauternes', 'Sauternes', '#d9a441', 'dessert'], ['port', 'Port', '#6b1d2a', 'dessert']];
-  const PICK_PLACES = [['burgundy', 'Burgundy', 'France'], ['bordeaux', 'Bordeaux', 'France'], ['provence', 'Provence', 'France'], ['rioja', 'Rioja', 'Spain'], ['tuscany', 'Tuscany', 'Italy'], ['mosel', 'Mosel', 'Germany'],
-    ['douro', 'Douro', 'Portugal'], ['napa', 'Napa', 'USA'], ['barossa', 'Barossa', 'Australia'], ['marlborough', 'Marlborough', 'New Zealand']];
+  const PICK_PLACES = [['burgundy', 'Burgundy', 'France'], ['provence', 'Provence', 'France'], ['rioja', 'Rioja', 'Spain'], ['tuscany', 'Tuscany', 'Italy'], ['mosel', 'Mosel', 'Germany'],
+    ['douro', 'Douro', 'Portugal'], ['napa', 'Napa', 'USA'], ['barossa', 'Barossa', 'Australia'], ['marlborough', 'Marlborough', 'New Zealand'], ['mendoza', 'Mendoza', 'Argentina']];
   const pickCode = (name, w, r) => `p:${name.toLowerCase().trim().replace(/\s+/g, ' ')}|${w}|${r}`;
   const pickOf = code => { if (!String(code || '').startsWith('p:')) return null; const [, w, r] = code.slice(2).split('|'); return { w: PICK_WINES.find(x => x[0] === w), r: PICK_PLACES.find(x => x[0] === r) }; };
   const normCode = c => String(c || '').toLowerCase().trim().replace(/[\s_]+/g, '-').replace(/[^a-z0-9-]/g, '');
@@ -1731,7 +1731,7 @@
     const rekey = mode === 'rekey';
     app.innerHTML = `<div class="welcome">
       <div class="w-head"><div class="wl-glass">${miniGlass('#a8434e', 'burgundy')}</div><h1>${rekey ? 'New wine & region' : 'Who\'s tasting?'}</h1></div>
-      <p class="w-sub">${rekey ? 'Pick a new wine and region for your login.' : 'Your name, wine and region make up your login, so your progress stays yours.'}</p>
+      <p class="w-sub">${rekey ? 'Pick a new wine and region for your login.' : 'This makes up your login info so you can keep your progress on any device.'}</p>
       <input class="w-input" id="w-name" placeholder="Your name" autocomplete="off" value="${esc(localStorage.getItem(NAME_KEY) || '')}" ${rekey ? 'disabled' : ''}>
       <p class="w-step mono">YOUR WINE</p>
       <div class="w-wines">${PICK_WINES.map(([id, n, c, k]) => `<button class="w-wine" data-act="w-wine" data-id="${id}">${miniGlass(c, k)}<span>${n}</span></button>`).join('')}</div>
