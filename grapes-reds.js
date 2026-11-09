@@ -111,7 +111,7 @@
         explain: 'Bright, savoury and firm.' },
       { type: 'choice', q: 'Vino Nobile di Montepulciano is named after…', options: ['A town', 'A grape', 'A producer', 'A river'], answer: 0,
         explain: 'The town of Montepulciano, in Tuscany. Its grape is mostly Sangiovese.' },
-      { type: 'choice', q: 'Why is Sangiovese good with tomato sauces?', options: ['Its high acidity matches the tomato', 'It\'s sweet', 'It has no tannin', 'It\'s white'], answer: 0,
+      { type: 'choice', q: 'Why is Sangiovese good with tomato sauces?', options: ['Its high acidity matches the sauce\'s', 'It\'s sweet', 'It has no tannin', 'It\'s white'], answer: 0,
         explain: 'Acidity in food needs acidity in the wine.' },
     ],
   };
@@ -167,7 +167,7 @@
         { h: 'Cabernet Sauvignon', items: ['Fuller, firmer', 'Blackcurrant, cedar', 'High tannin'] }] },
     ],
     questions: [
-      { type: 'choice', q: 'Cabernet Franc is…', options: ['A parent of Cabernet Sauvignon', 'The same grape as Merlot', 'A white grape', 'Another name for Malbec'], answer: 0,
+      { type: 'choice', q: 'Cabernet Franc is…', options: ['A parent of Cabernet Sauvignon', 'The same grape as Merlot', 'A mutation of Cabernet Sauvignon', 'Another name for Malbec'], answer: 0,
         explain: 'Its offspring is Cabernet Sauvignon.' },
       { type: 'sort', wines: ['cabfranc'], q: 'Cabernet Franc or Cabernet Sauvignon?', buckets: ['Franc', 'Sauvignon'],
         items: [{ t: 'Raspberry', b: 0 }, { t: 'Blackcurrant', b: 1 }, { t: 'Lighter', b: 0 }, { t: 'High tannin', b: 1 }, { t: 'Violet', b: 0 }],
