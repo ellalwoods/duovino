@@ -1711,6 +1711,7 @@
       case 'prmode': S.practice.mode = b.dataset.v; save(); practicePage(); break;
       case 'prarea': S.practice.area = b.dataset.v; save(); practicePage(); break;
       case 'prlen': S.practice.n = +b.dataset.v; save(); practicePage(); break;
+      case 'prcat': S.practice.cat = b.dataset.v; save(); practicePage(); break;
       case 'prstart': startPractice(); break;
       case 'prtaste': S.practice = { ...(S.practice || { area: 'all', n: 10 }), mode: 'taste' }; save(); go('#practice'); break;
       case 'glass-pour': glassPage('taste'); break;
@@ -1743,6 +1744,8 @@
     [D.C.pink]: 'Pink', [D.C.salmon]: 'Pale salmon', [D.C.purple]: 'Deep purple', [D.C.ruby]: 'Ruby', [D.C.garnet]: 'Garnet', [D.C.tawny]: 'Tawny' });
   const rangeWord = (v, L) => { const [a, b] = Array.isArray(v) ? v : [v, v]; return a === b ? L[a] : `${L[a]} to ${L[b]}`; };
   const learnedWines = () => Object.keys(S.cellar).filter(id => D.wines[id]);
+  const WINE_CATS = ['Sparkling', 'White', 'Rosé', 'Red', 'Sweet'];
+  const CAT_LABEL = { Sparkling: 'Sparkling', White: 'Whites', 'Rosé': 'Rosés', Red: 'Reds', Sweet: 'Sweet & fortified' };
   const doneB = () => UNITS.filter(r => r.track === 'B' && playable(r) && S.units[r.u.id]);
   const doneAll = () => UNITS.filter(r => playable(r) && S.units[r.u.id]);
   function practiceAreas() {
@@ -1767,10 +1770,11 @@
     const w = D.wines[id], cat = wineCat(w);
     const dist = o => TASTE_DIMS.reduce((sum, [k]) => sum + Math.abs((midOf(o.profile[k]) ?? 0) - (midOf(w.profile[k]) ?? 0)), 0);
     const nearest = (ids, n) => ids.filter(o => o !== id).sort((a, b) => (wineCat(D.wines[b]) === cat) - (wineCat(D.wines[a]) === cat) || dist(D.wines[a]) - dist(D.wines[b])).slice(0, n);
-    const others = nearest(pool.length >= 4 ? pool : Object.keys(D.wines), 3).length === 3 ? nearest(pool.length >= 4 ? pool : Object.keys(D.wines), 3) : nearest(Object.keys(D.wines), 3);
+    const sameKind = Object.keys(D.wines).filter(o => wineCat(D.wines[o]) === cat);
+    const others = [pool, sameKind, Object.keys(D.wines)].map(src => nearest(src, 3)).find(x => x.length === 3);
     const dims = TASTE_DIMS.filter(([k]) => w.profile[k] != null);
     const ao = aromaOptions(id);
-    const kinds = ['blind', 'blind', 'scale', 'aroma', 'redact'];
+    const kinds = ['blind', 'blind', 'scale', 'aroma', 'redact', 'compare', 'compare'];
     if (w.kind !== 'Grape' && w.kind !== 'Style') kinds.push('grape');
     const kind = pick(kinds);
     const explain = `${w.name}: ${w.grapes}, from ${w.origin.split(' · ')[0]}. ${dims.map(([k, n, L]) => `${n} ${rangeWord(w.profile[k], L).toLowerCase()}`).join(', ')}.`;
@@ -1785,6 +1789,7 @@
         options: opts.map(o => D.wines[o].name), answer: opts.indexOf(id) };
     }
     if (kind === 'redact') return redactQuestion(id, others, explain);
+    if (kind === 'compare') { const q = compareQuestion(id, pool); if (q) return q; }
     if (kind === 'scale') {
       const [k, n, L] = pick(dims.filter(([k]) => !(k === 'sweetness' && midOf(w.profile[k]) === 1 && Math.random() < .6)));
       const v = w.profile[k], [a, b] = Array.isArray(v) ? v : [v, v];
@@ -1804,6 +1809,26 @@
     const styleWord = { Sparkling: 'sparkling wine', Red: 'red', 'Rosé': 'rosé', Sweet: 'sweet wine', White: 'white' }[cat];
     const q = named ? `A classic ${styleWord} from ${place}. Which grape is it made from?` : `What is ${w.name} made from?`;
     return { type: 'choice', wines: [id], q, options: [w.grapes, ...shuffle(grapes).slice(0, 3)], answer: 0, explain };
+  }
+  // Head to head: two wines of the same kind whose ranges don't overlap on one measure. Which is higher (or lower)?
+  const CMP_WORDS = { sweetness: ['sweeter', 'drier'], acidity: ['higher in acidity', 'lower in acidity'], tannin: ['more tannic', 'softer in tannin'], body: ['fuller-bodied', 'lighter-bodied'], alcohol: ['higher in alcohol', 'lower in alcohol'] };
+  const span = v => Array.isArray(v) ? v : [v, v];
+  function compareQuestion(id, pool) {
+    const w = D.wines[id], cat = wineCat(w);
+    const mates = [...new Set([...pool, ...Object.keys(D.wines)])].filter(o => o !== id && wineCat(D.wines[o]) === cat);
+    const fromPool = shuffle(mates.filter(o => pool.includes(o))), rest = shuffle(mates.filter(o => !pool.includes(o)));
+    for (const o of [...fromPool, ...rest]) {
+      const x = D.wines[o];
+      for (const [k, n, L] of shuffle(TASTE_DIMS.filter(([k]) => w.profile[k] != null && x.profile[k] != null))) {
+        const [a1, a2] = span(w.profile[k]), [b1, b2] = span(x.profile[k]);
+        if (!(a2 < b1 || b2 < a1)) continue; // overlapping: no clear answer
+        const higher = a1 > b2 ? id : o, ask = Math.random() < .5 ? 0 : 1, right = ask === 0 ? higher : (higher === id ? o : id);
+        const opts = shuffle([id, o]);
+        return { type: 'choice', wines: [id, o], q: `Which is ${CMP_WORDS[k][ask]}?`, options: opts.map(i => D.wines[i].name), answer: opts.indexOf(right),
+          explain: `${n}: ${w.name} ${rangeWord(w.profile[k], L).toLowerCase()}, ${x.name} ${rangeWord(x.profile[k], L).toLowerCase()}.` };
+      }
+    }
+    return null;
   }
   // A made-up label for a wine, with every word that names it blacked out.
   const RED_STOP = new Set(['valley', 'the', 'and', 'style', 'blend', 'white', 'red', 'rouge', 'old', 'vine', 'non', 'vintage', 'brut', 'grape', 'grapes', 'wine', 'di', 'de', 'des', 'du', 'del', 'la', 'le', 'les', 'from', 'with']);
@@ -1841,7 +1866,8 @@
   function practiceQuestions() {
     const n = S.practice.n;
     if (S.practice.mode === 'taste') {
-      const pool = learnedWines(); if (!pool.length) return [];
+      const cat = S.practice.cat && S.practice.cat !== 'all' ? S.practice.cat : null;
+      const pool = learnedWines().filter(id => !cat || wineCat(D.wines[id]) === cat); if (!pool.length) return [];
       // favour wines that are due or corked, but keep it random
       const weighted = pool.flatMap(id => { const e = S.cellar[id], st = bottleState(e); return st === 'corked' ? [id, id, id] : st === 'ready' ? [id, id] : [id]; });
       const qs = []; let guard = 0;
@@ -1867,11 +1893,13 @@
         <button class="pr-mode ${cur.mode === 'rules' ? 'on' : ''}" data-act="prmode" data-v="rules"><span class="pr-ic pr-book">§</span>
           <strong>Lessons & rules</strong><small>${doneAll().length ? `From ${doneAll().length} lesson${doneAll().length === 1 ? '' : 's'} you've finished` : 'Finish a lesson first'}</small></button>
       </div>
+      ${cur.mode === 'taste' && wines.length ? `<p class="pr-label mono">Focus</p><div class="pr-areas">${[['all', 'All wines'], ...WINE_CATS.map(c => [c, CAT_LABEL[c]])].map(([k, t]) => { const n = k === 'all' ? wines.length : wines.filter(id => wineCat(D.wines[id]) === k).length;
+        return `<button class="aroma ${(cur.cat || 'all') === k ? 'on' : ''}" data-act="prcat" data-v="${k}" ${n ? '' : 'disabled'}>${t} <small>${n}</small></button>`; }).join('')}</div>` : ''}
       ${cur.mode === 'rules' && areas[0][2].length ? `<p class="pr-label mono">Focus</p><div class="pr-areas">${areas.map(([k, t]) => `<button class="aroma ${cur.area === k ? 'on' : ''}" data-act="prarea" data-v="${esc(k)}">${t}</button>`).join('')}</div>` : ''}
       <p class="pr-label mono">Length</p>
       <div class="seg pr-len">${[5, 10, 20].map(n => `<button class="${cur.n === n ? 'on' : ''}" data-act="prlen" data-v="${n}">${n} questions</button>`).join('')}</div>
       <button class="primary pr-go" data-act="prstart" ${ready ? '' : 'disabled'}>Shuffle & start</button>
-      ${cur.mode === 'taste' ? `<p class="pr-note">Identify wines from their clues, place them on a scale, pick their aromas. Wines you miss come back sooner in your cellar.</p>` : `<p class="pr-note">Shuffled questions from the lessons you've finished, in both tracks. Appellation rules covers the lessons checked against official texts.</p>`}
+      ${cur.mode === 'taste' ? `<p class="pr-note">Identify wines from their clues, place them on a scale, pick their aromas, and compare them head to head. Pick a focus to test reds against reds, whites against whites. Wines you miss come back sooner in your cellar.</p>` : `<p class="pr-note">Shuffled questions from the lessons you've finished, in both tracks. Appellation rules covers the lessons checked against official texts.</p>`}
     </div>${tabbar('list')}`;
   }
   function startPractice() {
