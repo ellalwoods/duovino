@@ -1071,3 +1071,8 @@ button.aroma:active { transform: scale(.96); }
 .an-bar i { display: block; height: 100%; border-radius: 4px; background: #7c5a8a; }
 .an-stats { margin-bottom: 8px; background: #fbf6ec; }
 .an-foot { margin: 0; font-size: 13px; color: var(--ink-soft); line-height: 1.4; }
+
+.an-time { display: grid; grid-template-columns: 1fr 1.4fr 1fr; gap: 6px; margin: 0 0 12px; text-align: center; }
+.an-time b { display: block; font-size: 17px; font-weight: 500; }
+.an-time span { font-size: 11.5px; color: var(--ink-soft); }
+.an-time-note { margin: -6px 0 10px; font-size: 12px; }
