@@ -330,11 +330,74 @@
       ['tastevin', 'Tastevin', `<path d="M18 43 Q24 52 32 53 Q40 52 46 43" stroke="#a8434e" stroke-width="1" fill="none"/><circle cx="32" cy="55.5" r="4.2" fill="#d5d9dc" stroke="#9aa1a6" stroke-width=".7"/><circle cx="32" cy="55.5" r="1.6" fill="none" stroke="#9aa1a6" stroke-width=".5"/>`, 'cp1', 'Pass a checkpoint'],
     ],
   };
-  const SLOT_NAMES = { hat: 'Hats', eyes: 'Eyes', neck: 'Neck' };
+  /* Earned outfits: one for every Roots chapter and every region of Grapes & places, inspired by it */
+  const LOWER = 'M14.7 48 Q32 55 49.3 48 A20 20 0 0 1 14.7 48 Z'; // the bottom of Botty, for shirts and ponchos
+  const flower = (x, y, r, petals, fill, mid) => `<g transform="translate(${x} ${y})">${[...Array(petals)].map((_, i) => `<ellipse cy="${-r}" rx="${r * .55}" ry="${r}" fill="${fill}" transform="rotate(${i * 360 / petals})"/>`).join('')}<circle r="${r * .5}" fill="${mid}"/></g>`;
+  const leaves = (pts, fill, rx = 4.6, ry = 2.6) => `<g fill="${fill}">${pts.map(([x, y, r]) => `<ellipse cx="${x}" cy="${y}" rx="${rx}" ry="${ry}" transform="rotate(${r} ${x} ${y})"/>`).join('')}</g>`;
+  const EARNED = {
+    hat: [
+      ['sprout', 'Sprout', `<path d="M32 13 V5" stroke="#5f7d3a" stroke-width="1.6"/>${leaves([[28, 6, -25], [36, 5, 25]], '#7c9a4e', 4.5, 2.2)}`, 'a:0'],
+      ['muselet', 'Champagne cork', `<path d="M24 19 Q24 7 32 7 Q40 7 40 19 Z" fill="#c9a06a"/><path d="M26 10 Q32 12 38 10 M25 14 Q32 16 39 14" stroke="#a9804a" stroke-width=".6" fill="none"/><rect x="22" y="16.5" width="20" height="4" rx="1.6" fill="#c4c4c4"/><path d="M26 17 L31 8 M38 17 L33 8" stroke="#9a9a9a" stroke-width=".8"/><circle cx="32" cy="7" r="2.6" fill="#d9b44a"/>`, 'r:Champagne AOC'],
+      ['turret', 'Château turret', `<rect x="25" y="9" width="14" height="11" fill="#ece2cf" stroke="#8a7a62" stroke-width=".6"/><path d="M23 9.5 L32 1 L41 9.5 Z" fill="#7d2a35"/><rect x="30" y="13" width="4" height="7" rx="2" fill="#5a4636"/>`, 'r:Bordeaux'],
+      ['mitre', 'Papal mitre', `<path d="M24 20 L24 10 Q28 4 32 1.5 Q36 4 40 10 L40 20 Z" fill="#fbf6ea" stroke="#c9a24a" stroke-width="1"/><path d="M32 2 V20 M24 15 H40" stroke="#c9a24a" stroke-width="1.8"/>`, 'r:Rhône'],
+      ['coiffe', 'Alsace bow', `<path d="M32 13 C24 1 10 5 13 15 C15 22 26 17 32 15 C38 17 49 22 51 15 C54 5 40 1 32 13 Z" fill="#1f1a1d"/><ellipse cx="32" cy="14" rx="3" ry="3.6" fill="#3a2a30"/>`, 'r:Alsace'],
+      ['bobble', 'Mountain bobble hat', `<path d="M19 21 Q19 6 32 6 Q45 6 45 21 Z" fill="#4f7a8f"/><path d="M22 11 H42 M20 15 H44" stroke="#f0e6d2" stroke-width="1.2" stroke-dasharray="2 2"/><rect x="18" y="18" width="28" height="5" rx="2" fill="#f0e6d2"/><circle cx="32" cy="5" r="3.6" fill="#f0e6d2"/>`, 'r:South, South-West & mountains'],
+      ['florentine', 'Florentine cap', `<path d="M20 20 Q20 7 32 7 Q42 7 44 13 L49 17 L44 20 Z" fill="#9c2a2a"/><path d="M20 19.5 H45" stroke="#6e1a1a" stroke-width="2.6"/>`, 'r:Tuscany'],
+      ['alpine', 'Alpine hat', `<path d="M21 20 Q22 9 32 8 Q42 9 43 20 Z" fill="#4e6b3a"/><rect x="18" y="18.5" width="28" height="3" rx="1.5" fill="#3f572f"/><rect x="22" y="15.5" width="20" height="2.4" fill="#a8434e"/><path d="M40 16 Q47 9 47 1 Q44 8 39.5 15 Z" fill="#9aa1a6"/>`, 'r:The north'],
+      ['rose', 'Flamenco rose', `<g transform="translate(40 15)"><ellipse cx="-6" cy="3" rx="3.4" ry="1.6" fill="#5f7d3a" transform="rotate(30 -6 3)"/><circle r="5.4" fill="#b3263a"/><path d="M-3.2 -.6 Q0 -4 3.2 -.6 Q0 2.4 -3.2 -.6 M-2.4 2.4 Q0 .6 2.4 2.4" stroke="#7d1526" stroke-width=".9" fill="none"/></g>`, 'r:Spain'],
+      ['edelweiss', 'Edelweiss', flower(24, 15, 3.4, 6, '#f7f4ec', '#e0c85a').replace('<g ', '<g stroke="#c9c2b2" stroke-width=".3" '), 'r:Austria'],
+      ['olive', 'Olive wreath', `${leaves([[17, 23, -45], [21, 17, -30], [26, 13, -12], [38, 13, 12], [43, 17, 30], [47, 23, 45]], '#93a07a', 4.8, 1.8)}<g fill="#3a3530"><circle cx="23.5" cy="15.5" r="1.4"/><circle cx="40.5" cy="15.5" r="1.4"/><circle cx="32" cy="11.5" r="1.4"/></g>`, 'r:Greece'],
+      ['papakha', 'Papakha', `<path d="M20 20 V9 Q32 4 44 9 V20 Z" fill="#efe9dd"/><g fill="#d8cfbf">${[[23, 10], [28, 8], [33, 7.5], [38, 8], [42, 10], [22, 15], [27, 13], [32, 12], [37, 13], [42, 15], [25, 18], [30, 17], [35, 17], [40, 18]].map(([x, y]) => `<circle cx="${x}" cy="${y}" r="1.6"/>`).join('')}</g>`, 'r:Georgia'],
+      ['bowler', 'Bowler hat', `<path d="M22 19 Q22 5 32 5 Q42 5 42 19 Z" fill="#1f1a1d"/><rect x="22" y="15" width="20" height="2.2" fill="#3a2f33"/><rect x="17" y="17.5" width="30" height="3" rx="1.5" fill="#1f1a1d"/>`, 'r:England'],
+      ['earmuffs', 'Earmuffs', `<path d="M13 35 Q13 11 32 11 Q51 11 51 35" stroke="#a8434e" stroke-width="2.2" fill="none"/><circle cx="13" cy="35" r="5.2" fill="#fbf6ea" stroke="#d6c6ab"/><circle cx="51" cy="35" r="5.2" fill="#fbf6ea" stroke="#d6c6ab"/><path d="M11 35 H15 M13 33 V37 M49 35 H53 M51 33 V37" stroke="#9ab6c8" stroke-width=".8"/>`, 'r:Canada'],
+      ['gaucho', 'Gaucho hat', `<path d="M23 18 V9 H41 V18 Z" fill="#2a1a1f"/><rect x="23" y="14" width="18" height="2" fill="#8a6a3a"/><rect x="15" y="17" width="34" height="3" rx="1.5" fill="#2a1a1f"/>`, 'r:Argentina'],
+      ['feathers', 'Carnival feathers', `${[[-50, '#2f8f5b'], [-25, '#f0c76a'], [0, '#a8434e'], [25, '#4f7a8f'], [50, '#e58a3a']].map(([r, c]) => `<ellipse cx="32" cy="7" rx="3" ry="8" fill="${c}" transform="rotate(${r} 32 17)"/>`).join('')}<rect x="22" y="15" width="20" height="4" rx="2" fill="#e0b23c"/>`, 'r:Brazil'],
+      ['corkhat', 'Cork hat', `<path d="M23 19 Q23 8 32 8 Q41 8 41 19 Z" fill="#a7865a"/><ellipse cx="32" cy="19" rx="20" ry="3.4" fill="#a7865a"/><g stroke="#6b5a3c" stroke-width=".5">${[15, 21, 43, 49].map(x => `<path d="M${x} 20 V${x < 32 ? 26 + (x - 15) / 3 : 26 + (49 - x) / 3}"/>`).join('')}</g><g fill="#c9a06a">${[15, 21, 43, 49].map(x => `<rect x="${x - 1.2}" y="${x < 32 ? 26 + (x - 15) / 3 : 26 + (49 - x) / 3}" width="2.4" height="3.6" rx=".8"/>`).join('')}</g>`, 'r:Australia'],
+      ['protea', 'Protea', `<g transform="translate(40 14)"><path d="M-5.5 4 Q-7 -4 0 -7 Q7 -4 5.5 4 Z" fill="#e58aa0"/><path d="M-3.5 3 Q-4 -2.5 0 -4.5 Q4 -2.5 3.5 3 Z" fill="#f3c6cf"/><path d="M-6 4 H6" stroke="#5f7d3a" stroke-width="1.4"/></g>`, 'r:South Africa'],
+      ['sakura', 'Cherry blossom', `${flower(23, 16, 2.6, 5, '#f6c1cf', '#e07a95')}${flower(29, 12, 2, 5, '#f9d4de', '#e07a95')}`, 'r:Japan'],
+    ],
+    eyes: [
+      ['redsmile', 'Red-wine smile', `<path d="M27 44 q5 4 10 0" stroke="#6b1d3a" stroke-width="3.2" fill="none" stroke-linecap="round" opacity=".7"/>`, 'a:3'],
+      ['halfmoon', 'Half-moon glasses', `<g fill="#fff" fill-opacity=".25" stroke="#c9a24a" stroke-width="1.2"><path d="M20.5 37.5 A5.5 5 0 0 0 31.5 37.5 Z"/><path d="M32.5 37.5 A5.5 5 0 0 0 43.5 37.5 Z"/></g><path d="M31.5 37.8 Q32 37.2 32.5 37.8 M20.5 37.6 L14 35.5 M43.5 37.6 L50 35.5" stroke="#c9a24a" stroke-width="1" fill="none"/>`, 'a:4'],
+      ['mask', 'Carnival mask', `<path d="M16 35 Q19 30 26 32 Q32 34 38 32 Q45 30 48 35 Q47 42 39.5 42 Q34 42 32 39 Q30 42 24.5 42 Q17 42 16 35 Z" fill="#c9a24a"/><path d="M18 34 Q24 31 30 34 M34 34 Q40 31 46 34" stroke="#8a6a1f" stroke-width=".7" fill="none"/><ellipse cx="26" cy="37" rx="3" ry="2.2" fill="#2a1a1f"/><ellipse cx="38" cy="37" rx="3" ry="2.2" fill="#2a1a1f"/><circle cx="26.8" cy="36.4" r=".7" fill="#fff"/><circle cx="38.8" cy="36.4" r=".7" fill="#fff"/><path d="M47 34 Q53 26 51 20 Q50 27 46 32 Z" fill="#7c5a8a"/>`, 'r:Veneto'],
+      ['heartshades', 'Rosé heart shades', `<g fill="#f2a7a0" fill-opacity=".92" stroke="#c75b6b" stroke-width=".8">${[26, 38].map(x => `<path d="M${x} 41.5 L${x - 5} 36.5 A2.6 2.6 0 0 1 ${x} 33.6 A2.6 2.6 0 0 1 ${x + 5} 36.5 Z"/>`).join('')}</g><path d="M31 36 H33 M21 36 L14 34 M43 36 L50 34" stroke="#c75b6b" stroke-width=".9"/>`, 'r:Provence & Corsica'],
+      ['aviators', 'Aviators', `<g fill="#3a5a6a" fill-opacity=".88" stroke="#c9a24a" stroke-width=".9"><path d="M20 34 H31 Q31 42.5 25.5 42.5 Q20 42.5 20 34 Z"/><path d="M33 34 H44 Q44 42.5 38.5 42.5 Q33 42.5 33 34 Z"/></g><path d="M31 34.6 H33 M20 34.6 L14 33 M44 34.6 L50 33" stroke="#c9a24a" stroke-width=".9"/>`, 'r:California'],
+    ],
+    neck: [
+      ['leafcollar', 'Vine-leaf collar', leaves([[17, 47, 35], [22, 51, 20], [28, 53, 5], [36, 53, -5], [42, 51, -20], [47, 47, -35]], '#7c9a4e', 4.2, 2.4), 'a:1'],
+      ['apron', 'Cellar apron', `<path d="M22 46 L16 41 M42 46 L48 41" stroke="#5a4a68" stroke-width="1"/><path d="M22 46 H42 L43 57 Q32 60.5 21 57 Z" fill="#6b5a7a"/><circle cx="36" cy="53" r="2.4" fill="#4a1836" opacity=".7"/><circle cx="38.6" cy="51" r=".9" fill="#4a1836" opacity=".7"/>`, 'a:2'],
+      ['waistcoat', 'Sommelier\'s waistcoat', `<path d="${LOWER}" fill="#2a1a1f"/><path d="M27 49.5 L32 57 L37 49.5" fill="#fbf6ea"/><path d="M30 50 L32 51.5 L34 50 L32 49 Z" fill="#a8434e"/><g fill="#c9a24a"><circle cx="32" cy="58.5" r=".8"/><circle cx="32" cy="61" r=".8"/></g>`, 'a:5'],
+      ['ribbon', 'Red & gold ribbon', `<path d="M18 43 L32 54 L46 43" stroke="#a8434e" stroke-width="2.6" fill="none"/><path d="M18 43 L32 54 L46 43" stroke="#e0b23c" stroke-width=".8" fill="none"/><circle cx="32" cy="56.5" r="3.6" fill="#e0b23c" stroke="#b07c25" stroke-width=".6"/><circle cx="32" cy="56.5" r="1.6" fill="none" stroke="#b07c25" stroke-width=".5"/>`, 'r:Burgundy'],
+      ['oyster', 'Oyster & pearl', `<path d="M35 52 Q36 47 41 47.5 Q46 48.5 45.5 53 Q44 56.5 39.5 56 Q35 55.5 35 52 Z" fill="#d9d4c7" stroke="#a49c8b" stroke-width=".6"/><path d="M37 50 Q40 49 43 51" stroke="#b9b1a0" stroke-width=".5" fill="none"/><circle cx="40.5" cy="52.5" r="1.6" fill="#fbf6ea" stroke="#d6cdb8" stroke-width=".3"/>`, 'r:Loire'],
+      ['truffle', 'White truffle pin', `<path d="M36.5 51 Q37 47.5 40.5 47.5 Q44.5 48 44 52 Q43.5 55.5 40 55.5 Q36.5 55 36.5 51 Z" fill="#e2d6b8" stroke="#b9a984" stroke-width=".6"/><g fill="#c4b38c"><circle cx="39" cy="50" r=".6"/><circle cx="41.5" cy="52" r=".6"/><circle cx="39.5" cy="53.5" r=".5"/><circle cx="42" cy="49.5" r=".5"/></g>`, 'r:Piedmont'],
+      ['lemonscarf', 'Lemon scarf', `<path d="M14.5 49 Q32 57 49.5 49 L50 53.5 Q32 61.5 14 53.5 Z" fill="#fbf6ea"/><path d="M41 54 L45 63 L49 61 L44.5 53" fill="#fbf6ea"/><g fill="#f0c43a">${[[19, 52], [26, 55], [33, 56], [40, 55], [46, 52]].map(([x, y]) => `<ellipse cx="${x}" cy="${y}" rx="2" ry="1.4"/>`).join('')}</g><g fill="#7c9a4e">${[[20.5, 50.8], [34.5, 54.8], [47.5, 50.8]].map(([x, y]) => `<ellipse cx="${x}" cy="${y}" rx="1.2" ry=".6"/>`).join('')}</g>`, 'r:Centre, south & islands'],
+      ['azulejo', 'Azulejo scarf', `<path d="M14.5 49 Q32 57 49.5 49 L50 54 Q32 62 14 54 Z" fill="#fbf6ea" stroke="#2f5d9a" stroke-width=".6"/><g fill="#2f5d9a">${[18, 23, 28, 33, 38, 43, 47].map(x => { const y = 51.5 + 3.8 * (1 - Math.pow((x - 32) / 18, 2)); return `<path d="M${x} ${y - 1.6} L${x + 1.6} ${y} L${x} ${y + 1.6} L${x - 1.6} ${y} Z"/>`; }).join('')}</g>`, 'r:Portugal'],
+      ['braces', 'Braces', `<path d="M23 44 V59 M41 44 V59" stroke="#5a4636" stroke-width="2.6"/><path d="M23 51 H41" stroke="#5a4636" stroke-width="2.2"/>${flower(32, 51, 1.2, 6, '#f7f4ec', '#e0c85a')}`, 'r:Germany'],
+      ['cowbell', 'Cowbell', `<path d="M16 46 Q32 56 48 46" stroke="#a8434e" stroke-width="2.6" fill="none"/><path d="M17 46.6 Q32 55.6 47 46.6" stroke="#fbf6ea" stroke-width=".7" fill="none" stroke-dasharray="1.4 1.4"/><path d="M28.5 53 H35.5 L37.2 60.5 H26.8 Z" fill="#d9b44a" stroke="#a8842a" stroke-width=".6"/><circle cx="32" cy="61" r="1.1" fill="#7a5a1a"/>`, 'r:Switzerland'],
+      ['embroidery', 'Embroidered collar', `<path d="M15 47 Q32 56 49 47 L48 51.5 Q32 60 16 51.5 Z" fill="#fbf6ea" stroke="#d6c6ab" stroke-width=".5"/>${[[19, 50, '#b3263a'], [25, 52.6, '#2f6fa8'], [32, 53.6, '#b3263a'], [39, 52.6, '#2f6fa8'], [45, 50, '#b3263a']].map(([x, y, c]) => flower(x, y, 1.1, 5, c, '#f0c43a')).join('')}`, 'r:Hungary'],
+      ['cravat', 'Cravat', `<path d="M24 46 Q32 51 40 46" stroke="#b3263a" stroke-width="2" fill="none"/><path d="M30 48.5 H34 L33.2 51.5 H30.8 Z" fill="#8f1d2e"/><path d="M30.8 51.5 H33.2 L35.6 59.5 L32 63 L28.4 59.5 Z" fill="#b3263a"/><path d="M31 54 H33 M30.2 57 H33.8" stroke="#fbf6ea" stroke-width=".5" opacity=".7"/>`, 'r:Slovenia & Croatia'],
+      ['cedar', 'Cedar pin', `<g transform="translate(40 52)"><path d="M0 -5.5 L4 -1.5 H1.8 L5 2 H-5 L-1.8 -1.5 H-4 Z" fill="#3f7a3a"/><rect x="-.7" y="2" width="1.4" height="2.4" fill="#6b4a2a"/></g>`, 'r:Lebanon'],
+      ['flannel', 'Flannel shirt', `<clipPath id="dvLower"><path d="${LOWER}"/></clipPath><path d="${LOWER}" fill="#a8434e"/><g stroke="#5a1a24" stroke-width="1.1" opacity=".55" clip-path="url(#dvLower)"><path d="M17 51 H47 M15.5 55 H48.5"/><path d="M22 48 V58 M28 49 V58 M36 49 V58 M42 48 V58"/></g><path d="M27 49.5 L32 54 L37 49.5" stroke="#5a1a24" stroke-width="1" fill="none"/>`, 'r:Pacific Northwest & East'],
+      ['poncho', 'Poncho', `<path d="${LOWER}" fill="#b5502e"/><path d="M15.5 51 Q32 58.5 48.5 51" stroke="#f0c76a" stroke-width="1.6" fill="none"/><path d="M16.5 53.5 Q32 61 47.5 53.5" stroke="#2f6f6a" stroke-width="1.6" fill="none"/>`, 'r:Chile'],
+      ['neckerchief', 'Neckerchief', `<path d="M18 47 Q32 53 46 47 L32 61 Z" fill="#4f7a8f"/><circle cx="32" cy="51" r="1.8" fill="#3a5f70"/><g fill="#fbf6ea">${[[27, 51.5], [37, 51.5], [32, 56]].map(([x, y]) => `<circle cx="${x}" cy="${y}" r=".7"/>`).join('')}</g>`, 'r:Uruguay'],
+      ['fern', 'Silver fern pin', `<g transform="translate(40 53) rotate(-25)"><path d="M0 5 Q.5 0 0 -5" stroke="#b8c2c6" stroke-width=".8" fill="none"/>${[-4, -2.5, -1, .5, 2, 3.5].map((y, i) => `<path d="M0 ${y} L${-2.6 + i * .25} ${y - 1} M0 ${y} L${2.6 - i * .25} ${y - 1}" stroke="#b8c2c6" stroke-width=".7"/>`).join('')}</g>`, 'r:New Zealand'],
+    ],
+  };
+  const PLACE_NAMES = { 'Champagne AOC': 'Champagne', 'The north': 'Italy\'s north', 'Centre, south & islands': 'Italy\'s centre, south & islands', 'South, South-West & mountains': 'the South, South-West & mountains', 'Pacific Northwest & East': 'the Pacific Northwest & East' };
+  Object.keys(EARNED).forEach(slot => EARNED[slot].forEach(it => {
+    const n = it[3];
+    it[4] = n.startsWith('r:') ? `Finish ${PLACE_NAMES[n.slice(2)] || n.slice(2)}` : `Finish Roots chapter ${+n.slice(2) + 1} (${D.chapters[+n.slice(2)].title})`;
+    WARDROBE[slot].push(it);
+  }));
+  const SLOT_NAMES = { hat: 'Hat', eyes: 'Face', neck: 'Clothes' };
+  const unitsFor = need => need.startsWith('r:') ? UNITS.filter(r => r.part === 3 && r.region.name === need.slice(2) && playable(r))
+    : UNITS.filter(r => r.track === 'A' && r.ci === +need.slice(2) && playable(r));
   const wearable = need => !need ? true : need === 'cellar10' ? Object.keys(S.cellar).length >= 10 : need === 'days7' ? Object.keys(S.days).length >= 7
-    : need === 'cp1' ? Object.keys(S.checkpoints || {}).length >= 1 : need === 'cp3' ? Object.keys(S.checkpoints || {}).length >= 3 : false;
-  const outfit = (o = S.botty || {}) => ['neck', 'eyes', 'hat'].map(slot => { const it = WARDROBE[slot].find(x => x[0] === o[slot]); return it && wearable(it[3]) ? it[2] : ''; }).join('');
-  const botty = (o, cls = '') => `<svg class="botty ${cls}" viewBox="0 0 64 64" aria-hidden="true">${BOTTY_BASE}${outfit(o)}</svg>`;
+    : need === 'cp1' ? Object.keys(S.checkpoints || {}).length >= 1 : need === 'cp3' ? Object.keys(S.checkpoints || {}).length >= 3
+    : /^[ra]:/.test(need) ? (rs => rs.length > 0 && rs.every(done))(unitsFor(need)) : false;
+  // all = true draws whatever someone chose (e.g. other people's Botty in analytics) without checking your own progress
+  const outfit = (o = S.botty || {}, all) => ['neck', 'eyes', 'hat'].map(slot => { const it = WARDROBE[slot].find(x => x[0] === o[slot]); return it && (all || wearable(it[3])) ? it[2] : ''; }).join('');
+  const botty = (o, cls = '', all) => `<svg class="botty ${cls}" viewBox="0 0 64 64" aria-hidden="true">${BOTTY_BASE}${outfit(o, all)}</svg>`;
 
   function vineSVG(stage) {
     const green = '#5f7d3a', leafCols = { fall: ['#d39a2d', '#b9502c', '#e0b84b', '#8d3a2a'] };
@@ -666,11 +729,11 @@
         <div><b>${grapeUnits.filter(done).length}<small>/${grapeUnits.length}</small></b><span>grapes</span></div><div><b>${Object.keys(S.checkpoints || {}).length}</b><span>checkpoints</span></div>
       </div>
       <h2 class="j-h">Dress Botty</h2>
-      ${Object.keys(WARDROBE).map(slot => `<p class="pf-slot mono">${SLOT_NAMES[slot]}</p>
+      ${Object.keys(WARDROBE).map(slot => `<p class="pf-slot mono">${SLOT_NAMES[slot]} <span>${WARDROBE[slot].filter(x => wearable(x[3])).length}/${WARDROBE[slot].length}</span></p>
         <div class="pf-items">
           <button class="pf-item ${!o[slot] ? 'on' : ''}" data-act="dress" data-slot="${slot}" data-v=""><span class="pf-none">—</span><small>None</small></button>
-          ${WARDROBE[slot].map(([id, label, , need, hint]) => { const ok = wearable(need); return `<button class="pf-item ${o[slot] === id ? 'on' : ''} ${ok ? '' : 'locked'}" data-act="dress" data-slot="${slot}" data-v="${id}" ${ok ? '' : `data-hint="${esc(hint)}"`}>
-            ${botty({ [slot]: ok ? id : '' }, 'mini')}${ok ? '' : '<i class="pf-lock">🔒</i>'}<small>${label}</small></button>`; }).join('')}
+          ${[...WARDROBE[slot]].sort((x, y) => wearable(y[3]) - wearable(x[3])).map(([id, label, , need, hint]) => { const ok = wearable(need); return `<button class="pf-item ${o[slot] === id ? 'on' : ''} ${ok ? '' : 'locked'}" data-act="dress" data-slot="${slot}" data-v="${id}" ${ok ? '' : `data-hint="${esc(hint)}"`}>
+            ${botty({ [slot]: id }, 'mini', true)}${ok ? '' : '<i class="pf-lock">🔒</i>'}<small>${label}</small></button>`; }).join('')}
         </div>`).join('')}
       <p class="pf-hint mono" hidden></p>
       ${pk ? `<div class="seg pf-acts"><button data-act="w-rekey">Change wine & region</button></div>` : ''}
@@ -716,7 +779,7 @@
     app.querySelector('.analytics').innerHTML = `<header class="pf-head"><button class="icon-btn" data-act="go" data-h="#profile" aria-label="Back">${backIcon()}</button><span class="mono">Everyone's progress</span><span class="pf-gap"></span></header>
       <p class="an-note">Only you can see this page.</p>
       ${ADMIN.list.map(x => { const t = cellarStats(x.state); return `<section class="an-card">
-        <div class="an-top">${botty((x.state || {}).botty, 'an-botty')}<div><h2>${esc(x.name || 'No name')}${x.me ? ' <small>(you)</small>' : ''}</h2><p class="mono">Active ${ago(x.updated_at)} · joined ${ago(x.created_at)}</p></div></div>
+        <div class="an-top">${botty((x.state || {}).botty, 'an-botty', true)}<div><h2>${esc(x.name || 'No name')}${x.me ? ' <small>(you)</small>' : ''}</h2><p class="mono">Active ${ago(x.updated_at)} · joined ${ago(x.created_at)}</p></div></div>
         <div class="an-strip" aria-label="Last 14 days">${t.strip.map(x => `<i class="${x.on ? 'on' : ''}" style="${x.secs ? `opacity:${Math.min(1, .35 + x.secs / 1800).toFixed(2)}` : ''}" title="${x.label}: ${x.secs ? mins(x.secs) : x.on ? 'active' : 'no visit'}"></i>`).join('')}<span class="mono">last 14 days</span></div>
         <div class="an-time"><div><b>${mins(t.today) || '0 min'}</b><span>today</span></div><div><b>${mins(t.weekAvg) || '0 min'}</b><span>a day, last 7 days</span></div><div><b>${mins(t.total) || '0 min'}</b><span>in total</span></div></div>
         ${t.tracked ? '' : '<p class="an-foot an-time-note">Time is counted from their next visit on the new version.</p>'}
