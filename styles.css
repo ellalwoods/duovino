@@ -1050,3 +1050,24 @@ button.aroma:active { transform: scale(.96); }
 .pf-acts { margin-top: 24px; }
 .profile { padding: calc(14px + var(--safe-top)) 18px calc(110px + var(--safe-bot)); }
 .pf-stats b small { font-size: 13px; color: var(--ink-soft); font-weight: 400; }
+
+/* Analytics (admins only) */
+.an-note { margin: 0 2px 14px; font-size: 14px; color: var(--ink-soft); }
+.an-card { margin-bottom: 16px; padding: 16px; border-radius: 20px; background: #fffaf2; border: 1px solid #ece2cf; }
+.an-top { display: flex; align-items: center; gap: 12px; }
+.an-top h2 { margin: 0; font-size: 22px; font-weight: 500; }
+.an-top h2 small { font-size: 13px; color: var(--ink-soft); }
+.an-top p { margin: 2px 0 0; font-size: 10.5px; color: var(--ink-soft); text-transform: none; }
+.botty.an-botty { width: 48px; height: 48px; animation: none; }
+.an-strip { display: flex; align-items: center; gap: 3px; margin: 12px 0 10px; }
+.an-strip i { width: 12px; height: 12px; border-radius: 4px; background: #efe4d0; }
+.an-strip i.on { background: #a8434e; }
+.an-strip .mono { white-space: nowrap; margin-left: 6px; font-size: 9.5px; color: var(--ink-soft); }
+.an-rows { display: grid; gap: 7px; margin-bottom: 12px; }
+.an-row { display: grid; grid-template-columns: 64px 1fr 52px; align-items: center; gap: 8px; font-size: 14px; }
+.an-row b { font-weight: 500; text-align: right; }
+.an-row b small { font-size: 11px; color: var(--ink-soft); font-weight: 400; }
+.an-bar { height: 7px; border-radius: 4px; background: #efe4d0; overflow: hidden; }
+.an-bar i { display: block; height: 100%; border-radius: 4px; background: #7c5a8a; }
+.an-stats { margin-bottom: 8px; background: #fbf6ec; }
+.an-foot { margin: 0; font-size: 13px; color: var(--ink-soft); line-height: 1.4; }

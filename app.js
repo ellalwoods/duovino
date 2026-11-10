@@ -656,6 +656,7 @@
         <div><b>${Object.keys(S.days).length}</b><span>days</span></div><div><b>${Object.keys(S.cellar).length}</b><span>wines</span></div>
         <div><b>${grapeUnits.filter(done).length}<small>/${grapeUnits.length}</small></b><span>grapes</span></div><div><b>${Object.keys(S.checkpoints || {}).length}</b><span>checkpoints</span></div>
       </div>
+      ${ADMIN && ADMIN.list ? `<button class="pr-entry" data-act="go" data-h="#analytics"><span class="pr-entry-ic">↗</span><span class="pr-entry-txt"><strong>Everyone's progress</strong><small>${ADMIN.list.length} cellar${ADMIN.list.length === 1 ? '' : 's'} · only you can see this</small></span><span class="pr-entry-go">›</span></button>` : ''}
       <h2 class="j-h">Dress Botty</h2>
       ${Object.keys(WARDROBE).map(slot => `<p class="pf-slot mono">${SLOT_NAMES[slot]}</p>
         <div class="pf-items">
@@ -669,6 +670,49 @@
     app.querySelector('.tabview.profile').scrollTop = scroll;
     const f = app.querySelector('#pf-name');
     if (f) f.addEventListener('change', () => { S.name = f.value.trim(); save(); });
+    if (!ADMIN) loadAdmin().then(() => { if (ADMIN.list && location.hash === '#profile') profile(); });
+  }
+
+  /* ---------- analytics (admins only: decided by the database, see supabase/duovino-admin.sql) ---------- */
+  let ADMIN = null; // { list: [...] } for an admin, { list: null } for everyone else
+  async function loadAdmin() {
+    if (!cloudOn || !myCode()) { ADMIN = { list: null }; return ADMIN; }
+    try { const r = await rpc('duovino_admin_list', { p_id: await codeId(myCode()) }); ADMIN = { list: Array.isArray(r) ? r : null }; }
+    catch { ADMIN = { list: null }; }
+    return ADMIN;
+  }
+  const ago = t => { const d = Math.floor((Date.now() - new Date(t)) / DAY); return d <= 0 ? 'today' : d === 1 ? 'yesterday' : d < 30 ? `${d} days ago` : new Date(t).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' }); };
+  function cellarStats(st) {
+    st = st || {}; const u = st.units || {}, c = st.cellar || {};
+    const count = rs => [rs.filter(r => u[r.u.id]).length, rs.length];
+    const A = UNITS.filter(r => r.track === 'A' && playable(r)), G = UNITS.filter(r => r.part === 2), R = UNITS.filter(r => r.part === 3 && playable(r));
+    const ks = Object.entries(c).filter(([id]) => D.wines[id]).map(([id, e]) => [id, knowPct(e)]).filter(([, k]) => k != null);
+    const days = Object.keys(st.days || {});
+    const strip = [...Array(14)].map((_, i) => { const d = new Date(); d.setDate(d.getDate() - 13 + i); return days.includes(key(d)); });
+    return { roots: count(A), grapes: count(G), regions: count(R), days: days.length, strip, wines: Object.keys(c).length,
+      know: ks.length ? Math.round(ks.reduce((a, [, k]) => a + k, 0) / ks.length) : null, weak: ks.sort((a, b) => a[1] - b[1]).slice(0, 3),
+      cps: Object.keys(st.checkpoints || {}).length, rounds: (st.practice || {}).rounds || 0 };
+  }
+  async function analytics() {
+    setWine('#7c5a8a');
+    app.innerHTML = `<div class="tabview profile analytics"><header class="pf-head"><button class="icon-btn" data-act="go" data-h="#profile" aria-label="Back">${backIcon()}</button><span class="mono">Everyone's progress</span><span class="pf-gap"></span></header><p class="an-note">Loading…</p></div>${tabbar('journey')}`;
+    await loadAdmin();
+    if (location.hash !== '#analytics') return;
+    if (!ADMIN.list) { location.hash = '#profile'; return; }
+    const bar = ([a, b]) => `<span class="an-bar"><i style="width:${b ? a / b * 100 : 0}%"></i></span><b>${a}<small>/${b}</small></b>`;
+    app.querySelector('.analytics').innerHTML = `<header class="pf-head"><button class="icon-btn" data-act="go" data-h="#profile" aria-label="Back">${backIcon()}</button><span class="mono">Everyone's progress</span><span class="pf-gap"></span></header>
+      <p class="an-note">Only you can see this page.</p>
+      ${ADMIN.list.map(x => { const t = cellarStats(x.state); return `<section class="an-card">
+        <div class="an-top">${botty((x.state || {}).botty, 'an-botty')}<div><h2>${esc(x.name || 'No name')}${x.me ? ' <small>(you)</small>' : ''}</h2><p class="mono">Active ${ago(x.updated_at)} · joined ${ago(x.created_at)}</p></div></div>
+        <div class="an-strip" aria-label="Last 14 days">${t.strip.map(on => `<i class="${on ? 'on' : ''}"></i>`).join('')}<span class="mono">last 14 days</span></div>
+        <div class="an-rows">
+          <div class="an-row"><span>Roots</span>${bar(t.roots)}</div>
+          <div class="an-row"><span>Grapes</span>${bar(t.grapes)}</div>
+          <div class="an-row"><span>Regions</span>${bar(t.regions)}</div>
+        </div>
+        <div class="pf-stats an-stats"><div><b>${t.days}</b><span>days</span></div><div><b>${t.wines}</b><span>wines</span></div><div><b>${t.know == null ? '–' : t.know + '%'}</b><span>known</span></div><div><b>${t.cps}</b><span>checkpoints</span></div></div>
+        <p class="an-foot">${t.rounds} practice round${t.rounds === 1 ? '' : 's'}${t.weak.length ? ` · shakiest: ${t.weak.map(([id, k]) => `${D.wines[id].name} ${k}%`).join(', ')}` : ''}</p>
+      </section>`; }).join('')}`;
   }
   function journey() {
     const view = S.mapView || 'europe';
@@ -1929,6 +1973,7 @@
     } catch { closeModal(); welcomeError('Couldn\'t reach the cellar. Are you online?'); }
   }
   async function switchCellar() {
+    ADMIN = null;
     await cloudPush(true);
     localStorage.removeItem(CODE_KEY);
     S = defaults();
@@ -1948,6 +1993,7 @@
     else if (h === 'glass') { lastTab = 'glass'; glassPage(); }
     else if (h === 'journey') { lastTab = 'journey'; journey(); }
     else if (h === 'profile') { lastTab = 'journey'; profile(); }
+    else if (h === 'analytics') { lastTab = 'journey'; analytics(); }
     else if (h === 'practice') { lastTab = 'practice'; practicePage(); }
     else { lastTab = 'home'; home(); }
   }
