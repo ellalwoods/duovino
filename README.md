@@ -78,3 +78,7 @@ Setup (once):
 How it stays private: the name + wine + region is never stored, only its SHA-256 hash; the table has row-level security with no policies, so it can't be read or listed; the app can only call `duovino_load` and `duovino_save` for a cellar it knows. With 64 wine/region pairs per name it isn't a lock, just a way to keep two people's progress separate.
 
 With `cloud-config.js` left blank, the app works exactly as before, with progress on the device only.
+
+### Analytics (admins only)
+
+Run `supabase/duovino-admin.sql` after `duovino.sql`. It adds `duovino_admins` and `duovino_admin_list`, and makes the cellar named Ella an admin. Admins get an "Everyone's progress" card on their profile: each cellar's last activity, a 14-day activity strip, Roots / grapes / regions progress, wines, % known, checkpoints, practice rounds and shakiest wines. The database decides who's an admin, so nobody can unlock it by editing the app.
