@@ -779,7 +779,7 @@
     app.querySelector('.analytics').innerHTML = `<header class="pf-head"><button class="icon-btn" data-act="go" data-h="#profile" aria-label="Back">${backIcon()}</button><span class="mono">Everyone's progress</span><span class="pf-gap"></span></header>
       <p class="an-note">Only you can see this page.</p>
       ${ADMIN.list.map(x => { const t = cellarStats(x.state); return `<section class="an-card">
-        <div class="an-top">${botty((x.state || {}).botty, 'an-botty', true)}<div><h2>${esc(x.name || 'No name')}${x.me ? ' <small>(you)</small>' : ''}</h2><p class="mono">Active ${ago(x.updated_at)} · joined ${ago(x.created_at)}</p></div></div>
+        <div class="an-top">${botty((x.state || {}).botty || {}, 'an-botty', true)}<div><h2>${esc(x.name || 'No name')}${x.me ? ' <small>(you)</small>' : ''}</h2><p class="mono">Active ${ago(x.updated_at)} · joined ${ago(x.created_at)}</p></div></div>
         <div class="an-strip" aria-label="Last 14 days">${t.strip.map(x => `<i class="${x.on ? 'on' : ''}" style="${x.secs ? `opacity:${Math.min(1, .35 + x.secs / 1800).toFixed(2)}` : ''}" title="${x.label}: ${x.secs ? mins(x.secs) : x.on ? 'active' : 'no visit'}"></i>`).join('')}<span class="mono">last 14 days</span></div>
         <div class="an-time"><div><b>${mins(t.today) || '0 min'}</b><span>today</span></div><div><b>${mins(t.weekAvg) || '0 min'}</b><span>a day, last 7 days</span></div><div><b>${mins(t.total) || '0 min'}</b><span>in total</span></div></div>
         ${t.tracked ? '' : '<p class="an-foot an-time-note">Time is counted from their next visit on the new version.</p>'}
