@@ -1076,3 +1076,4 @@ button.aroma:active { transform: scale(.96); }
 .an-time b { display: block; font-size: 17px; font-weight: 500; }
 .an-time span { font-size: 11.5px; color: var(--ink-soft); }
 .an-time-note { margin: -6px 0 10px; font-size: 12px; }
+.pf-admin { margin-top: 14px; }

@@ -665,7 +665,6 @@
         <div><b>${Object.keys(S.days).length}</b><span>days</span></div><div><b>${Object.keys(S.cellar).length}</b><span>wines</span></div>
         <div><b>${grapeUnits.filter(done).length}<small>/${grapeUnits.length}</small></b><span>grapes</span></div><div><b>${Object.keys(S.checkpoints || {}).length}</b><span>checkpoints</span></div>
       </div>
-      ${ADMIN && ADMIN.list ? `<button class="pr-entry" data-act="go" data-h="#analytics"><span class="pr-entry-ic">↗</span><span class="pr-entry-txt"><strong>Everyone's progress</strong><small>${ADMIN.list.length} cellar${ADMIN.list.length === 1 ? '' : 's'} · only you can see this</small></span><span class="pr-entry-go">›</span></button>` : ''}
       <h2 class="j-h">Dress Botty</h2>
       ${Object.keys(WARDROBE).map(slot => `<p class="pf-slot mono">${SLOT_NAMES[slot]}</p>
         <div class="pf-items">
@@ -675,6 +674,7 @@
         </div>`).join('')}
       <p class="pf-hint mono" hidden></p>
       ${pk ? `<div class="seg pf-acts"><button data-act="w-rekey">Change wine & region</button></div>` : ''}
+      ${ADMIN && ADMIN.list ? `<button class="pr-entry pf-admin" data-act="go" data-h="#analytics"><span class="pr-entry-ic">↗</span><span class="pr-entry-txt"><strong>Everyone's progress</strong><small>${ADMIN.list.length} cellar${ADMIN.list.length === 1 ? '' : 's'} · only you can see this</small></span><span class="pr-entry-go">›</span></button>` : ''}
     </div>${tabbar('journey')}`;
     app.querySelector('.tabview.profile').scrollTop = scroll;
     const f = app.querySelector('#pf-name');
