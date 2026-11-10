@@ -15,7 +15,7 @@
     catch { return defaults(); }
   };
   let S = load();
-  const save = () => { S._updated = Date.now(); try { localStorage.setItem(STORE, JSON.stringify(S)); } catch { /* private mode */ } cloudPush(); };
+  const save = () => { unsavedTicks = 0; S._updated = Date.now(); try { localStorage.setItem(STORE, JSON.stringify(S)); } catch { /* private mode */ } cloudPush(); };
 
   /* ---------- cloud cellars (optional): a wine-word code per person, synced to Supabase ---------- */
   const CLOUD = window.DUOVINO_CLOUD || {};
@@ -48,7 +48,16 @@
     if (now) return go();
     pushTimer = setTimeout(go, 1500);
   }
-  document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'hidden') cloudPush(true); });
+  document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'hidden') { flushTime(); cloudPush(true); } });
+  /* Time on the app: 15-second ticks while it's on screen and you've touched it in the last minute */
+  let lastTouch = Date.now(), unsavedTicks = 0;
+  ['pointerdown', 'keydown', 'scroll', 'touchmove', 'input'].forEach(ev => addEventListener(ev, () => { lastTouch = Date.now(); }, { passive: true, capture: true }));
+  setInterval(() => {
+    if (document.visibilityState !== 'visible' || Date.now() - lastTouch > 60000) return;
+    S.time = S.time || {}; const k = todayKey(); S.time[k] = (S.time[k] || 0) + 15;
+    if (++unsavedTicks >= 4) save(); // write (and sync) about once a minute
+  }, 15000);
+  function flushTime() { if (unsavedTicks) save(); }
   async function cloudPull() {
     if (!cloudOn || !myCode()) return;
     try {
@@ -681,6 +690,7 @@
     catch { ADMIN = { list: null }; }
     return ADMIN;
   }
+  const mins = secs => { const m = Math.round(secs / 60); return secs > 0 && m < 1 ? '&lt;1 min' : m < 60 ? `${m} min` : `${Math.floor(m / 60)}h ${m % 60 ? (m % 60) + 'm' : ''}`.trim(); };
   const ago = t => { const d = Math.floor((Date.now() - new Date(t)) / DAY); return d <= 0 ? 'today' : d === 1 ? 'yesterday' : d < 30 ? `${d} days ago` : new Date(t).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' }); };
   function cellarStats(st) {
     st = st || {}; const u = st.units || {}, c = st.cellar || {};
@@ -688,10 +698,13 @@
     const A = UNITS.filter(r => r.track === 'A' && playable(r)), G = UNITS.filter(r => r.part === 2), R = UNITS.filter(r => r.part === 3 && playable(r));
     const ks = Object.entries(c).filter(([id]) => D.wines[id]).map(([id, e]) => [id, knowPct(e)]).filter(([, k]) => k != null);
     const days = Object.keys(st.days || {});
-    const strip = [...Array(14)].map((_, i) => { const d = new Date(); d.setDate(d.getDate() - 13 + i); return days.includes(key(d)); });
+    const tm = st.time || {};
+    const strip = [...Array(14)].map((_, i) => { const d = new Date(); d.setDate(d.getDate() - 13 + i); const k = key(d); return { on: days.includes(k) || !!tm[k], secs: tm[k] || 0, label: d.toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric' }) }; });
+    const week = strip.slice(7).reduce((a, x) => a + x.secs, 0), total = Object.values(tm).reduce((a, x) => a + x, 0);
     return { roots: count(A), grapes: count(G), regions: count(R), days: days.length, strip, wines: Object.keys(c).length,
       know: ks.length ? Math.round(ks.reduce((a, [, k]) => a + k, 0) / ks.length) : null, weak: ks.sort((a, b) => a[1] - b[1]).slice(0, 3),
-      cps: Object.keys(st.checkpoints || {}).length, rounds: (st.practice || {}).rounds || 0 };
+      cps: Object.keys(st.checkpoints || {}).length, rounds: (st.practice || {}).rounds || 0,
+      today: strip[13].secs, weekAvg: week / 7, total, tracked: Object.keys(tm).length > 0 };
   }
   async function analytics() {
     setWine('#7c5a8a');
@@ -704,7 +717,9 @@
       <p class="an-note">Only you can see this page.</p>
       ${ADMIN.list.map(x => { const t = cellarStats(x.state); return `<section class="an-card">
         <div class="an-top">${botty((x.state || {}).botty, 'an-botty')}<div><h2>${esc(x.name || 'No name')}${x.me ? ' <small>(you)</small>' : ''}</h2><p class="mono">Active ${ago(x.updated_at)} · joined ${ago(x.created_at)}</p></div></div>
-        <div class="an-strip" aria-label="Last 14 days">${t.strip.map(on => `<i class="${on ? 'on' : ''}"></i>`).join('')}<span class="mono">last 14 days</span></div>
+        <div class="an-strip" aria-label="Last 14 days">${t.strip.map(x => `<i class="${x.on ? 'on' : ''}" style="${x.secs ? `opacity:${Math.min(1, .35 + x.secs / 1800).toFixed(2)}` : ''}" title="${x.label}: ${x.secs ? mins(x.secs) : x.on ? 'active' : 'no visit'}"></i>`).join('')}<span class="mono">last 14 days</span></div>
+        <div class="an-time"><div><b>${mins(t.today) || '0 min'}</b><span>today</span></div><div><b>${mins(t.weekAvg) || '0 min'}</b><span>a day, last 7 days</span></div><div><b>${mins(t.total) || '0 min'}</b><span>in total</span></div></div>
+        ${t.tracked ? '' : '<p class="an-foot an-time-note">Time is counted from their next visit on the new version.</p>'}
         <div class="an-rows">
           <div class="an-row"><span>Roots</span>${bar(t.roots)}</div>
           <div class="an-row"><span>Grapes</span>${bar(t.grapes)}</div>
