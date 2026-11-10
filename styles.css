@@ -1078,3 +1078,5 @@ button.aroma:active { transform: scale(.96); }
 .an-time-note { margin: -6px 0 10px; font-size: 12px; }
 .pf-admin { margin-top: 14px; }
 .pf-slot span { float: right; }
+.pr-areas .aroma small { opacity: .55; margin-left: 3px; font-size: .85em; }
+.pr-areas .aroma:disabled { opacity: .4; }
