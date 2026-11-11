@@ -437,6 +437,9 @@
     it[4] = n.startsWith('r:') ? `Finish ${PLACE_NAMES[n.slice(2)] || n.slice(2)}` : `Finish Roots chapter ${+n.slice(2) + 1} (${D.chapters[+n.slice(2)].title})`;
     WARDROBE[slot].push(it);
   }));
+  const earnedText = need => !need ? '' : need === 'cellar10' ? 'earned by having 10 wines in your cellar' : need === 'days7' ? 'earned by learning on 7 different days'
+    : need === 'cp1' ? 'earned by passing your first checkpoint' : need === 'cp3' ? 'earned by passing 3 checkpoints'
+    : need.startsWith('r:') ? `earned by finishing ${PLACE_NAMES[need.slice(2)] || need.slice(2)}` : `earned by finishing Roots chapter ${+need.slice(2) + 1} (${D.chapters[+need.slice(2)].title})`;
   const SLOT_NAMES = { hat: 'Hat', eyes: 'Face', neck: 'Clothes' };
   const unitsFor = need => need.startsWith('r:') ? UNITS.filter(r => r.part === 3 && r.region.name === need.slice(2) && playable(r))
     : UNITS.filter(r => r.track === 'A' && r.ci === +need.slice(2) && playable(r));
@@ -1792,8 +1795,13 @@
       case 'ask-yes': { const fn = askFn; askFn = null; overlay.innerHTML = ''; fn && fn(); break; }
       case 'settings': settings(); break;
       case 'dress': {
-        if (b.dataset.hint) { const h = app.querySelector('.pf-hint'); h.textContent = `🔒 ${b.dataset.hint} to unlock this`; h.hidden = false; b.after(h); buzz(5); break; }
-        S.botty = { ...(S.botty || {}), [b.dataset.slot]: b.dataset.v }; save(); buzz(8); profile(); break; }
+        if (b.dataset.hint) { const h = app.querySelector('.pf-hint'); h.textContent = `🔒 ${b.dataset.hint} to unlock this`; h.classList.remove('earned'); h.hidden = false; b.after(h); h.scrollIntoView({ block: 'nearest', behavior: 'smooth' }); buzz(5); break; }
+        S.botty = { ...(S.botty || {}), [b.dataset.slot]: b.dataset.v }; save(); buzz(8); profile();
+        // an earned piece: say what earned it
+        const it = WARDROBE[b.dataset.slot].find(x => x[0] === b.dataset.v), how = it && earnedText(it[3]);
+        const nb = app.querySelector(`[data-act="dress"][data-slot="${b.dataset.slot}"][data-v="${b.dataset.v}"]`), h = app.querySelector('.pf-hint');
+        if (how && nb && h) { h.textContent = `✨ ${it[1]}: ${how}`; h.classList.add('earned'); h.hidden = false; nb.after(h); h.scrollIntoView({ block: 'nearest', behavior: 'smooth' }); }
+        break; }
       case 'hemi': S.settings.hemi = b.dataset.h; save(); home(); settings(); break;
       case 'sound': S.settings.sound = b.dataset.v === 'true'; save(); settings(); if (S.settings.sound) clink(); break;
       case 'glass-open': clink(); glassPage('name'); break;

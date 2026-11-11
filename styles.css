@@ -1137,3 +1137,5 @@ button.aroma:active { transform: scale(.96); }
 .sm-notes { margin: 6px 0 0; font-size: 12px; color: var(--ink-soft); }
 .sm-acts { margin-top: 20px; }
 .preview .ghost-btn.wide { width: 100%; margin-top: 8px; }
+.pf-hint.earned { background: #eef3e2; color: #4f6a2a; }
+.pf-hint { scroll-margin-bottom: calc(110px + var(--safe-bot)); }
