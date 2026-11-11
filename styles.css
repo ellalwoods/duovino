@@ -1080,3 +1080,60 @@ button.aroma:active { transform: scale(.96); }
 .pf-slot span { float: right; }
 .pr-areas .aroma small { opacity: .55; margin-left: 3px; font-size: .85em; }
 .pr-areas .aroma:disabled { opacity: .4; }
+
+/* Detailed region maps */
+.geo-wrap { margin: 10px 0 4px; }
+.geo-map, .geo-wrap .map-svg { display: block; width: 100%; height: auto; border-radius: 12px; }
+.geo-map { max-height: 46vh; width: auto; max-width: 100%; margin: 0 auto; }
+.gm-dot { fill: #b5a48c; }
+.gm-dot.ref { fill: #6b5a5a; }
+.gm-dot.on { fill: var(--fw, #a8434e); stroke: #fffaf2; stroke-width: 1.4; }
+.gm-dot.dim { fill: #c9b89c; }
+.gm-label { font: 9.5px var(--serif, Georgia, serif); fill: #8a7a6a; }
+.gm-label.ref { fill: #4a3a3a; font-style: italic; }
+.gm-label.on { fill: #2a1a1f; font-weight: 600; font-size: 11px; paint-order: stroke; stroke: #f8f1e0; stroke-width: 3px; }
+.gm-zone { font: italic 10.5px var(--serif, Georgia, serif); fill: #9a8a72; }
+.gm-zone.on { fill: var(--fw, #a8434e); font-weight: 600; }
+.gm-river { font: italic 8.5px var(--serif, Georgia, serif); fill: #6f97a3; }
+.gm-big { font: 600 10px var(--mono, monospace); letter-spacing: .18em; fill: #a8434e; opacity: .55; }
+.gm-big.sea { fill: #6f97a3; letter-spacing: .25em; }
+.geo-note { margin: 8px 0 0; font-size: 14px; line-height: 1.45; color: var(--ink-soft); }
+.geo-note b { color: var(--ink); font-weight: 600; }
+/* tap-the-map questions */
+.gm-pin { cursor: pointer; }
+.gm-pin-dot { fill: #fffaf2; stroke: #a8434e; stroke-width: 2; }
+.gm-pin-n { font: 700 10px var(--mono, monospace); fill: #a8434e; pointer-events: none; }
+.gm-pin.right .gm-pin-dot { fill: #7f9a45; stroke: #5d7530; }
+.gm-pin.wrong .gm-pin-dot { fill: #c0574b; stroke: #8f3a30; }
+.gm-pin.right .gm-pin-n, .gm-pin.wrong .gm-pin-n { fill: #fff; }
+.geo-wrap.mapq { margin-top: 14px; }
+
+/* Lesson summaries */
+.summary { padding: calc(14px + var(--safe-top)) 18px calc(110px + var(--safe-bot)); }
+.summary h1 { margin: 4px 0 2px; font-size: 32px; font-weight: 500; font-style: italic; font-variation-settings: 'SOFT' 100, 'WONK' 1; }
+.sm-sub { margin: 0 0 16px; color: var(--ink-soft); font-size: 16px; }
+.sm-grid { display: grid; gap: 10px; }
+.sm-tile { padding: 14px 15px; border-radius: 18px; background: #fffaf2; border: 1px solid #ece2cf; border-left: 4px solid var(--fw); }
+.sm-tile h3 { margin: 0 0 4px; font-size: 17px; font-weight: 600; }
+.sm-tile p { margin: 4px 0 0; font-size: 14.5px; line-height: 1.45; color: var(--ink-soft); }
+.sm-tile .sm-big { font-size: 19px; font-style: italic; color: var(--ink); margin: 0 0 4px; }
+.sm-tile .wine-label { transform: none; margin: 8px auto 2px; max-width: 250px; }
+.sm-tile .compare { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 8px; font-size: 13.5px; }
+.sm-tile .compare h4 { margin: 0 0 2px; font-size: 13.5px; }
+.sm-tile .compare ul { margin: 0; padding-left: 16px; }
+.sm-layers p { margin: 3px 0 0; }
+.sm-layers .mono, .sm-try .mono { font-size: 10.5px; color: var(--fw); margin-right: 4px; }
+.sm-scale { display: flex; flex-wrap: wrap; gap: 4px 6px; align-items: baseline; margin-top: 8px; font-size: 11px; color: var(--ink-soft); }
+.sm-scale b { font-weight: 500; color: var(--ink); }
+.sm-map .geo-note { font-size: 13px; }
+.sm-wines { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.sm-wine { padding: 11px; border-radius: 16px; background: #fffaf2; border: 1px solid #ece2cf; }
+.sm-wine-top { display: flex; gap: 8px; align-items: center; margin-bottom: 6px; }
+.sm-wine-top svg { width: 16px; height: 34px; flex: none; }
+.sm-wine-top strong { display: block; font-size: 14px; font-weight: 600; line-height: 1.15; }
+.sm-wine-top small { display: block; font-size: 11.5px; color: var(--ink-soft); line-height: 1.2; }
+.sm-wine .bar-row { grid-template-columns: 56px 1fr; gap: 6px; margin: 3px 0; }
+.sm-wine .bar-row .mono { font-size: 9px; }
+.sm-notes { margin: 6px 0 0; font-size: 12px; color: var(--ink-soft); }
+.sm-acts { margin-top: 20px; }
+.preview .ghost-btn.wide { width: 100%; margin-top: 8px; }

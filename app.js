@@ -111,6 +111,53 @@
   const DRAFTS = /[?&]drafts\b/.test(location.search) || !!S.settings.drafts;
   const playable = r => !!(r.u.questions && r.u.questions.length) && (!r.u.draft || DRAFTS);
   const done = r => !!S.units[r.u.id];
+
+  /* ---------- geography: a map card in lessons that talk about places, and questions on where things are ---------- */
+  const GEO = D.geo;
+  const stripTags = t => String(t || '').replace(/<[^>]+>/g, ' ');
+  const cardText = c => stripTags([c.title, c.big, c.body, c.prompt, c.reveal, ...(c.rows || []).flatMap(x => [x.k, x.v, x.h, x.t]),
+    ...(c.cols || []).flatMap(x => [x.h, ...(x.items || [])]), ...(c.label ? c.label.lines.flat().map(x => x.t) : [])].filter(Boolean).join(' · '));
+  const geoPlace = (id, n) => GEO.MAPS[id].places.find(x => x.n === n);
+  function geoFor(r) {
+    const text = (r.u.lesson || []).map(cardText).join(' · ');
+    const own = r.region && GEO.FOR_REGION[r.region.name];
+    const score = id => GEO.mentions(id, text).filter(n => { const pl = geoPlace(id, n); return !pl || !pl.ref; }).length;
+    const id = own || Object.keys(GEO.MAPS).map(m => [m, score(m)]).filter(([, n]) => n >= 2).sort((a, b) => b[1] - a[1]).map(([m]) => m)[0];
+    if (!id) return null;
+    const M = GEO.MAPS[id], said = GEO.mentions(id, text);
+    // a zone mentioned by name ("Left Bank") lights up the places in it
+    const hl = [...new Set(said.flatMap(n => M.zones.includes(n) && !geoPlace(id, n) ? M.places.filter(x => x.z === n && !x.zone).map(x => x.n) : [n]))];
+    return { id, hl, said };
+  }
+  const geoNote = (id, hl) => {
+    const M = GEO.MAPS[id], by = {};
+    hl.map(n => geoPlace(id, n)).filter(x => x && !x.ref && x.z).forEach(x => { if (x.z !== x.n) (by[x.z] = by[x.z] || []).push(x.n); });
+    return Object.entries(by).map(([z, ns]) => `<b>${z}</b>: ${ns.join(', ')}`).join(' · ');
+  };
+  UNITS.forEach(r => {
+    const u = r.u;
+    if (!u.lesson || !u.lesson.length || u.lesson.some(c => c.kind === 'map')) return;
+    const g = geoFor(r);
+    let card = null;
+    if (g) card = { kind: 'map', title: `${GEO.MAPS[g.id].name.replace(/^the /, 'The ')} on the map`, map: g.id, hl: g.hl };
+    else if (r.region && r.region.at) card = { kind: 'map', title: `${r.region.name} on the map`, loc: { name: r.region.name, at: r.region.at, colour: r.country ? r.country.wine : r.wine } };
+    if (card) u.lesson.splice(Math.min(1, u.lesson.length), 0, card);
+    if (!g || !u.questions) return;
+    // questions: tap it on the map, and which part it's in
+    const M = GEO.MAPS[g.id];
+    const askable = M.places.filter(x => !x.ref);
+    const targets = shuffle(g.hl.map(n => geoPlace(g.id, n)).filter(x => x && !x.ref));
+    if (targets.length) {
+      const t = targets[0], others = shuffle(askable.filter(x => x.n !== t.n)).sort((a, b) => (a.z === t.z) - (b.z === t.z)).slice(0, 3);
+      u.questions.push({ type: 'mapq', map: g.id, target: t.n, pins: shuffle([t, ...others].map(x => x.n)), q: `Tap ${t.n} on the map`,
+        explain: `${t.n}${t.z && t.z !== t.n ? ` is ${t.z === 'Left Bank' || t.z === 'Right Bank' ? 'on the ' + t.z : 'in ' + t.z}` : ''}.` });
+    }
+    const zt = targets.find(x => !x.zone && x.z && x.z !== x.n && !x.n.includes(x.z) && M.zones.includes(x.z) && M.zones.length >= 2);
+    if (zt) {
+      const opts = [zt.z, ...shuffle(M.zones.filter(z => z !== zt.z)).slice(0, 3)];
+      u.questions.push({ type: 'choice', q: M.zoneQ(zt.n), options: opts, answer: 0, explain: `${zt.n} is ${zt.z === 'Left Bank' || zt.z === 'Right Bank' ? 'on the ' + zt.z : 'in ' + zt.z}.` });
+    }
+  });
   // Gates open once and stay open, so adding new lessons never re-locks what you'd already opened.
   // Earlier versions opened Track B after Roots 1.1–1.3, and the regions after B0 + Chardonnay, Sauvignon, Riesling.
   TOPSOIL.key = 'topsoil'; CORE_REQ.key = 'core';
@@ -969,7 +1016,8 @@
       ${rec ? `<p class="mono resting-note">Best ${rec.best}% · poured ${rec.plays}×</p>` : ''}
       ${u.draft ? `<div class="draft-box"><p class="mono">Draft · rules not yet checked</p>${u.toCheck && u.toCheck.length ? `<p>To check against ${esc(u.sources.join(' and '))}:</p><ul>${u.toCheck.map(t => `<li>${esc(t)}</li>`).join('')}</ul>` : `<p>To check against ${esc(u.sources.join(' and '))}.</p>`}</div>`
         : u.checked ? `<div class="checked-box"><p class="mono">✓ Rules checked ${u.checked}</p><p>Against: ${esc(u.sources.join('; '))}.</p>${u.note ? `<p class="note">${esc(u.note)}</p>` : ''}</div>` : ''}
-      ${s === 'current' || s === 'done' ? `<button class="primary" data-act="go" data-h="#unit-${id}">${s === 'done' ? 'Pour it again' : 'Start lesson'}</button>`
+      ${s === 'done' && (u.lesson || []).length ? `<button class="primary" data-act="go" data-h="#sum-${id}">See the summary</button>` : ''}
+      ${s === 'current' || s === 'done' ? `<button class="${s === 'done' && (u.lesson || []).length ? 'ghost-btn wide' : 'primary'}" data-act="go" data-h="#unit-${id}">${s === 'done' ? 'Pour it again' : 'Start lesson'}</button>`
         : s === 'locked' && !reqMet(r) ? (r.part === 1 ? `<p class="mono resting-note">Locked · finish ${reqText()} in Track A first</p><button class="primary" data-act="go" data-h="#roots">Go to Track A</button>` : `<p class="mono resting-note">Locked · opens once you've finished the big international grapes</p>`)
         : s === 'locked' ? `<p class="mono resting-note">Locked · finish ${label(prev)} ${prev.u.title} first</p>`
         : u.draft && u.questions ? `<p class="mono resting-note">Written, waiting for the rule check before it's poured</p>`
@@ -991,6 +1039,38 @@
     if (!es.length) return null;
     const due = es.filter(([, e]) => bottleState(e) !== 'resting');
     return pick(due.length ? due : es)[0];
+  }
+  /* A one-page recap of a finished lesson: the map, every card in short, and the wines it taught */
+  const sentences = (t, n) => { const x = String(t || '').replace(/<[^>]+>/g, '').replace(/\s+/g, ' ').trim(), m = x.match(/[^.!?]+[.!?]+(\s|$)/g); return m ? m.slice(0, n).join('').trim() : x; };
+  function summaryTile(c) {
+    let h = `<h3>${c.title}</h3>`;
+    if (c.big) h += `<p class="sm-big">${c.big}</p>`;
+    if (c.kind === 'map') return `<section class="sm-tile sm-map">${h}${mapCardHTML(c)}</section>`;
+    if (c.body) h += `<p>${sentences(c.body, 2)}</p>`;
+    if (c.kind === 'label') h += labelHTML(c.label, null);
+    if (c.kind === 'facts') h += `<dl class="facts compact">${c.rows.map(r => `<div><dt class="mono">${r.k}</dt><dd>${r.v}</dd></div>`).join('')}</dl>`;
+    if (c.kind === 'compare') h += `<div class="compare">${c.cols.map(col => `<div class="col"><h4>${col.h}</h4><ul>${col.items.map(i => `<li>${i}</li>`).join('')}</ul></div>`).join('')}</div>`;
+    if (c.kind === 'layers') h += `<div class="sm-layers">${c.rows.map(r => `<p><span class="mono">${r.h}</span> ${r.t}</p>`).join('')}</div>`;
+    if (c.kind === 'scale') h += `<div class="sm-scale mono"><span>${c.low}</span>${c.marks.map(m => `<b>${m.t}</b>`).join(' → ')}<span>${c.high}</span></div>`;
+    if (c.kind === 'try') h += `<p class="sm-try"><span class="mono">Q</span> ${c.prompt}<br><span class="mono">A</span> ${c.reveal}</p>`;
+    return `<section class="sm-tile k-${c.kind || 'text'}">${h}</section>`;
+  }
+  function summaryPage(id) {
+    const r = UNIT[id];
+    if (!r || !done(r)) { location.hash = r && r.track === 'A' ? '#roots' : '#list'; return; }
+    lastTab = 'learn'; setWine(r.wine);
+    const u = r.u, wines = [...new Set((u.questions || []).flatMap(q => q.wines || []))].filter(w => D.wines[w]).slice(0, 6);
+    const mini = id => { const w = D.wines[id], rows = TASTE_DIMS.filter(([k]) => w.profile[k] != null && k !== 'alcohol').slice(0, 4);
+      return `<div class="sm-wine"><div class="sm-wine-top">${miniGlass(w.wine, glassKind(w))}<div><strong>${w.name}</strong><small>${w.grapes}</small></div></div>
+        ${rows.map(([k, n, L]) => { const [a, b] = span(w.profile[k]); return `<div class="bar-row"><span class="mono">${n}</span>${meter(a, b)}</div>`; }).join('')}
+        <p class="sm-notes">${w.notes.slice(0, 3).join(' · ')}</p></div>`; };
+    app.innerHTML = `<div class="tabview summary" style="--fw:${r.wine}">
+      <header class="pf-head"><button class="icon-btn" data-act="go" data-h="#${r.track === 'A' ? 'roots' : 'list'}" aria-label="Back">${backIcon()}</button><span class="mono">Summary · ${label(r)}</span><span class="pf-gap"></span></header>
+      <h1>${u.title}</h1>${u.sub ? `<p class="sm-sub">${u.sub}</p>` : ''}
+      <div class="sm-grid">${(u.lesson || []).map(summaryTile).join('')}</div>
+      ${wines.length ? `<h2 class="j-h">The wines</h2><div class="sm-wines">${wines.map(mini).join('')}</div>` : ''}
+      <div class="sm-acts"><button class="primary" data-act="go" data-h="#unit-${id}">Pour it again</button></div>
+    </div>${tabbar('learn')}`;
   }
   function startUnit(id) {
     const r = UNIT[id];
@@ -1036,6 +1116,11 @@
     },
   };
 
+  function mapCardHTML(c) {
+    if (c.map) { const note = geoNote(c.map, c.hl || []); return `<div class="geo-wrap">${GEO.render(c.map, { hl: c.hl })}</div>${note ? `<p class="geo-note">${note}</p>` : ''}`; }
+    const view = c.loc.at[0] > -12 && c.loc.at[0] < 34 && c.loc.at[1] > 34 && c.loc.at[1] < 60 ? 'europe' : 'world';
+    return `<div class="geo-wrap loc">${D.scenes.map(view, [{ name: c.loc.name, at: c.loc.at, state: 'next', colour: c.loc.colour }]).replace(/data-act="region"/g, '')}</div>`;
+  }
   function cardHTML(c) {
     let h = '';
     if (c.art) h += ART[c.art]();
@@ -1047,6 +1132,7 @@
     if (c.kind === 'try') h += `<div class="try"><p class="mono">Try it</p><p class="try-prompt">${c.prompt}</p><button class="reveal-btn" data-act="tryreveal">Tap to find out</button><p class="try-answer" hidden>${c.reveal}</p></div>`;
     if (c.kind === 'compare') h += `<div class="compare">${c.cols.map(col => `<div class="col"><h3>${col.h}</h3><ul>${col.items.map(i => `<li>${i}</li>`).join('')}</ul></div>`).join('')}</div>`;
     if (c.kind === 'scale') h += `<div class="scale"><div class="scale-bar"></div>${c.marks.map((m, i) => `<div class="mark ${i % 2 ? 'below' : 'above'}" style="left:${m.at * 100}%;animation-delay:${0.2 + i * 0.15}s"><span>${m.t}</span></div>`).join('')}<div class="scale-ends mono"><span>${c.low}</span><span>${c.high}</span></div></div>`;
+    if (c.kind === 'map') h += mapCardHTML(c);
     if (c.kind === 'layers') h += `<div class="layers">${c.rows.map((r, i) => `<div class="layer l${i}" style="animation-delay:${i * 0.12}s"><span class="mono">${r.h}</span><p>${r.t}</p></div>`).join('')}</div>`;
     return h;
   }
@@ -1116,7 +1202,7 @@
     </div>`;
   }
 
-  const TYPE_LABEL = { odd: 'Odd one out', chain: 'Label → appellation → grape → taste', choice: 'Question', blind: 'Blind · mystery glass', label: 'Label decoder', order: 'Put in order', sort: 'Sort it', slider: 'Place it on the scale', recall: 'From your cellar', redact: 'Redacted label' };
+  const TYPE_LABEL = { odd: 'Odd one out', chain: 'Label → appellation → grape → taste', choice: 'Question', blind: 'Blind · mystery glass', label: 'Label decoder', order: 'Put in order', sort: 'Sort it', slider: 'Place it on the scale', recall: 'From your cellar', redact: 'Redacted label', mapq: 'On the map' };
   function renderQ() {
     const q = P.questions[P.i];
     P.locked = false; P.phase = 'practice';
@@ -1132,6 +1218,7 @@
     if (q.type === 'slider') body += sliderUI(q);
     if (q.type === 'recall') body += recallUI(q);
     if (q.type === 'redact') { P.red = { k: 0, misses: 0, fills: [] }; body += redactUI(q); }
+    if (q.type === 'mapq') body += `<div class="geo-wrap mapq">${GEO.render(q.map, { pins: q.pins })}</div><p class="hint mono">Tap a numbered pin</p>`;
     app.innerHTML = playerShell(body);
     window.scrollTo(0, 0);
     if (q.type === 'blind') initSwirl(q);
@@ -1666,6 +1753,11 @@
       case 'lnote': { const n = app.querySelector('.lnote'); n.textContent = b.dataset.note; n.classList.add('on'); app.querySelectorAll('.term.picked').forEach(t => t.classList.remove('picked')); b.classList.add('picked'); buzz(5); break; }
       case 'chainpick': chainPick(q, b); break;
       case 'redpick': redactPick(q, b); break;
+      case 'mappick': {
+        if (P.locked || q.type !== 'mapq') return;
+        const picked = decodeURIComponent(b.dataset.n), ok = picked === q.target;
+        app.querySelector('.geo-wrap.mapq').innerHTML = GEO.render(q.map, { pins: q.pins, picked, right: q.target });
+        answer(ok, ok ? '' : `That was ${picked}. ${q.target} is pin ${q.pins.indexOf(q.target) + 1}.`); break; }
       case 'term': {
         if (P.locked) return;
         const ok = b.dataset.k === q.answer;
@@ -2104,6 +2196,7 @@
     window.scrollTo(0, 0);
     const h = location.hash.slice(1);
     if (h.startsWith('unit-')) return startUnit(h.slice(5));
+    if (h.startsWith('sum-')) { P = null; return summaryPage(h.slice(4)); }
     P = null;
     if (h === 'roots' || h === 'list') { lastTab = h; S.learnView = h; save(); h === 'roots' ? roots() : wineList(); }
     else if (h === 'cellar') { lastTab = 'cellar'; cellar(); }
