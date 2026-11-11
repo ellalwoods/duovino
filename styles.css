@@ -1139,3 +1139,36 @@ button.aroma:active { transform: scale(.96); }
 .preview .ghost-btn.wide { width: 100%; margin-top: 8px; }
 .pf-hint.earned { background: #eef3e2; color: #4f6a2a; }
 .pf-hint { scroll-margin-bottom: calc(110px + var(--safe-bot)); }
+
+/* ---------- Web browser on a computer: sidebar navigation and a comfortable reading column ---------- */
+@media (min-width: 900px) {
+  body { background: #e9dfcd var(--grain); }
+  #app { max-width: none; box-shadow: none; }
+  #app:has(> .tabbar) { padding-left: 232px; }
+  /* the tab bar becomes a sidebar */
+  .tabbar { left: 0; top: 0; bottom: 0; transform: none; width: 232px; max-width: none; display: flex; flex-direction: column; align-items: stretch; gap: 4px;
+    padding: 28px 16px; border-radius: 0; border: 0; border-right: 1px solid #e3d6c1; background: #f3ebdc var(--grain); backdrop-filter: none; box-shadow: none; }
+  .tabbar::before { content: 'Duovino'; display: block; margin: 0 12px 22px; font: italic 500 30px var(--serif); color: var(--ink); font-variation-settings: 'SOFT' 100, 'WONK' 1; }
+  .tab, .tab-glass { flex-direction: row; justify-content: flex-start; gap: 14px; width: auto; height: auto; margin: 0; padding: 12px 14px; border-radius: 14px; background: none; box-shadow: none;
+    color: #7d6a64; font: 500 16px var(--serif); letter-spacing: 0; text-transform: none; }
+  .tab svg, .tab-glass svg { width: 24px; height: 24px; flex: none; }
+  .tab::after, .tab.on::after, .tab-glass.on::after { content: attr(aria-label); position: static; width: auto; height: auto; margin: 0; border-radius: 0; background: none; }
+  .tab:hover { background: rgba(123,42,42,.06); color: var(--ink); }
+  .tab.on, .tab-glass.on { background: #fffaf2; color: var(--ink); box-shadow: 0 6px 18px -14px rgba(60,30,20,.5); }
+  .tab-glass { display: flex; align-items: center; }
+  .tab-dot { top: 9px; right: auto; left: 34px; }
+  /* content sits in a centred column */
+  .tabview:not(.home) { padding-left: max(24px, calc((100% - 760px) / 2)) !important; padding-right: max(24px, calc((100% - 760px) / 2)) !important; padding-bottom: 48px !important; }
+  .player { padding-left: max(24px, calc((100% - 680px) / 2)); padding-right: max(24px, calc((100% - 680px) / 2)); }
+  .sheet-in { max-width: 680px; border-radius: 24px 24px 0 0; }
+  /* dialogs float in the middle instead of rising from the bottom */
+  .j-map { max-width: 620px; margin-left: auto; margin-right: auto; }
+  .modal { align-items: center; }
+  .modal-card { max-width: 540px; border-radius: 26px; padding-bottom: 26px; }
+  /* home: the vineyard fills the space, the button stays centred */
+  .home { width: min(560px, calc(100% - 48px)); height: calc(100dvh - 48px) !important; margin: 24px auto; border-radius: 30px; box-shadow: 0 30px 60px -30px rgba(60,30,20,.45); }
+}
+@media (min-width: 900px) and (hover: hover) {
+  .opt:hover, .aroma:hover, .pf-item:hover, .w-wine:hover, .w-place:hover, .cp-line:hover, .pr-entry:hover { filter: brightness(1.03); box-shadow: 0 6px 18px -12px rgba(60,30,20,.45); }
+  button, a, [data-act] { cursor: pointer; }
+}
