@@ -20,6 +20,7 @@
   /* ---------- cloud cellars (optional): a wine-word code per person, synced to Supabase ---------- */
   const CLOUD = window.DUOVINO_CLOUD || {};
   const cloudOn = !!(CLOUD.url && CLOUD.key);
+  const MOUSE = matchMedia('(hover: hover) and (pointer: fine)').matches; // a computer, not a phone
   const APP_URL = 'https://ellalwoods.github.io/duovino/';
   const CODE_KEY = 'duovino.code', NAME_KEY = 'duovino.name';
   const myCode = () => localStorage.getItem(CODE_KEY);
@@ -680,7 +681,7 @@
       <button class="primary narrow" data-act="go" data-h="#list">Find a wine</button>`;
     else if (g.done) body = `${bigGlass(w.wine, false, true, gk)}<p class="glass-name">${w.name}</p><p class="glass-line">${g.ok ? 'Tasted. Lovely.' : 'Tasted. It\'ll come round again soon.'}</p><p class="glass-small mono">Next glass tomorrow</p>`;
     else if (phase === 'swirl') body = `<div class="glass-wrap big" data-glass>${bigGlass(w.wine, true, false, gk)}<svg class="swirl-ring" viewBox="0 0 100 100" style="top:${((GLASSES[gk].bowl.match(/^M\d+ (\d+)/)[1] * 1 + GLASSES[gk].stem) / 2 - 144) / 520 * 100}%"><circle cx="50" cy="50" r="47" pathLength="100" stroke-dasharray="0 100"/></svg></div>
-      <p class="glass-small mono">Swirl the glass with your finger ↻</p><button class="link-btn" data-act="glass-open">or tap here</button>`;
+      <p class="glass-small mono">Swirl the glass with your ${MOUSE ? 'mouse' : 'finger'} ↻</p><button class="link-btn" data-act="glass-open">or ${MOUSE ? 'click' : 'tap'} here</button>`;
     else if (phase === 'name') body = `${bigGlass(w.wine, true, false, gk)}<p class="glass-name">${w.name}</p><p class="glass-line">Taste it in your mind.</p>
       <button class="primary narrow" data-act="glass-pour">Start tasting</button>`;
     else if (['taste', 'notes', 'reveal'].includes(phase)) {
@@ -1131,7 +1132,7 @@
     if (c.big) h += `<p class="big">${c.big}</p>`;
     h += `<h2>${c.title}</h2>`;
     if (c.body) h += `<p class="lbody">${c.body}</p>`;
-    if (c.kind === 'label') h += `${labelHTML(c.label, 'lnote')}<p class="lnote mono">Tap the underlined words</p>`;
+    if (c.kind === 'label') h += `${labelHTML(c.label, 'lnote')}<p class="lnote mono">${MOUSE ? 'Click' : 'Tap'} the underlined words</p>`;
     if (c.kind === 'facts') h += `<dl class="facts">${c.rows.map((r, i) => `<div style="animation-delay:${i * 0.08}s"><dt class="mono">${r.k}</dt><dd>${r.v}</dd></div>`).join('')}</dl>`;
     if (c.kind === 'try') h += `<div class="try"><p class="mono">Try it</p><p class="try-prompt">${c.prompt}</p><button class="reveal-btn" data-act="tryreveal">Tap to find out</button><p class="try-answer" hidden>${c.reveal}</p></div>`;
     if (c.kind === 'compare') h += `<div class="compare">${c.cols.map(col => `<div class="col"><h3>${col.h}</h3><ul>${col.items.map(i => `<li>${i}</li>`).join('')}</ul></div>`).join('')}</div>`;
@@ -1222,7 +1223,7 @@
     if (q.type === 'slider') body += sliderUI(q);
     if (q.type === 'recall') body += recallUI(q);
     if (q.type === 'redact') { P.red = { k: 0, misses: 0, fills: [] }; body += redactUI(q); }
-    if (q.type === 'mapq') body += `<div class="geo-wrap mapq">${GEO.render(q.map, { pins: q.pins })}</div><p class="hint mono">Tap a numbered pin</p>`;
+    if (q.type === 'mapq') body += `<div class="geo-wrap mapq">${GEO.render(q.map, { pins: q.pins })}</div><p class="hint mono">${MOUSE ? 'Click' : 'Tap'} a numbered pin</p>`;
     app.innerHTML = playerShell(body);
     window.scrollTo(0, 0);
     if (q.type === 'blind') initSwirl(q);
@@ -1313,7 +1314,7 @@
       </div>
     </div>`;
   }
-  function labelUI(q) { return labelHTML(q.label, 'term') + '<p class="hint mono">Tap a word on the label</p>'; }
+  function labelUI(q) { return labelHTML(q.label, 'term') + `<p class="hint mono">${MOUSE ? 'Click' : 'Tap'} a word on the label</p>`; }
 
   /* Redacted label: the giveaway words are blacked out; fill in the blanks from what's left */
   function redactUI(q) {
@@ -1388,7 +1389,7 @@
   function sortUI(q) {
     const s = P.sort, cur = s.items[s.k];
     return `<div class="sort">
-      <div class="sort-stage">${cur ? `<div class="sort-card">${cur.t}</div><span class="mono">${s.k + 1} of ${s.items.length} · tap a group</span>` : '<span class="mono">All sorted</span>'}</div>
+      <div class="sort-stage">${cur ? `<div class="sort-card">${cur.t}</div><span class="mono">${s.k + 1} of ${s.items.length} · ${MOUSE ? 'click' : 'tap'} a group</span>` : '<span class="mono">All sorted</span>'}</div>
       <div class="buckets n${q.buckets.length}">${q.buckets.map((b, i) => `<button class="bucket" data-act="bucket" data-b="${i}"><strong>${b}</strong><span class="b-items">${s.placed.filter(p => p.b === i).map(p => `<em class="${p.ok ? 'ok' : 'no'}">${p.t}</em>`).join('')}</span></button>`).join('')}</div>
     </div>`;
   }
