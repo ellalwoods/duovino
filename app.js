@@ -20,6 +20,7 @@
   /* ---------- cloud cellars (optional): a wine-word code per person, synced to Supabase ---------- */
   const CLOUD = window.DUOVINO_CLOUD || {};
   const cloudOn = !!(CLOUD.url && CLOUD.key);
+  const APP_URL = 'https://ellalwoods.github.io/duovino/';
   const CODE_KEY = 'duovino.code', NAME_KEY = 'duovino.name';
   const myCode = () => localStorage.getItem(CODE_KEY);
   // Your "passcode" is just your name + a wine + a region you pick. Easy to remember; it only keeps the two of you apart.
@@ -1638,9 +1639,12 @@
       <div class="cellar-id">${pk ? `<span class="ci-glass">${miniGlass(pk.w[2], pk.w[3])}</span>` : ''}<div><strong>${esc(localStorage.getItem(NAME_KEY) || 'My')}'s cellar</strong><span>${pk ? `${pk.w[1]} · ${pk.r[1]}` : `Code: <span class="mono">${myCode()}</span>`}</span></div></div>
       <p class="set-note">Saved to the cloud as you go. On another phone, pick your name, ${pk ? 'this wine and this region' : 'and type this code'}.</p>
       <div class="seg"><button data-act="w-rekey">${pk ? 'Change wine & region' : 'Use a wine & region instead'}</button><button data-act="w-switch">Switch cellar</button></div>`; })() : ''}
+      <p class="set-label mono">SHARE DUOVINO</p>
+      <div class="seg"><button data-act="share-app">Share the link</button><button data-act="copy-link">Copy link</button></div>
+      <p class="set-note">Send someone the app: <span class="mono" style="text-transform:none">${APP_URL.replace('https://', '')}</span></p>
       <p class="set-label mono">BACKUP</p>
       <div class="seg"><button data-act="export">Export backup</button><button data-act="import">Import backup</button></div>
-      <p class="set-note">Your progress lives only in this browser. Export a backup now and then, and import it on a new phone or after clearing Safari.</p>
+      <p class="set-note">${cloudOn && myCode() ? 'Your progress already saves to your cellar. A backup file is an extra copy, just in case.' : 'Your progress lives only in this browser. Export a backup now and then, and import it on a new phone or after clearing Safari.'}</p>
       <p class="set-label mono">PROGRESS</p>
       <button class="link-btn danger" data-act="reset">Pour it all away (reset)</button>
     </div></div>`;
@@ -1818,6 +1822,13 @@
       case 'mapview': S.mapView = b.dataset.v; save(); journey(); break;
       case 'setview': S.settings.view = b.dataset.v; save(); clink(); closeModal(); journey(); break;
       case 'export': exportBackup(); break;
+      case 'share-app': {
+        const data = { title: 'Duovino', text: 'Learn wine with me on Duovino 🍷', url: APP_URL };
+        if (navigator.share) navigator.share(data).catch(() => {});
+        else location.href = `sms:?&body=${encodeURIComponent(data.text + ' ' + APP_URL)}`;
+        break; }
+      case 'copy-link': { const done = () => { b.textContent = 'Copied ✓'; setTimeout(() => { b.textContent = 'Copy link'; }, 1600); };
+        if (navigator.clipboard) navigator.clipboard.writeText(APP_URL).then(done, () => {}); else { prompt('Copy this link', APP_URL); } break; }
       case 'import': importBackup(); break;
       case 'restore': restoreBackup(); break;
       case 'copy-backup': {
