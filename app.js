@@ -2038,7 +2038,8 @@
     if (labels.length) defs.push({ key: 'L:labels', title: 'The Label Tasting', short: 'Read a label', units: labels, colour: TB.wine });
     TB.grapeGroups.forEach(g => {
       const rs = UNITS.filter(r => r.grapeGroup === g);
-      if (rs.filter(playable).length >= 2) defs.push({ key: 'G:' + g.name, title: `${g.name.replace(/^The /, '').replace(/^./, c => c.toUpperCase())}: the tasting`, short: g.name.replace(/^The /, ''), units: rs, colour: g.wine || TB.wine });
+      const nm = g.name.replace(/^The /, '').split(' ').map((w, i) => i && /^(and|the|of|&|a)$/.test(w) ? w : w[0].toUpperCase() + w.slice(1)).join(' ');
+      if (rs.filter(playable).length >= 2) defs.push({ key: 'G:' + g.name, title: `The ${nm} Tasting`, short: nm, units: rs, colour: g.wine || TB.wine });
     });
     const byC = new Map();
     UNITS.filter(r => r.track === 'B' && r.part === 3 && r.country).forEach(r => { const k = r.country.name; if (!byC.has(k)) byC.set(k, { c: r.country, units: [] }); byC.get(k).units.push(r); });
