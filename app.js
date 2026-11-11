@@ -910,7 +910,7 @@
           <ol>${rows}
             <li class="node checkpoint ${cpPassed('A:' + ch.id) ? 'done' : fullyDone ? 'current' : 'locked'}" style="top:${ROW * rs.length}px">
               <button class="node-btn" style="left:50%" data-act="checkpoint" data-k="A:${ch.id}" aria-label="Checkpoint tasting"><span class="nb-num">${cpPassed('A:' + ch.id) ? '✓' : '✦'}</span></button>
-              <div class="node-label right" style="left:calc(50% + 40px)"><span class="mono">Checkpoint${S.checkpoints && S.checkpoints['A:' + ch.id] ? ` · best ${S.checkpoints['A:' + ch.id].best}%` : ''}</span><strong>The ${st.name} Tasting</strong><span>${cpPassed('A:' + ch.id) ? 'Passed · revise any time' : 'A mixed tasting with a blind finale'}</span></div>
+              <div class="node-label right" style="left:calc(50% + 40px)"><span class="mono">Checkpoint${S.checkpoints && S.checkpoints['A:' + ch.id] ? ` · best ${S.checkpoints['A:' + ch.id].best}%` : ''}</span><strong>The ${st.name} tasting</strong><span>${cpPassed('A:' + ch.id) ? 'Passed · revise any time' : 'A mixed tasting with a blind finale'}</span></div>
             </li>
           </ol>
         </div>
@@ -1558,7 +1558,7 @@
     app.innerHTML = `<div class="tabview cellar">
       <header class="tab-head">
         <p class="eyebrow">${entries.length} wine${entries.length === 1 ? '' : 's'}</p>
-        <h1>The Cellar</h1>
+        <h1>The cellar</h1>
         ${entries.length ? `<button class="pr-entry" data-act="prtaste"><span class="pr-entry-ic">↻</span><span class="pr-entry-txt"><strong>Blind-taste your cellar</strong><small>A shuffled round from your wines</small></span><span class="pr-entry-go">›</span></button>` : ''}
       </header>
       ${entries.length ? `<div class="legend mono"><span class="lg ready">${counts.ready} ready</span><span class="lg corked">${counts.corked} corked</span><span class="lg-know">${(() => { const ks = entries.map(([, e]) => knowPct(e)).filter(k => k != null); return ks.length ? `${Math.round(ks.reduce((a, b) => a + b, 0) / ks.length)}% known` : ''; })()}</span></div>${racks}`
@@ -2039,18 +2039,18 @@
     const defs = [];
     D.chapters.forEach((ch, ci) => {
       const rs = UNITS.filter(r => r.track === 'A' && r.ci === ci);
-      defs.push({ key: 'A:' + ch.id, title: `The ${D.strata[ci].name} Tasting`, short: D.strata[ci].name, units: rs, colour: ch.wine });
+      defs.push({ key: 'A:' + ch.id, title: `The ${D.strata[ci].name} tasting`, short: D.strata[ci].name, units: rs, colour: ch.wine });
     });
     const labels = UNITS.filter(r => r.track === 'B' && r.part === 1);
-    if (labels.length) defs.push({ key: 'L:labels', title: 'The Label Tasting', short: 'Read a label', units: labels, colour: TB.wine });
+    if (labels.length) defs.push({ key: 'L:labels', title: 'The label tasting', short: 'Read a label', units: labels, colour: TB.wine });
     TB.grapeGroups.forEach(g => {
       const rs = UNITS.filter(r => r.grapeGroup === g);
-      const nm = g.name.replace(/^The /, '').split(' ').map((w, i) => i && /^(and|the|of|&|a)$/.test(w) ? w : w[0].toUpperCase() + w.slice(1)).join(' ');
-      if (rs.filter(playable).length >= 2) defs.push({ key: 'G:' + g.name, title: `The ${nm} Tasting`, short: nm, units: rs, colour: g.wine || TB.wine });
+      const nm = g.name.replace(/^The /, '');
+      if (rs.filter(playable).length >= 2) defs.push({ key: 'G:' + g.name, title: `The ${/^(Mediterranean)\b/.test(nm) ? nm : (nm[0].toLowerCase() + nm.slice(1)).replace('off the beaten track', 'off-the-beaten-track')} tasting`, short: nm[0].toUpperCase() + nm.slice(1), units: rs, colour: g.wine || TB.wine });
     });
     const byC = new Map();
     UNITS.filter(r => r.track === 'B' && r.part === 3 && r.country).forEach(r => { const k = r.country.name; if (!byC.has(k)) byC.set(k, { c: r.country, units: [] }); byC.get(k).units.push(r); });
-    byC.forEach(({ c, units }, name) => { if (units.filter(playable).length >= 2) defs.push({ key: 'B:' + name, title: `The ${name} Tasting`, short: name, units, colour: c.wine }); });
+    byC.forEach(({ c, units }, name) => { if (units.filter(playable).length >= 2) defs.push({ key: 'B:' + name, title: `The ${name} tasting`, short: name, units, colour: c.wine }); });
     return defs;
   }
   const cpDef = k => checkpointDefs().find(d => d.key === k);
