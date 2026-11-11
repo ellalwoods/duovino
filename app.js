@@ -862,7 +862,7 @@
           <ol>${rows}
             <li class="node checkpoint ${cpPassed('A:' + ch.id) ? 'done' : fullyDone ? 'current' : 'locked'}" style="top:${ROW * rs.length}px">
               <button class="node-btn" style="left:50%" data-act="checkpoint" data-k="A:${ch.id}" aria-label="Checkpoint tasting"><span class="nb-num">${cpPassed('A:' + ch.id) ? '✓' : '✦'}</span></button>
-              <div class="node-label right" style="left:calc(50% + 40px)"><span class="mono">Checkpoint${S.checkpoints && S.checkpoints['A:' + ch.id] ? ` · best ${S.checkpoints['A:' + ch.id].best}%` : ''}</span><strong>The ${st.name} Tasting</strong><span>${cpPassed('A:' + ch.id) ? 'Passed' : 'A mixed tasting with a blind finale'}</span></div>
+              <div class="node-label right" style="left:calc(50% + 40px)"><span class="mono">Checkpoint${S.checkpoints && S.checkpoints['A:' + ch.id] ? ` · best ${S.checkpoints['A:' + ch.id].best}%` : ''}</span><strong>The ${st.name} Tasting</strong><span>${cpPassed('A:' + ch.id) ? 'Passed · revise any time' : 'A mixed tasting with a blind finale'}</span></div>
             </li>
           </ol>
         </div>
@@ -899,11 +899,14 @@
     const p1Open = reqMet(p1[0]), restOpen = reqMet(p3[0]);
     const step = (n, title, state) => `<li class="step ${state}"><span class="step-n">${state === 'done' ? '✓' : n}</span>${title}</li>`;
     const coreDone = CORE_REQ.every(x => !playable(x) || done(x));
+    const cpLine = key => { const cp = cpDef(key); if (!cp) return ''; const ok = cpPassed(cp.key), rec = S.checkpoints && S.checkpoints[cp.key], open = cpOpen(cp);
+      return `<button class="cp-line ${ok ? 'done' : open ? 'ready' : 'locked'}" data-act="checkpoint" data-k="${cp.key}">${cpBadge(cp, ok)}<span><strong>${cp.title}</strong><small>${ok ? `Passed · best ${rec.best}% · revise any time` : open ? 'Ready: test all of it, with a blind finale' : 'Opens when every lesson above is done'}</small></span></button>`; };
     const groupHTML = g => {
       const rs = p2.filter(r => r.grapeGroup === g);
       return `<details class="wl-group" ${g.core || rs.some(r => unitState(r) === 'current') ? 'open' : ''}>
         <summary><span class="wl-gname">${g.name}<small>${g.blurb}</small></span><span class="mono wl-count">${stats(rs)}</span></summary>
         <ul class="wl-rows">${rs.map(row).join('')}</ul>
+        ${cpLine('G:' + g.name)}
       </details>`;
     };
     const countryHTML = c => {
@@ -912,8 +915,7 @@
       return `<details class="wl-group" ${rs.some(r => unitState(r) === 'current') ? 'open' : ''}>
         <summary><span class="wl-gname">${c.name}</span><span class="mono wl-count">${stats(rs)}</span></summary>
         ${c.regions.map(rg => `${multi ? `<h4 class="wl-region">${rg.name}</h4>` : ''}<ul class="wl-rows">${rs.filter(r => r.region === rg).map(row).join('')}</ul>`).join('')}
-        ${(() => { const cp = cpDef('B:' + c.name); if (!cp) return ''; const ok = cpPassed(cp.key), rec = S.checkpoints && S.checkpoints[cp.key];
-          return `<button class="cp-line ${ok ? 'done' : cpOpen(cp) ? 'ready' : 'locked'}" data-act="checkpoint" data-k="${cp.key}">${cpBadge(cp, ok)}<span><strong>${cp.title}</strong><small>${ok ? `Passed · best ${rec.best}%` : cpOpen(cp) ? 'Ready: a mixed tasting with a blind finale' : 'Opens when every lesson above is done'}</small></span></button>`; })()}
+        ${cpLine('B:' + c.name)}
       </details>`;
     };
     app.innerHTML = `<div class="tabview winelist">
@@ -932,6 +934,7 @@
         <h2><span class="mono">Part 1</span>Read a label</h2>
         ${p1Open ? '' : `<p class="wl-part-sub">Opens after Roots ${reqText().replace('Topsoil ', '')}</p>`}
         <ul class="wl-rows">${p1.map(row).join('')}</ul>
+        ${cpLine('L:labels')}
       </section>
 
       <section class="wl-part">
@@ -1939,6 +1942,12 @@
       const rs = UNITS.filter(r => r.track === 'A' && r.ci === ci);
       defs.push({ key: 'A:' + ch.id, title: `The ${D.strata[ci].name} Tasting`, short: D.strata[ci].name, units: rs, colour: ch.wine });
     });
+    const labels = UNITS.filter(r => r.track === 'B' && r.part === 1);
+    if (labels.length) defs.push({ key: 'L:labels', title: 'The Label Tasting', short: 'Read a label', units: labels, colour: TB.wine });
+    TB.grapeGroups.forEach(g => {
+      const rs = UNITS.filter(r => r.grapeGroup === g);
+      if (rs.filter(playable).length >= 2) defs.push({ key: 'G:' + g.name, title: `${g.name.replace(/^The /, '').replace(/^./, c => c.toUpperCase())}: the tasting`, short: g.name.replace(/^The /, ''), units: rs, colour: g.wine || TB.wine });
+    });
     const byC = new Map();
     UNITS.filter(r => r.track === 'B' && r.part === 3 && r.country).forEach(r => { const k = r.country.name; if (!byC.has(k)) byC.set(k, { c: r.country, units: [] }); byC.get(k).units.push(r); });
     byC.forEach(({ c, units }, name) => { if (units.filter(playable).length >= 2) defs.push({ key: 'B:' + name, title: `The ${name} Tasting`, short: name, units, colour: c.wine }); });
@@ -1949,8 +1958,10 @@
   function startCheckpoint(k) {
     const d = cpDef(k);
     if (!cpOpen(d)) { ask(d ? d.title : 'Checkpoint', `Finish every lesson ${k.startsWith('A:') ? 'in this chapter' : 'in ' + d.short} to open its checkpoint: a longer mixed tasting with a blind finale.`, 'Lovely', () => {}); return; }
-    const pool = d.units.filter(playable).flatMap(r => r.u.questions.filter(q => q.type !== 'recall' && q.type !== 'blind'));
-    const qs = shuffle(pool).slice(0, 11);
+    // Cover all of it: one question from every lesson, then topped up from the rest (12 to 20 in all)
+    const per = d.units.filter(playable).map(r => shuffle(r.u.questions.filter(q => q.type !== 'recall' && q.type !== 'blind')));
+    const first = per.map(qs => qs[0]).filter(Boolean), rest = shuffle(per.flatMap(qs => qs.slice(1)));
+    const qs = shuffle([...first, ...rest].slice(0, Math.min(20, Math.max(11, first.length))));
     // the finale: a blind glass from a wine this chapter/country taught (or any wine you've learned)
     const taught = [...new Set(d.units.flatMap(r => (r.u.questions || []).flatMap(q => q.wines || [])))].filter(id => D.wines[id]);
     const finalePool = taught.length ? taught : learnedWines();
