@@ -109,7 +109,7 @@
   })));
   const UNIT = Object.fromEntries(UNITS.map(r => [r.u.id, r]));
   // Draft units (rules not yet checked against official regulations) are only playable with ?drafts
-  const DRAFTS = /[?&]drafts\b/.test(location.search) || !!S.settings.drafts;
+  const DRAFTS = /[?&]drafts\b/.test(location.search); // drafts only show with ?drafts in the address
   const playable = r => !!(r.u.questions && r.u.questions.length) && (!r.u.draft || DRAFTS);
   const done = r => !!S.units[r.u.id];
 
@@ -1632,9 +1632,6 @@
       <p class="set-note">The vineyard calendar on Today follows your hemisphere.</p>
       <p class="set-label mono">SOUND</p>
       <div class="seg">${[true, false].map(v => `<button class="${S.settings.sound === v ? 'on' : ''}" data-act="sound" data-v="${v}">${v ? 'Clinks on' : 'Silent'}</button>`).join('')}</div>
-      <p class="set-label mono">DRAFT LESSONS</p>
-      <div class="seg">${[false, true].map(v => `<button class="${!!S.settings.drafts === v ? 'on' : ''}" data-act="drafts" data-v="${v}">${v ? 'Preview drafts' : 'Hide drafts'}</button>`).join('')}</div>
-      <p class="set-note">Drafts are written lessons whose rules haven't yet been checked against the official regulations (e.g. Champagne). Previewing unlocks them and shows a draft banner.</p>
       ${cloudOn && myCode() ? (() => { const pk = pickOf(myCode()); return `<p class="set-label mono">YOUR CELLAR</p>
       <div class="cellar-id">${pk ? `<span class="ci-glass">${miniGlass(pk.w[2], pk.w[3])}</span>` : ''}<div><strong>${esc(localStorage.getItem(NAME_KEY) || 'My')}'s cellar</strong><span>${pk ? `${pk.w[1]} · ${pk.r[1]}` : `Code: <span class="mono">${myCode()}</span>`}</span></div></div>
       <p class="set-note">Saved to the cloud as you go. On another phone, pick your name, ${pk ? 'this wine and this region' : 'and type this code'}.</p>
@@ -1798,7 +1795,6 @@
         if (b.dataset.hint) { const h = app.querySelector('.pf-hint'); h.textContent = `🔒 ${b.dataset.hint} to unlock this`; h.hidden = false; b.after(h); buzz(5); break; }
         S.botty = { ...(S.botty || {}), [b.dataset.slot]: b.dataset.v }; save(); buzz(8); profile(); break; }
       case 'hemi': S.settings.hemi = b.dataset.h; save(); home(); settings(); break;
-      case 'drafts': S.settings.drafts = b.dataset.v === 'true'; save(); location.reload(); break;
       case 'sound': S.settings.sound = b.dataset.v === 'true'; save(); settings(); if (S.settings.sound) clink(); break;
       case 'glass-open': clink(); glassPage('name'); break;
       case 'w-wine': W.wine = b.dataset.id; welcomeReady(); break;
