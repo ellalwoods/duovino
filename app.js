@@ -542,6 +542,42 @@
 
   /* Swirl detection: measures how much the finger's direction of travel turns, so small circles
      anywhere on the glass count (a full circle = 2π of turning), whatever the size or position. */
+  /* Swirl a big glass: it orbits on a small, flattened circle in the direction you swirl, and the ring fills.
+     Every `need` radians of swirling calls onFull(); return false from it to stop. Used by Today's glass and blind questions. */
+  function orbitSwirl(wrap, need, onFull, R = 22) {
+    const ringC = wrap.querySelector('.swirl-ring circle'), wine = wrap.querySelector('.bg-wine'), body = wrap.querySelector('.glass-body');
+    const FLAT = .42, k = R / 22;
+    let acc = 0, stopped = false, theta = -Math.PI / 2, r = 0, spin = 0, held = false, touched = false, last = performance.now();
+    const draw = () => {
+      const x = r * Math.cos(theta), y = r * Math.sin(theta) * FLAT;
+      body.style.transform = `translate(${x.toFixed(2)}px, ${y.toFixed(2)}px) rotate(${(x * .12).toFixed(2)}deg)`;
+      // the wine is thrown outwards: it leans the way the glass is heading, a little behind it
+      if (wine) wine.style.transform = `rotate(${(-Math.sin(theta - .6) * r * .55).toFixed(2)}deg)`;
+    };
+    const frame = now => {
+      if (!body.isConnected) return;
+      const dt = Math.min(50, now - last); last = now;
+      if (!touched && !stopped) { theta -= dt * .004; r = (9 + 3 * Math.sin(now / 900)) * k; }   // idle: a gentle hint circle
+      else if (!held) { theta += spin * dt; spin *= .94; r *= .955; }                      // released: coast and settle
+      draw(); requestAnimationFrame(frame);
+    };
+    requestAnimationFrame(frame);
+    trackSwirl(wrap, d => {
+      if (stopped) return;
+      if (!touched) { touched = true; r = 0; }
+      held = true; acc += Math.abs(d);
+      theta += d * 1.15; spin = d * 1.15 / 16;                                              // follow your direction
+      r = Math.min(R, r + Math.abs(d) * 9 * k);
+      ringC.setAttribute('stroke-dasharray', `${Math.min(100, acc / need * 100)} 100`);
+      if (acc >= need) {
+        acc = 0;
+        if (onFull() === false) { stopped = true; held = false; ringC.setAttribute('stroke-dasharray', '100 100'); }
+        else ringC.setAttribute('stroke-dasharray', '0 100');
+      }
+    }, () => { held = false; });
+  }
+  // where the swirl ring sits on a big glass, so it circles the bowl
+  const ringTop = gk => ((GLASSES[gk].bowl.match(/^M\d+ (\d+)/)[1] * 1 + GLASSES[gk].stem) / 2 - 144) / 520 * 100;
   function trackSwirl(el, onTurn, onEnd) {
     let prev = null, heading = null, start = null;
     el.addEventListener('pointerdown', e => {
@@ -680,7 +716,7 @@
     if (!w) body = `${bigGlass('#e2d6b8', false, false, 'bordeaux')}<p class="glass-line">Your first glass arrives with your first wine.</p>
       <button class="primary narrow" data-act="go" data-h="#list">Find a wine</button>`;
     else if (g.done) body = `${bigGlass(w.wine, false, true, gk)}<p class="glass-name">${w.name}</p><p class="glass-line">${g.ok ? 'Tasted. Lovely.' : 'Tasted. It\'ll come round again soon.'}</p><p class="glass-small mono">Next glass tomorrow</p>`;
-    else if (phase === 'swirl') body = `<div class="glass-wrap big" data-glass>${bigGlass(w.wine, true, false, gk)}<svg class="swirl-ring" viewBox="0 0 100 100" style="top:${((GLASSES[gk].bowl.match(/^M\d+ (\d+)/)[1] * 1 + GLASSES[gk].stem) / 2 - 144) / 520 * 100}%"><circle cx="50" cy="50" r="47" pathLength="100" stroke-dasharray="0 100"/></svg></div>
+    else if (phase === 'swirl') body = `<div class="glass-wrap big" data-glass>${bigGlass(w.wine, true, false, gk)}<svg class="swirl-ring" viewBox="0 0 100 100" style="top:${ringTop(gk)}%"><circle cx="50" cy="50" r="47" pathLength="100" stroke-dasharray="0 100"/></svg></div>
       <p class="glass-small mono">Swirl the glass with your ${MOUSE ? 'mouse' : 'finger'} ↻</p><button class="link-btn" data-act="glass-open">or ${MOUSE ? 'click' : 'tap'} here</button>`;
     else if (phase === 'name') body = `${bigGlass(w.wine, true, false, gk)}<p class="glass-name">${w.name}</p><p class="glass-line">Taste it in your mind.</p>
       <button class="primary narrow" data-act="glass-pour">Start tasting</button>`;
@@ -725,36 +761,7 @@
     }
     app.innerHTML = `<div class="tabview glass-page ${['taste', 'notes', 'reveal'].includes(phase) && w && !g.done ? 'noted' : ''}" style="--fw:${w ? w.wine : '#a8434e'}">${body}</div>${tabbar('glass')}`;
     const wrap = app.querySelector('[data-glass]');
-    if (wrap) {
-      const ringC = wrap.querySelector('.swirl-ring circle'), wine = wrap.querySelector('.bg-wine'), body = wrap.querySelector('.glass-body'), NEED = Math.PI * 2 * 1.5;
-      // The glass orbits on a small circle (flattened, like a glass swirled on a table), in the
-      // direction you swirl. The circle grows with momentum; let go and it slows to a stop.
-      const R = 22, FLAT = .42;
-      let acc = 0, done = false, theta = -Math.PI / 2, r = 0, spin = 0, held = false, touched = false, last = performance.now();
-      const draw = () => {
-        const x = r * Math.cos(theta), y = r * Math.sin(theta) * FLAT;
-        body.style.transform = `translate(${x.toFixed(2)}px, ${y.toFixed(2)}px) rotate(${(x * .12).toFixed(2)}deg)`;
-        // the wine is thrown outwards: it leans the way the glass is heading, a little behind it
-        if (wine) wine.style.transform = `rotate(${(-Math.sin(theta - .6) * r * .55).toFixed(2)}deg)`;
-      };
-      const frame = now => {
-        if (!body.isConnected) return;
-        const dt = Math.min(50, now - last); last = now;
-        if (!touched) { theta -= dt * .004; r = 9 + 3 * Math.sin(now / 900); }          // idle: a gentle hint circle
-        else if (!held) { theta += spin * dt; spin *= .94; r *= .955; }                  // released: coast and settle
-        draw(); requestAnimationFrame(frame);
-      };
-      requestAnimationFrame(frame);
-      trackSwirl(wrap, d => {
-        if (done) return;
-        if (!touched) { touched = true; r = 0; }
-        held = true; acc += Math.abs(d);
-        theta += d * 1.15; spin = d * 1.15 / 16;                                          // follow your direction
-        r = Math.min(R, r + Math.abs(d) * 9);
-        ringC.setAttribute('stroke-dasharray', `${Math.min(100, acc / NEED * 100)} 100`);
-        if (acc >= NEED) { done = true; held = false; clink(); buzz(12); setTimeout(() => glassPage('name'), 650); }
-      }, () => { held = false; });
-    }
+    if (wrap) orbitSwirl(wrap, Math.PI * 2 * 1.5, () => { clink(); buzz(12); setTimeout(() => glassPage('name'), 650); return false; });
     app.querySelectorAll('.trange').forEach(r => {
       const upd = () => { const k = r.dataset.k, v = +r.value; GT.marks[k] = v; app.querySelector(`[data-lv="${k}"]`).textContent = TASTE_DIMS.find(x => x[0] === k)[2][v]; };
       r.addEventListener('input', upd); r.addEventListener('change', () => { upd(); buzz(4); });
@@ -1226,7 +1233,7 @@
     if (q.type === 'mapq') body += `<div class="geo-wrap mapq">${GEO.render(q.map, { pins: q.pins })}</div><p class="hint mono">${MOUSE ? 'Click' : 'Tap'} a numbered pin</p>`;
     app.innerHTML = playerShell(body);
     window.scrollTo(0, 0);
-    if (q.type === 'blind') initSwirl(q);
+    if (q.type === 'blind') orbitSwirl(app.querySelector('[data-blind-glass]'), Math.PI * 2 * 1.1, () => { if (P.locked) return false; revealClue(q); clink(); buzz(10); return P.clues < q.clues.length; }, 40);
     if (q.type === 'recall') app.querySelectorAll('.trange').forEach(r => {
       const upd = () => { const k = r.dataset.k, v = +r.value; P.rt.marks[k] = v; app.querySelector(`[data-lv="${k}"]`).textContent = TASTE_DIMS.find(x => x[0] === k)[2][v]; };
       r.addEventListener('input', upd); r.addEventListener('change', () => { upd(); buzz(4); });
@@ -1237,53 +1244,14 @@
   function blindUI(q) {
     P.clues = 1; P.blindOpts = shuffle(q.options.map((_, i) => i));
     return `<div class="blind">
-      <div class="glass-wrap" aria-label="Swirl the glass to reveal the next clue">
-        <svg class="swirl-ring" viewBox="0 0 100 100"><circle cx="50" cy="50" r="47" pathLength="100" stroke-dasharray="0 100"/></svg>
-        <svg class="glass" viewBox="0 0 120 170">
-          <defs><clipPath id="bowl"><path d="M28 8C24 58 32 94 60 98C88 94 96 58 92 8Z"/></clipPath></defs>
-          <g clip-path="url(#bowl)">
-            <path class="wine" d="" fill="${(q.wines && D.wines[q.wines[0]] && D.wines[q.wines[0]].wine) || (q.concept && D.concepts[q.concept] && D.concepts[q.concept].wine) || P.wine}"/>
-            <g class="legs">${[38, 52, 70, 82].map((x, i) => `<line x1="${x}" y1="20" x2="${x + (i % 2 ? 1 : -1)}" y2="60" style="animation-delay:${i * 0.35}s"/>`).join('')}</g>
-          </g>
-          <path d="M28 8C24 58 32 94 60 98C88 94 96 58 92 8" fill="none" stroke="currentColor" stroke-width="1.6" opacity=".7"/>
-          <path d="M34 16C32 44 36 72 48 86" fill="none" stroke="#fff" stroke-width="2.5" opacity=".35" stroke-linecap="round"/>
-          <path d="M60 98V150M38 156Q60 148 82 156" fill="none" stroke="currentColor" stroke-width="1.6" opacity=".7" stroke-linecap="round"/>
-        </svg>
-        <p class="swirl-hint mono">SWIRL ME ↻</p>
-      </div>
+      <div class="glass-wrap big blind-glass" data-blind-glass aria-label="Swirl the glass to reveal the next clue">${(() => { const w = q.wines && D.wines[q.wines[0]], gk = glassKind(w), col = (w && w.wine) || (q.concept && D.concepts[q.concept] && D.concepts[q.concept].wine) || P.wine;
+        return `${bigGlass(col, true, false, gk)}<svg class="swirl-ring" viewBox="0 0 100 100" style="top:${ringTop(gk)}%"><circle cx="50" cy="50" r="47" pathLength="100" stroke-dasharray="0 100"/></svg>`; })()}</div>
+      <p class="swirl-hint mono">SWIRL THE GLASS ↻</p>
       <ol class="clues">${q.clues.map((c, i) => `<li class="clue ${i < 1 ? 'shown' : ''}" data-c="${i}"><span class="mono">${c.stage}</span><p>${i < 1 ? c.text : 'Swirl the glass to reveal'}</p></li>`).join('')}</ol>
-      <button class="link-btn" data-act="reveal">Can't swirl? Tap to reveal the next clue</button>
+      <button class="link-btn" data-act="reveal">Can't swirl? ${MOUSE ? 'Click' : 'Tap'} to reveal the next clue</button>
       <p class="blind-score mono">Clues so far: <strong class="pts">1 of ${q.clues.length}</strong> · the earlier you call it, the better</p>
       <div class="options grid2">${P.blindOpts.map(i => `<button class="opt" data-act="guess" data-i="${i}">${q.options[i]}</button>`).join('')}</div>
     </div>`;
-  }
-
-  function initSwirl(q) {
-    const wrap = app.querySelector('.glass-wrap'), winePath = app.querySelector('.wine'), ringC = app.querySelector('.swirl-ring circle');
-    const NEED = Math.PI * 2 * 1.4;
-    let phase = 0, amp = 2;
-    const wave = () => {
-      let d = '';
-      for (let x = 0; x <= 120; x += 4) {
-        const y = 62 + amp * Math.sin(phase + x / 13) * 0.5 + amp * ((x - 60) / 60) * Math.cos(phase) * 1.3;
-        d += (x ? ' L' : 'M') + x + ' ' + y.toFixed(2);
-      }
-      winePath.setAttribute('d', d + ' L120 170 L0 170Z');
-    };
-    const tick = () => {
-      if (!winePath.isConnected) return;
-      amp = Math.max(1.2, amp * 0.97); phase += 0.02 + amp * 0.012;
-      wave(); requestAnimationFrame(tick);
-    };
-    tick();
-    let acc2 = 0;
-    trackSwirl(wrap, d => {
-      if (P.locked) return;
-      acc2 += Math.abs(d); phase += d * 1.6; amp = Math.min(13, amp + Math.abs(d) * 4);
-      if (P.clues >= q.clues.length) { ringC.setAttribute('stroke-dasharray', '100 100'); return; }
-      ringC.setAttribute('stroke-dasharray', `${Math.min(100, (acc2 / NEED) * 100)} 100`);
-      if (acc2 >= NEED) { acc2 = 0; revealClue(q); ringC.setAttribute('stroke-dasharray', '0 100'); }
-    });
   }
 
   function revealClue(q) {

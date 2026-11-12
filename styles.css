@@ -1172,3 +1172,8 @@ button.aroma:active { transform: scale(.96); }
   .opt:hover, .aroma:hover, .pf-item:hover, .w-wine:hover, .w-place:hover, .cp-line:hover, .pr-entry:hover { filter: brightness(1.03); box-shadow: 0 6px 18px -12px rgba(60,30,20,.45); }
   button, a, [data-act] { cursor: pointer; }
 }
+
+/* blind questions use the same swirlable glass as Today's glass, a little smaller */
+.glass-wrap.big.blind-glass { width: min(170px, 46vw); margin: -6px auto -14px; }
+.blind-glass .big-glass { width: 100%; }
+.blind .swirl-hint { text-align: center; margin: 0 0 10px; }
