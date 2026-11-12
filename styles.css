@@ -1176,4 +1176,4 @@ button.aroma:active { transform: scale(.96); }
 /* blind questions use the same swirlable glass as Today's glass, a little smaller */
 .glass-wrap.big.blind-glass { width: min(170px, 46vw); margin: -6px auto -14px; }
 .blind-glass .big-glass { width: 100%; }
-.blind .swirl-hint { text-align: center; margin: 0 0 10px; }
+.blind .swirl-hint { position: static; text-align: center; margin: 4px 0 12px; }
