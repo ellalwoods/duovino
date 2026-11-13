@@ -176,7 +176,8 @@
   };
   // An unwritten draft never blocks what follows it: look past it to the unit before.
   const prevOk = p => !p || done(p) || (p.u.draft && !playable(p) && prevOk(p.prev));
-  const unlocked = r => (DRAFTS && r.u.draft) || (prevOk(r.prev) && reqMet(r));
+  // Grapes & places, part 2 (the grapes) is open from the start: any grape, any time. Roots and the regions keep their order.
+  const unlocked = r => (DRAFTS && r.u.draft) || (r.track === 'B' && r.part === 2) || (prevOk(r.prev) && reqMet(r));
   const reqText = () => { const w = TOPSOIL.filter(playable); return `Topsoil (${w[0].tag}–${w[w.length - 1].tag})`; };
   const unitState = r => done(r) ? 'done' : !playable(r) ? 'soon' : unlocked(r) ? 'current' : 'locked';
   const nextUnit = (track = 'A') => { const left = UNITS.filter(r => r.track === track && !done(r)); return left.find(r => unitState(r) === 'current') || left[0]; };
@@ -984,7 +985,7 @@
         ${doneB().length ? `<button class="pr-entry" data-act="go" data-h="#practice"><span class="pr-entry-ic">↻</span><span class="pr-entry-txt"><strong>Practice what you\'ve learned</strong><small>Shuffled tastings and rules, any time</small></span><span class="pr-entry-go">›</span></button>` : ''}
         <ol class="steps-row">
           ${step(1, 'Read a label', p1.every(done) ? 'done' : p1Open ? 'now' : 'locked')}
-          ${step(2, 'Meet the grapes', coreDone && restOpen ? 'done' : p1.every(done) ? 'now' : 'locked')}
+          ${step(2, 'Meet the grapes', coreDone && restOpen ? 'done' : 'now')}
           ${step(3, 'Travel the regions', restOpen ? 'now' : 'locked')}
         </ol>
       </header>
