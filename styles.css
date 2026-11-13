@@ -1177,3 +1177,9 @@ button.aroma:active { transform: scale(.96); }
 .glass-wrap.big.blind-glass { width: min(170px, 46vw); margin: -6px auto -14px; }
 .blind-glass .big-glass { width: 100%; }
 .blind .swirl-hint { position: static; text-align: center; margin: 4px 0 12px; }
+
+/* Today's glass, once tasting: a plain top-to-bottom page so it scrolls like every other page (iOS Safari won't
+   touch-scroll the centred flex layout reliably). Sliders and cards let vertical swipes through. */
+.glass-page.noted { display: block; overflow-y: scroll; touch-action: pan-y; }
+.glass-page.noted .glass-sheet { margin: 0 auto; }
+.glass-page.noted .gs-card, .glass-page.noted .taste-row, .glass-page.noted .aroma-picks { touch-action: pan-y; }
