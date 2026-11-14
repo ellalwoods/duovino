@@ -321,7 +321,7 @@ Appellation rules (permitted grapes, minimum percentages, ageing minimums, sweet
 |---|---|
 | 1–9 + Checkpoint | ✅ checked, live |
 | 10 Champagne vs other sparkling | ✅ checked, live: EU Reg. 2019/33 Art. 53 ("traditional method" and "Crémant": hand-picked, ≤100 L per 150 kg, ≥9 months on lees), AOC Crémant de Loire cahier des charges (arrêté 12 Jan 2024), and the Cava (OJ C/2026/241), Franciacorta (OJ C/2024/5690) and Prosecco (OJ C/2025/6773) single documents from the EU register |
-| V1–V4 Vintages (what makes a vintage; 2000–2008; 2009–2016; 2017–2026) | ✅ live: every year's weather, yields, harvest dates and analysis figures follow Essi Avellan MW's *Champagne Vintage Guide* (The Finest Bubble, read 2026-11-14); the vintage rules (one harvest, ≥36 months, ≤80% sold as vintage) follow the cahier des charges as in lesson 6. 2024–2026 are early assessments. |
+| V1, V0, V2–V4 Vintages (what makes a vintage; 1990–1999; 2000–2008; 2009–2016; 2017–2026; the guide has no 1991 or 1994) | ✅ live: every year's weather, yields, harvest dates and analysis figures follow Essi Avellan MW's *Champagne Vintage Guide* (The Finest Bubble, read 2026-11-14); the vintage rules (one harvest, ≥36 months, ≤80% sold as vintage) follow the cahier des charges as in lesson 6. 2024–2026 are early assessments. |
 
 **What the official texts changed or confirmed in the spec:**
 
