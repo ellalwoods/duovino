@@ -1,4 +1,4 @@
-/* Track B · France · Champagne AOC: 10 lessons + a checkpoint, then 5 vintage lessons (what makes a vintage; 1990–2026).
+/* Track B · France · Champagne AOC: 10 lessons + a checkpoint, then 5 vintage lessons (what makes a vintage; every year 1990–2026).
  *
  * STATUS (checked 2026-11-08): lessons 1–9 and the checkpoint were checked against the cahier des
  * charges of AOC Champagne homologated by arrêté of 31 July 2025 (JORF 5 Aug 2025, BO agri 7 Aug 2025),
@@ -21,7 +21,7 @@
   const verified = (unit, sources, note) => ({ ...unit, draft: false, sources, checked: CHECKED, toCheck: [], note });
   // Vintage lessons: year notes from Essi Avellan MW's vintage guide; the vintage rules from the cahier des charges.
   const AVELLAN = 'Essi Avellan MW, Champagne Vintage Guide (The Finest Bubble), read 2026-11-14';
-  const vintage = unit => ({ ...unit, draft: false, sources: [AVELLAN, CDC], checked: '2026-11-14', toCheck: [],
+  const vintage = (unit, extra = []) => ({ ...unit, draft: false, sources: [AVELLAN, ...extra, CDC], checked: '2026-11-14', toCheck: [],
     note: 'Weather, yields, harvest dates and analysis figures for each year are as reported in the vintage guide. The newest years (2024–2026) are early assessments.' });
 
   Object.assign(D.concepts, {
@@ -490,10 +490,14 @@
       lesson: [
         { kind: 'text', title: '1990 · Long, hot and dry', big: 'The ripest year since 1959',
           body: 'April frost did some damage, but a long, hot, dry summer made the vintage. Picking began in the second week of September, and the crop was the third largest ever at the time (11,963 kg/ha), with excellent alcohol and acidity. Deep, fine wines, though many have aged faster than first expected.' },
+        { kind: 'text', title: '1991 · A frost year', big: 'Frost in April and May, rain at harvest',
+          body: 'Frosts in April and May made 1991 one of Champagne\'s benchmark frost years, alongside 2003 and 2021, and the crop was small. A hot, dry summer promised much, but heavy downpours in September brought <b>rot</b> to some vineyards. A big come-down after 1990: very few houses declared it.' },
         { kind: 'text', title: '1992 · Warm and moist', big: 'Late start, sizable crop',
           body: 'A late-starting but warm, moist season gave a sizable harvest (11,844 kg/ha), picked from 8 September. <b>Chardonnay</b> did better. The warmth doesn\'t show much in the wines, which have a certain elegance, and it was widely declared.' },
         { kind: 'text', title: '1993 · Spoiled by September rain', big: 'Swollen bunches, rot',
           body: 'A promising year turned in September, when frequent rain swelled the bunches and brought <b>rot</b>. Picked from 8 September with less ripeness and acidity than 1992. Balanced wines, often a little dilute, but better than their reputation, and widely declared.' },
+        { kind: 'text', title: '1994 · The year of rot', big: 'A promising summer, a drenched September',
+          body: 'Another summer that promised a lot. Then heavy September rain diluted the grapes and spread <b>rot</b>, and the year is remembered simply as the year of rot. Not a true vintage year: these wines needed reserve wine to fill them out, though a few famous names still made one.' },
         { kind: 'text', title: '1995 · Elegance returns', big: 'Frost, mildew, then a fine balance',
           body: 'Significant spring <b>frost</b>, then a warm but wet summer that brought <b>mildew</b>. The vines still cropped heavily, the seventh big crop in a row, and careful selection paid off. Picked from 18 September with a fine balance of sugar and acidity. Elegant, slowly building wines, especially <b>Chardonnay</b>.' },
         { kind: 'text', title: '1996 · Ripe and razor-sharp', big: 'Wind-dried grapes, cool nights',
@@ -504,8 +508,6 @@
           body: 'April frosts hit the <b>Côte des Blancs</b> (about 2% of the crop). The harvest began in rain on 12 September, then sunshine rescued it. A large crop with good acidity and above-average ripeness: the best are elegant and fresh, the weakest dull.' },
         { kind: 'text', title: '1999 · Soft and fruity', big: 'Hail in May, a damp September',
           body: 'Early budbreak, damaging <b>hail</b> in early May but no frost, a warm summer and a hot, dry August. A damp September diluted some grapes. A large, sweet crop gave soft, low-acid, ripe, even exotic wines, mostly for the medium term. The red wines were exceptional, so the <b>rosés</b> stand out.' },
-        { kind: 'text', title: 'What about 1991 and 1994?', big: 'Not covered here',
-          body: 'The vintage guide these lessons follow has no entries for 1991 or 1994, so they aren\'t covered.' },
       ],
       questions: [
         { type: 'choice', concept: 'chAge', q: 'Which year had a long, hot, dry summer and was called the ripest since 1959?',
@@ -522,10 +524,14 @@
         { type: 'choice', concept: 'chStyles', q: 'In 1999, which style stands out thanks to exceptional red wines?',
           options: ['Rosé Champagne', 'Blanc de Blancs', 'Coteaux Champenois blanc', 'Brut Nature'], answer: 0,
           explain: 'Rosé is often made by blending in red wine, and 1999\'s reds were exceptional.' },
+        { type: 'choice', concept: 'chAge', q: 'Which 1990s year is remembered simply as "the year of rot"?',
+          options: ['1994', '1990', '1996', '1998'], answer: 0, explain: 'Heavy September rain diluted the grapes and spread rot; few houses made a vintage.' },
+        { type: 'choice', concept: 'chAge', q: 'Frosts in April and May, then September downpours: which year?',
+          options: ['1991', '1995', '1999', '1992'], answer: 0, explain: '1991, one of Champagne\'s benchmark frost years with 2003 and 2021.' },
         { type: 'order', concept: 'chAge', q: 'Put these in order, oldest first.', items: ['1990 · long, hot and dry', '1993 · spoiled by September rain', '1996 · ripe and razor-sharp', '1999 · soft and fruity'],
           explain: 'Hot, wet, sharp, soft.' },
       ],
-    }),
+    }, ['Tom Stevenson, "Champagne vintages: Sparkling Nineties", Decanter (1991–1994)', 'Taittinger 2021 vintage report (1991 as a benchmark frost year)', 'Glass of Bubbly, "Champagne Vintage Years: 1990s", quoting Michael Edwards, The Finest Wines of Champagne (1991, 1994)']),
 
     vintage({
       id: 'b-fr-ch-v2', title: 'Vintages 2000–2008', sub: 'From the heatwave to the miracle year',
