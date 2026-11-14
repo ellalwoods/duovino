@@ -1,4 +1,4 @@
-/* Track B · France · Champagne AOC: 10 lessons + a checkpoint, then 4 vintage lessons (what makes a vintage; 2000–2026).
+/* Track B · France · Champagne AOC: 10 lessons + a checkpoint, then 5 vintage lessons (what makes a vintage; 1990–2026).
  *
  * STATUS (checked 2026-11-08): lessons 1–9 and the checkpoint were checked against the cahier des
  * charges of AOC Champagne homologated by arrêté of 31 July 2025 (JORF 5 Aug 2025, BO agri 7 Aug 2025),
@@ -442,7 +442,7 @@
       ],
     }, [CDC, EU33, RR]),
 
-    /* ---------- Vintages: what made each year (2000–2026) ----------
+    /* ---------- Vintages: what made each year (1990–2026) ----------
        Year notes follow Essi Avellan MW's Champagne Vintage Guide (thefinestbubble.com/champagne-vintage-guide,
        read 2026-11-14): weather, yields (kg/ha), harvest dates, potential alcohol and total acidity are hers.
        The vintage rules on the first card are from the cahier des charges (as in lesson 6). */
@@ -482,6 +482,48 @@
         { type: 'odd', concept: 'chAge', q: 'Three of these cut the size of the crop. Which one is about flavour, not quantity?',
           options: ['Spring frost', 'Hail', 'Mildew', 'Vegetal, ash-like aromas from drought'], answer: 3,
           explain: 'Frost, hail and mildew all destroy grapes. Drought aromas change how the wine tastes.' },
+      ],
+    }),
+
+    vintage({
+      id: 'b-fr-ch-v0', title: 'Vintages 1990–1999', sub: 'Hot 1990, majestic 1996, overlooked 1997',
+      lesson: [
+        { kind: 'text', title: '1990 · Long, hot and dry', big: 'The ripest year since 1959',
+          body: 'April frost did some damage, but a long, hot, dry summer made the vintage. Picking began in the second week of September, and the crop was the third largest ever at the time (11,963 kg/ha), with excellent alcohol and acidity. Deep, fine wines, though many have aged faster than first expected.' },
+        { kind: 'text', title: '1992 · Warm and moist', big: 'Late start, sizable crop',
+          body: 'A late-starting but warm, moist season gave a sizable harvest (11,844 kg/ha), picked from 8 September. <b>Chardonnay</b> did better. The warmth doesn\'t show much in the wines, which have a certain elegance, and it was widely declared.' },
+        { kind: 'text', title: '1993 · Spoiled by September rain', big: 'Swollen bunches, rot',
+          body: 'A promising year turned in September, when frequent rain swelled the bunches and brought <b>rot</b>. Picked from 8 September with less ripeness and acidity than 1992. Balanced wines, often a little dilute, but better than their reputation, and widely declared.' },
+        { kind: 'text', title: '1995 · Elegance returns', big: 'Frost, mildew, then a fine balance',
+          body: 'Significant spring <b>frost</b>, then a warm but wet summer that brought <b>mildew</b>. The vines still cropped heavily, the seventh big crop in a row, and careful selection paid off. Picked from 18 September with a fine balance of sugar and acidity. Elegant, slowly building wines, especially <b>Chardonnay</b>.' },
+        { kind: 'text', title: '1996 · Ripe and razor-sharp', big: 'Wind-dried grapes, cool nights',
+          body: 'Strong north winds dried the berries and concentrated them, while <b>cool September nights</b> kept acidity very high (about 10 g/l) despite great ripeness. Picked under clear skies from 14 September to mid-October. The best are majestic, but some have aged badly, too sharp or oxidised too early.' },
+        { kind: 'text', title: '1997 · Overlooked', big: 'Small crop, warm finish',
+          body: 'A cold winter and big spring <b>frosts</b>, cool rain through flowering, then a warm end to summer. A small crop (9,402 kg/ha) was picked from 12 September with acidity still high (8.5 g/l). Squeezed between 1995 and 1996, many houses skipped it.' },
+        { kind: 'text', title: '1998 · Variable, sometimes very fine', big: 'Cool and warm by turns',
+          body: 'April frosts hit the <b>Côte des Blancs</b> (about 2% of the crop). The harvest began in rain on 12 September, then sunshine rescued it. A large crop with good acidity and above-average ripeness: the best are elegant and fresh, the weakest dull.' },
+        { kind: 'text', title: '1999 · Soft and fruity', big: 'Hail in May, a damp September',
+          body: 'Early budbreak, damaging <b>hail</b> in early May but no frost, a warm summer and a hot, dry August. A damp September diluted some grapes. A large, sweet crop gave soft, low-acid, ripe, even exotic wines, mostly for the medium term. The red wines were exceptional, so the <b>rosés</b> stand out.' },
+        { kind: 'text', title: 'What about 1991 and 1994?', big: 'Not covered here',
+          body: 'The vintage guide these lessons follow has no entries for 1991 or 1994, so they aren\'t covered.' },
+      ],
+      questions: [
+        { type: 'choice', concept: 'chAge', q: 'Which year had a long, hot, dry summer and was called the ripest since 1959?',
+          options: ['1990', '1993', '1997', '1999'], answer: 0, explain: '1990: April frost, then a long, hot, dry summer.' },
+        { type: 'choice', concept: 'chAge', q: 'How did 1996 combine great ripeness with very high acidity?',
+          options: ['North winds dried and concentrated the grapes while cool September nights kept them fresh', 'Frost removed half the crop, keeping the acidity', 'It was picked in August', 'Rot concentrated the sugar'], answer: 0,
+          explain: 'About 10 g/l acidity and 10.3% potential alcohol: a rare combination.' },
+        { type: 'choice', concept: 'chAge', q: 'What spoiled the promising 1993 season?',
+          options: ['Frequent September rain, swelling the bunches and bringing rot', 'A summer heatwave', 'Hail in May', 'A drought'], answer: 0,
+          explain: 'Dilution and rot, though the best wines surprised.' },
+        { type: 'choice', concept: 'chAge', q: 'Why did so many houses skip a 1997 vintage?',
+          options: ['It fell between two celebrated years, 1995 and 1996', 'It was banned', 'The harvest failed completely', 'It was too sweet'], answer: 0,
+          explain: 'Not a weak year, just overshadowed and with a small crop.' },
+        { type: 'choice', concept: 'chStyles', q: 'In 1999, which style stands out thanks to exceptional red wines?',
+          options: ['Rosé Champagne', 'Blanc de Blancs', 'Coteaux Champenois blanc', 'Brut Nature'], answer: 0,
+          explain: 'Rosé is often made by blending in red wine, and 1999\'s reds were exceptional.' },
+        { type: 'order', concept: 'chAge', q: 'Put these in order, oldest first.', items: ['1990 · long, hot and dry', '1993 · spoiled by September rain', '1996 · ripe and razor-sharp', '1999 · soft and fruity'],
+          explain: 'Hot, wet, sharp, soft.' },
       ],
     }),
 
