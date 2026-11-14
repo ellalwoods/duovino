@@ -1,4 +1,4 @@
-/* Track B · France · Champagne AOC: 10 lessons + a checkpoint.
+/* Track B · France · Champagne AOC: 10 lessons + a checkpoint, then 4 vintage lessons (what makes a vintage; 2000–2026).
  *
  * STATUS (checked 2026-11-08): lessons 1–9 and the checkpoint were checked against the cahier des
  * charges of AOC Champagne homologated by arrêté of 31 July 2025 (JORF 5 Aug 2025, BO agri 7 Aug 2025),
@@ -19,6 +19,10 @@
   const CHECKED = '2026-11-08';
   const draft = (unit, toCheck, sources = [CDC]) => ({ ...unit, draft: true, sources, checked: null, toCheck });
   const verified = (unit, sources, note) => ({ ...unit, draft: false, sources, checked: CHECKED, toCheck: [], note });
+  // Vintage lessons: year notes from Essi Avellan MW's vintage guide; the vintage rules from the cahier des charges.
+  const AVELLAN = 'Essi Avellan MW, Champagne Vintage Guide (The Finest Bubble), read 2026-11-14';
+  const vintage = unit => ({ ...unit, draft: false, sources: [AVELLAN, CDC], checked: '2026-11-14', toCheck: [],
+    note: 'Weather, yields, harvest dates and analysis figures for each year are as reported in the vintage guide. The newest years (2024–2026) are early assessments.' });
 
   Object.assign(D.concepts, {
     chLabel: { name: 'Reading a Champagne label', short: 'Ch. label', kind: 'Label', wine: C.lemon, style: 'white', shape: 'champagne',
@@ -437,6 +441,174 @@
           explain: 'Rosé des Riceys is a still Pinot Noir rosé with its own appellation.' },
       ],
     }, [CDC, EU33, RR]),
+
+    /* ---------- Vintages: what made each year (2000–2026) ----------
+       Year notes follow Essi Avellan MW's Champagne Vintage Guide (thefinestbubble.com/champagne-vintage-guide,
+       read 2026-11-14): weather, yields (kg/ha), harvest dates, potential alcohol and total acidity are hers.
+       The vintage rules on the first card are from the cahier des charges (as in lesson 6). */
+    vintage({
+      id: 'b-fr-ch-v1', title: 'What makes a vintage', sub: 'Frost, hail, mildew, rot and heat',
+      lesson: [
+        { kind: 'text', title: 'A vintage is one year in a bottle', big: 'Made in the good years',
+          body: 'Most Champagne is <b>non-vintage</b>: blended across years with reserve wines so it tastes the same every time. A <b>vintage</b> Champagne uses only the wine of one harvest, rests at least <b>36 months</b> from bottling to sale, and a producer may sell no more than <b>80%</b> of a year\'s wine as vintage. Houses usually make one only when the year is good, so each vintage tastes of its own weather.' },
+        { kind: 'layers', title: 'What can go wrong in a year', rows: [
+          { h: 'Spring frost', t: 'Buds open early, then a freezing night kills them. Fewer bunches, smaller crop. Worst recent cases: 2003, 2021 and 2026.' },
+          { h: 'Hail', t: 'A summer storm shreds leaves and bunches, often in one village or valley.' },
+          { h: 'Mildew', t: 'A disease of leaves and young bunches that spreads in warm, wet weather and shrinks the crop. 2016, 2021 and 2024 were mildew years.' },
+          { h: 'Rot', t: 'Mould on ripe bunches when it rains near harvest (grey rot or sour rot). Unless sorted out, it leaves mouldy, off flavours. 2010 and 2017 were rot years.' },
+          { h: 'Heat & drought', t: 'Grapes scorch, sugar soars and acidity falls, giving soft, rich wines. Drought can also bring vegetal, ash-like aromas (2015, 2020).' },
+        ] },
+        { kind: 'text', title: 'So was 2016 mouldy?', big: 'Mildew, mostly, and much more besides',
+          body: '2016 threw almost everything at the growers: heavy rain, a <b>late-April frost</b>, <b>downy mildew</b> (worst in the Côte des Bar), <b>hail</b>, then a hot, very dry July and August that <b>sunburnt</b> the grapes. Each one took a slice of the crop. Mildew attacks the vine while it grows; true <b>rot</b> attacks ripe grapes at harvest, and that was the trouble in years like 2010 and 2017. Despite it all, 2016 made fruit-forward, lush wines with vibrant acidity.' },
+        { kind: 'compare', title: 'Cool year vs hot year', cols: [
+          { h: 'Cool, slow ripening', items: ['High acidity', 'Citrus, linear, saline', 'Slow to age, long-lived', 'e.g. 2008, 2013'] },
+          { h: 'Hot, quick ripening', items: ['Low acidity', 'Ripe, plush, generous', 'Lovely young', 'e.g. 2003, 2018, 2022'] }] },
+        { kind: 'text', title: 'Harvests are getting earlier', big: 'September → August',
+          body: 'Picking used to start in mid- to late September (2001 began on 20 September). Now August harvests are common: 2018 started on 20 August, 2022 on 20 August, and in <b>2026</b> the harvest both started and finished in August for the first time ever.' },
+      ],
+      questions: [
+        { wines: ['champagneVintage'], type: 'choice', concept: 'chStyles', q: 'What makes a Champagne a "vintage" Champagne?',
+          options: ['All of its wine comes from one harvest', 'It is at least ten years old', 'It is blended with reserve wines', 'It is a rosé'], answer: 0,
+          explain: 'One harvest only, with at least 36 months from bottling to sale.' },
+        { type: 'sort', concept: 'chAge', q: 'When does each problem strike?', buckets: ['While the vine grows', 'At harvest time'],
+          items: [{ t: 'Spring frost', b: 0 }, { t: 'Mildew', b: 0 }, { t: 'Grey rot on ripe bunches', b: 1 }, { t: 'Sour rot', b: 1 }],
+          explain: 'Frost and mildew hit the growing vine. Rot attacks ripe grapes when it rains near harvest.' },
+        { type: 'choice', concept: 'chAge', q: 'A very hot, dry summer usually gives Champagnes that are…',
+          options: ['Low in acidity, ripe and generous', 'Searingly acidic and lean', 'Sweet, whatever the dosage', 'Darker in colour but lighter in flavour'], answer: 0,
+          explain: 'Heat drives sugar up and acidity down: think 2003, 2018 and 2022.' },
+        { type: 'choice', concept: 'chAge', q: 'What mainly troubled 2016?',
+          options: ['Frost, downy mildew, hail and then sunburn', 'Rot at harvest after a wet September', 'A cold, late harvest in October', 'Nothing: it was an easy year'], answer: 0,
+          explain: 'Frost and mildew early, hail, then a hot, dry summer that scorched the grapes.' },
+        { type: 'odd', concept: 'chAge', q: 'Three of these cut the size of the crop. Which one is about flavour, not quantity?',
+          options: ['Spring frost', 'Hail', 'Mildew', 'Vegetal, ash-like aromas from drought'], answer: 3,
+          explain: 'Frost, hail and mildew all destroy grapes. Drought aromas change how the wine tastes.' },
+      ],
+    }),
+
+    vintage({
+      id: 'b-fr-ch-v2', title: 'Vintages 2000–2008', sub: 'From the heatwave to the miracle year',
+      lesson: [
+        { kind: 'text', title: '2000 · Ripe and quick', big: 'Rain, then a sprint to ripeness',
+          body: 'A warm year. A lot of the crop was still unripe amid heavy rain just before picking, but it then ripened fast and was picked in dry weather (13–25 September). The wines are <b>ripe, full-bodied and voluptuous</b>, easy when young, and have aged quickly. A <b>Chardonnay</b> year.' },
+        { kind: 'text', title: '2001 · Washed out', big: 'Huge, dilute, rotten',
+          body: 'A very poor year: a gigantic, watery crop ruined by last-minute rains, with <b>botrytis</b> rot a real problem. Sugar stayed low and acidity sharp, and picking started late, on 20 September. Few vintages were made.' },
+        { kind: 'text', title: '2002 · Near-perfect', big: 'Sun, cool nights, healthy grapes',
+          body: 'No significant frost and an ideal flowering, then sunny spells broken by regular rain. Wind dried the bunches a little, concentrating them, while <b>cool nights kept the acidity</b>. An abundant, healthy crop (11,930 kg/ha) made balanced wines all over the region: one of the best years of the last two decades.' },
+        { kind: 'text', title: '2003 · The heatwave', big: 'Frost, then the hottest summer',
+          body: 'Severe spring <b>frosts</b> first, then an unprecedented <b>heatwave</b>. Picking began on 21 August, yields were tiny (8,100 kg/ha) and acidity very low (5.8 g/l). Few houses declared it, though Krug and Dom Pérignon both made fine 2003s.' },
+        { kind: 'text', title: '2004 · Big and beautiful', big: 'One of the largest crops ever',
+          body: 'After 2003\'s tiny crop, the vines gave one of the biggest on record (13,990 kg/ha). A cooler, showery August raised the risk of rot, but the wines turned out <b>fresh, light and elegant</b>, and slow to age. Proof that a large crop needn\'t mean poor quality.' },
+        { kind: 'text', title: '2005 · Rich but rotten', big: 'Hot, wet early July',
+          body: 'A warm, dry year, but hot, wet weather at the turn of July brought <b>rot and mildew</b>. The abundant crop was picked from 9 September with high hopes, yet many wines are heavy, with <b>overripe or rot</b> characters that have grown more obvious in the bottle.' },
+        { kind: 'text', title: '2006 · Sunny and soft', big: 'High sugar, low acidity',
+          body: 'Spring frosts, then exceptionally hot, sunny weather into August, with some storms. Healthy grapes were picked from 9 September, ripe but <b>low in acidity</b>. Rich, fruity, welcoming wines that often lack a little tension.' },
+        { kind: 'text', title: '2007 · A Chardonnay year', big: 'Early spring, gloomy summer',
+          body: 'A warm spring brought early flowering, then one of the <b>murkiest summers on record</b>. Late-August sun saved it, and picking began early, on 24 August. Meunier struggled, but <b>Chardonnay</b> shone: high-acid, classic wines, including many great Blanc de Blancs.' },
+        { kind: 'text', title: '2008 · The miracle year', big: 'Damp and mildewy, then a perfect September',
+          body: 'A damp year with widespread <b>mildew</b> left expectations low. Then a drier August and a fine, warm September with <b>cool nights</b> gave a long, slow ripening. The result: pure, saline, high-acid wines built to last decades, good for all three grapes and especially Meunier. Some houses even released their 2009s first because the 2008s needed longer.' },
+      ],
+      questions: [
+        { type: 'choice', concept: 'chAge', q: 'Which year was hit by spring frost and then an unprecedented heatwave, with a harvest starting on 21 August?',
+          options: ['2003', '2008', '2001', '2004'], answer: 0, explain: '2003: tiny yields and very low acidity.' },
+        { type: 'choice', concept: 'chAge', q: 'Why did 2008 turn out so fresh and age-worthy after a damp, mildewy start?',
+          options: ['A fine September with cool nights gave a long, slow ripening', 'It was picked in July', 'A heatwave concentrated the grapes', 'Most of the crop was lost to frost'], answer: 0,
+          explain: 'Cool nights keep acidity; slow ripening builds flavour without losing freshness.' },
+        { type: 'sort', concept: 'chAge', q: 'Great year or difficult year?', buckets: ['Great', 'Difficult'],
+          items: [{ t: '2002', b: 0 }, { t: '2001', b: 1 }, { t: '2008', b: 0 }, { t: '2005', b: 1 }],
+          explain: '2002 and 2008 are classics. 2001 was washed out and 2005 often shows rot.' },
+        { type: 'choice', concept: 'chAge', q: 'What does 2004 show about Champagne?',
+          options: ['A very large crop can still make elegant, long-lived wine', 'Frost always ruins a vintage', 'Hot years age best', 'Only Pinot Noir succeeds in big years'], answer: 0,
+          explain: 'One of the biggest crops on record, yet fresh, light and slow to age.' },
+        { type: 'choice', concept: 'chGrapes', q: 'In 2007, a gloomy summer troubled Meunier. Which grape shone?',
+          options: ['Chardonnay', 'Pinot Noir', 'Pinot Gris', 'Arbane'], answer: 0,
+          explain: 'High-acid, classic wines and many great Blanc de Blancs.' },
+        { type: 'order', concept: 'chAge', q: 'Put these years in order, oldest first.', items: ['2001 · washed out', '2003 · the heatwave', '2005 · rich but rotten', '2008 · the miracle year'],
+          explain: 'A washout, a heatwave, a rot year, then a classic.' },
+      ],
+    }),
+
+    vintage({
+      id: 'b-fr-ch-v3', title: 'Vintages 2009–2016', sub: 'Rot, mildew and two classics',
+      lesson: [
+        { kind: 'text', title: '2009 · Warm and generous', big: 'Sunny August and September',
+          body: 'A cold winter, mild spring and variable early summer, then plenty of sun in August and September and very healthy grapes. Picked from 8 September with high sugar and <b>soft acidity</b>. <b>Pinot Noir</b> excelled. Generous wines that were lovely early.' },
+        { kind: 'text', title: '2010 · The rot year', big: 'Torrential rain in mid-August',
+          body: 'After a hot summer, torrential rain in mid-August turned the season into a battle against <b>botrytis</b> rot. Thin-skinned <b>Pinot Noir and Meunier</b> suffered worst; <b>Chardonnay</b> did much better. With full cellars and the financial crisis, few houses declared a vintage.' },
+        { kind: 'text', title: '2011 · Early and unripe', big: 'One of the earliest harvests in history',
+          body: 'A warm, early spring, then a cool, damp summer. <b>Mildew</b> and a lack of ripeness were the problems, and some wines show <b>mouldy, vegetal</b> notes. Fierce selection at harvest was essential, and few vintages were made.' },
+        { kind: 'text', title: '2012 · Rescued by August', big: 'Frost, hail, mildew… then greatness',
+          body: 'Winter and spring frosts, a wet early season with <b>mildew</b>, and hail cut yields (9,210 kg/ha). Then an August heatwave sent sugar up while <b>cool nights</b> kept the acidity: a rare high-sugar, high-acid harvest. <b>Pinot Noir</b> was the star, and the year was widely declared, though Krug kept its wine for reserves instead.' },
+        { kind: 'text', title: '2013 · The late, cool classic', big: 'Picked in October',
+          body: 'A long winter and cool spring delayed everything: some vines flowered in July. A hot, dry summer followed, but rain in mid-September brought rot in places. Picking began on 24 September and most grapes came in during a cool October, making a <b>classic, linear, racy</b> style, once underrated and now highly rated.' },
+        { kind: 'text', title: '2014 · Saved by September', big: 'A murky summer, a fine finish',
+          body: 'A warm, dry spring, then a moist, murky summer. <b>Meunier</b> in the Vallée de la Marne suffered from <b>mildew and sour rot</b>. A hot, fine September saved and concentrated the crop. Bright, easy wines with lovely acidity (8.3 g/l).' },
+        { kind: 'text', title: '2015 · The drought year', big: 'Bone-dry summer',
+          body: 'An exceptionally dry summer from mid-May and heat until mid-August; picking began on 29 August. Ripe wines, lower in acidity, but drought is blamed for <b>vegetal, ash-like aromas</b> in many of them. One to taste before you buy.' },
+        { kind: 'text', title: '2016 · Everything at once', big: 'Frost, mildew, hail, sunburn',
+          body: 'A late-April <b>frost</b>, then <b>downy mildew</b> (worst in the Côte des Bar), <b>hail</b>, and a hot, very dry July and August that <b>sunburnt</b> the grapes. Ripening was uneven and Chardonnay was the hardest grape. A small crop (9,163 kg/ha), but fruit-forward, lush wines with vibrant acidity (7.4 g/l).' },
+      ],
+      questions: [
+        { type: 'choice', concept: 'chAge', q: 'Torrential rain in mid-August made which year a battle against botrytis rot?',
+          options: ['2010', '2012', '2013', '2009'], answer: 0, explain: '2010: Pinot Noir and Meunier rotted; Chardonnay did much better.' },
+        { type: 'choice', concept: 'chAge', q: 'Frost, hail and mildew cut the crop, then an August heatwave with cool nights made it great. Which year?',
+          options: ['2012', '2011', '2015', '2014'], answer: 0, explain: '2012: a rare high-sugar, high-acid harvest, widely declared.' },
+        { type: 'choice', concept: 'chAge', q: 'Why is 2013 so linear and racy?',
+          options: ['Most grapes were picked in a cool October', 'It was the earliest harvest on record', 'A drought concentrated the grapes', 'Frost removed all the Chardonnay'], answer: 0,
+          explain: 'A late season meant picking in cool weather, keeping freshness.' },
+        { type: 'sort', concept: 'chAge', q: 'What was the main trouble?', buckets: ['Rot', 'Mildew', 'Drought'],
+          items: [{ t: '2010', b: 0 }, { t: '2011', b: 1 }, { t: '2015', b: 2 }, { t: '2016', b: 1 }],
+          explain: '2010 was a rot year; 2011 and 2016 suffered mildew; 2015 was the drought year.' },
+        { type: 'choice', concept: 'chGrapes', q: 'In 2010, which grape coped best with the rain and rot?',
+          options: ['Chardonnay', 'Pinot Noir', 'Meunier', 'They all rotted equally'], answer: 0,
+          explain: 'Thin-skinned black grapes rotted; Chardonnay did much better.' },
+        { type: 'odd', concept: 'chAge', q: 'Three of these years were widely praised. Which one was mainly a struggle with mildew and unripe grapes?',
+          options: ['2011', '2012', '2013', '2009'], answer: 0, explain: '2011: early harvest, mildew and some mouldy, vegetal notes.' },
+      ],
+    }),
+
+    vintage({
+      id: 'b-fr-ch-v4', title: 'Vintages 2017–2026', sub: 'Heat, records and August harvests',
+      lesson: [
+        { kind: 'text', title: '2017 · Rot in the red grapes', big: 'Frost, then summer rain',
+          body: 'Severe April <b>frosts</b>, then a hot summer interrupted by rain in July and August that brought <b>botrytis and sour rot</b>. <b>Meunier and Pinot Noir</b> were hit worst, and off-aromas forced producers to reject fruit. Not widely declared, but some great Chardonnay-led wines were made.' },
+        { kind: 'text', title: '2018 · Hot, healthy and huge', big: 'The earliest harvest of its time',
+          body: 'Record winter rain, then sunshine all spring and summer and abundant, healthy bunches. Picking began on 20 August, the earliest on record then. Cellars overflowed, so many houses replaced weak 2017 reserve wine. The wines are clean and plush but <b>soft</b>, with low acidity (5.9 g/l).' },
+        { kind: 'text', title: '2019 · Heat with tension', big: '42.9°C on 25 July',
+          body: 'Spring <b>frosts</b> and <b>powdery mildew</b> (hard on Chardonnay), then two heatwaves, with a record 42.9°C; scalding destroyed about a tenth of the crop. Sunny weather to harvest, but <b>cool nights</b> kept the acidity (6.8 g/l). Pure, tense wines, tipped as the finest of the century so far.' },
+        { kind: 'text', title: '2020 · The pandemic harvest', big: 'Early, short and uneven',
+          body: 'Picked amid Covid restrictions. A warm March started the vines early, June and July were cool, and an early-August heatwave pushed ripening fast: one of the <b>shortest ripening periods ever</b>, with uneven ripeness. Fresher than 2018, though drought brought some vegetal notes.' },
+        { kind: 'text', title: '2021 · Frost and mildew', big: 'The smallest crop in three decades',
+          body: 'On Easter Monday polar air brought <b>−7.7°C</b>; frosts destroyed about 30% of the vineyard. A wet summer (60% more rain than usual) then caused a <b>mildew epidemic</b> of unprecedented severity, worst in the Vallée de la Marne. The Côte des Blancs was largely spared, so <b>Chardonnay</b> leads. High-acid, classic wines.' },
+        { kind: 'text', title: '2022 · The sunniest summer', big: 'More than 900 hours of sun',
+          body: 'The sunniest summer ever measured in Champagne, and one of the hottest and driest. Hardly any disease and a generous crop, picked from 20 August, let growers refill their reserves. Ripe, plush wines with <b>low acidity</b> (5.8 g/l): the heat burned off much of the malic acid.' },
+        { kind: 'text', title: '2023 · Giant grapes', big: 'Record bunches, rot at harvest',
+          body: 'A late budbreak dodged the frost, flowering was perfect, and a very wet summer swelled bunches to a record weight; the crop was the second largest after 2004. Then the hottest harvest start on record sent <b>sour rot</b> through the black grapes, especially Meunier, and about a fifth were discarded. <b>Chardonnay</b> led; selection is everything.' },
+        { kind: 'text', title: '2024 · The wettest year', big: 'One of the worst mildew years ever',
+          body: 'The wettest growing season on record (over 540 mm of rain, April to September). Frost in April hit the Côte des Bar, hail in May hit the Vallée de la Marne, flowering dragged on in the cold, and <b>mildew</b> was relentless. A dry, sunny third week of September saved what was left. Small, lean, precise wines with lively acidity (7.6 g/l); <b>Chardonnay</b> surprised.' },
+        { kind: 'text', title: '2025 · Calm and healthy', big: 'Flawless bunches',
+          body: 'A quiet season after 2024: a very dry spring, a scorching June, then a cool, damp July that refilled the soils. A hot August pushed ripeness up at a pace rarely seen, and picking began on 19 August. The fruit was in spectacular health. <b>Pinot Noir</b> looks like the star.' },
+        { kind: 'text', title: '2026 · A year of extremes', big: 'All picked in August',
+          body: 'Budbreak came three weeks early, so frosts from mid-March to early April destroyed close to <b>40% of buds</b>; only 2003 lost more. A record-dry April and heatwaves followed, including France\'s hottest day on record (24 June). For the first time the harvest <b>started and finished in August</b>. Healthy, very ripe, low-acid grapes; time will tell how they age.' },
+      ],
+      questions: [
+        { type: 'choice', concept: 'chAge', q: 'Easter Monday frost at −7.7°C, then a mildew epidemic: which year?',
+          options: ['2021', '2022', '2018', '2025'], answer: 0, explain: '2021: the smallest crop in over three decades, led by Chardonnay.' },
+        { type: 'choice', concept: 'chAge', q: 'Why are many 2018 and 2022 Champagnes soft rather than racy?',
+          options: ['Hot, sunny summers left the grapes low in acidity', 'Rot forced early picking', 'Frost removed the Chardonnay', 'They were picked in October'], answer: 0,
+          explain: 'Heat burns off malic acid, so the wines are ripe and plush.' },
+        { type: 'sort', concept: 'chAge', q: 'Too wet or too hot?', buckets: ['Too wet', 'Too hot'],
+          items: [{ t: '2021', b: 0 }, { t: '2024', b: 0 }, { t: '2018', b: 1 }, { t: '2022', b: 1 }],
+          explain: '2021 and 2024 drowned in rain and mildew; 2018 and 2022 were sun-soaked.' },
+        { type: 'choice', concept: 'chAge', q: 'What happened for the first time in Champagne in 2026?',
+          options: ['The whole harvest started and finished in August', 'No frost at all', 'Machine harvesting was allowed', 'Every house declared a vintage'], answer: 0,
+          explain: 'Early budbreak, frost and heatwaves led to an all-August harvest.' },
+        { type: 'choice', concept: 'chGrapes', q: 'In 2017 and 2023, rot struck hardest in…',
+          options: ['The black grapes: Pinot Noir and Meunier', 'Chardonnay', 'The Côte des Blancs only', 'Rosé des Riceys'], answer: 0,
+          explain: 'Thin-skinned black grapes rot first; Chardonnay held up better.' },
+        { type: 'order', concept: 'chAge', q: 'Put these in order, oldest first.', items: ['2017 · rot in the red grapes', '2019 · heat with tension', '2021 · frost and mildew', '2024 · the wettest year'],
+          explain: 'Rot, a heatwave year, a frost-and-mildew year, then the wettest year on record.' },
+      ],
+    }),
   ];
 
   D.champagneUnits = units;
