@@ -177,7 +177,7 @@
   // An unwritten draft never blocks what follows it: look past it to the unit before.
   const prevOk = p => !p || done(p) || (p.u.draft && !playable(p) && prevOk(p.prev));
   // Grapes & places, part 2 (the grapes) is open from the start: any grape, any time. Roots and the regions keep their order.
-  const unlocked = r => (DRAFTS && r.u.draft) || (r.track === 'B' && r.part === 2) || (prevOk(r.prev) && reqMet(r));
+  const unlocked = r => (DRAFTS && r.u.draft) || r.track === 'B' || (prevOk(r.prev) && reqMet(r));
   const reqText = () => { const w = TOPSOIL.filter(playable); return `Topsoil (${w[0].tag}–${w[w.length - 1].tag})`; };
   const unitState = r => done(r) ? 'done' : !playable(r) ? 'soon' : unlocked(r) ? 'current' : 'locked';
   const nextUnit = (track = 'A') => { const left = UNITS.filter(r => r.track === track && !done(r)); return left.find(r => unitState(r) === 'current') || left[0]; };
@@ -939,13 +939,15 @@
       ${chaptersHTML}
       <p class="foot mono">Bedrock · more to come</p>
     </div>${tabbar('learn')}`;
-    if (scroll) requestAnimationFrame(() => {
+    if (scroll && SCROLL[location.hash || '#home'] == null) requestAnimationFrame(() => {
       const cur = app.querySelector('.node.current:not(.checkpoint)');
       if (cur && doneCount()) cur.scrollIntoView({ block: 'center' });
     });
   }
 
   /* ---------- WINE LIST tab: Track B in three clear parts ---------- */
+  // a section you've opened or collapsed stays that way (saved with your cellar); otherwise it opens where you're up to
+  const groupOpen = (k, dflt) => S.groups && k in S.groups ? S.groups[k] : dflt;
   function wineList(scroll = true) {
     setWine(TB.wine);
     const B = UNITS.filter(r => r.track === 'B');
@@ -963,7 +965,7 @@
       return `<button class="cp-line ${ok ? 'done' : open ? 'ready' : 'locked'}" data-act="checkpoint" data-k="${cp.key}">${cpBadge(cp, ok)}<span><strong>${cp.title}</strong><small>${ok ? `Passed · best ${rec.best}% · revise any time` : open ? 'Ready: test all of it, with a blind finale' : 'Opens when every lesson above is done'}</small></span></button>`; };
     const groupHTML = g => {
       const rs = p2.filter(r => r.grapeGroup === g);
-      return `<details class="wl-group" ${g.core || rs.some(r => unitState(r) === 'current') ? 'open' : ''}>
+      return `<details class="wl-group" data-g="${esc('g:' + g.name)}" ${groupOpen('g:' + g.name, g.core || rs.some(r => unitState(r) === 'current')) ? 'open' : ''}>
         <summary><span class="wl-gname">${g.name}<small>${g.blurb}</small></span><span class="mono wl-count">${stats(rs)}</span></summary>
         <ul class="wl-rows">${rs.map(row).join('')}</ul>
         ${cpLine('G:' + g.name)}
@@ -972,7 +974,7 @@
     const countryHTML = c => {
       const rs = p3.filter(r => r.country === c);
       const multi = c.regions.length > 1 || c.regions[0].name !== c.name;
-      return `<details class="wl-group" ${rs.some(r => unitState(r) === 'current') ? 'open' : ''}>
+      return `<details class="wl-group" data-g="${esc('c:' + c.name)}" ${groupOpen('c:' + c.name, rs.some(r => unitState(r) === 'current')) ? 'open' : ''}>
         <summary><span class="wl-gname">${c.name}</span><span class="mono wl-count">${stats(rs)}</span></summary>
         ${c.regions.map(rg => `${multi ? `<h4 class="wl-region">${rg.name}</h4>` : ''}<ul class="wl-rows">${rs.filter(r => r.region === rg).map(row).join('')}</ul>`).join('')}
         ${cpLine('B:' + c.name)}
@@ -984,15 +986,14 @@
         <h1>Grapes & places</h1>
         ${doneB().length ? `<button class="pr-entry" data-act="go" data-h="#practice"><span class="pr-entry-ic">↻</span><span class="pr-entry-txt"><strong>Practice what you\'ve learned</strong><small>Shuffled tastings and rules, any time</small></span><span class="pr-entry-go">›</span></button>` : ''}
         <ol class="steps-row">
-          ${step(1, 'Read a label', p1.every(done) ? 'done' : p1Open ? 'now' : 'locked')}
-          ${step(2, 'Meet the grapes', coreDone && restOpen ? 'done' : 'now')}
-          ${step(3, 'Travel the regions', restOpen ? 'now' : 'locked')}
+          ${step(1, 'Read a label', p1.every(done) ? 'done' : 'now')}
+          ${step(2, 'Meet the grapes', p2.filter(playable).every(done) ? 'done' : 'now')}
+          ${step(3, 'Travel the regions', p3.filter(playable).every(done) ? 'done' : 'now')}
         </ol>
       </header>
 
       <section class="wl-part">
         <h2><span class="mono">Part 1</span>Read a label</h2>
-        ${p1Open ? '' : `<p class="wl-part-sub">Opens after Roots ${reqText().replace('Topsoil ', '')}</p>`}
         <ul class="wl-rows">${p1.map(row).join('')}</ul>
         ${cpLine('L:labels')}
       </section>
@@ -1005,11 +1006,12 @@
 
       <section class="wl-part">
         <h2><span class="mono">Part 3</span>Travel the regions</h2>
-        ${restOpen ? '' : '<p class="wl-part-sub">Opens after the big international grapes</p>'}
         ${TB.continents.map(ct => `<h3 class="wl-continent">${ct.name}</h3>${ct.countries.map(countryHTML).join('')}`).join('')}
       </section>
     </div>${tabbar('learn')}`;
-    if (scroll && doneCount('B')) requestAnimationFrame(() => app.querySelector('.wl-row.current')?.scrollIntoView({ block: 'center' }));
+    app.querySelectorAll('details[data-g] > summary').forEach(sm => sm.addEventListener('click', () => setTimeout(() => {
+      const d = sm.parentElement; S.groups = { ...(S.groups || {}), [d.dataset.g]: d.open }; save(); })));
+    if (scroll && doneCount('B') && SCROLL[location.hash || '#home'] == null) requestAnimationFrame(() => app.querySelector('.wl-row.current')?.scrollIntoView({ block: 'center' }));
   }
 
   function preview(id) {
@@ -1571,6 +1573,7 @@
     overlay.innerHTML = '';
     const h = location.hash.slice(1) || 'today';
     if (h === 'cellar') cellar(); else if (h === 'roots') roots(false); else if (h === 'list') wineList(false); else if (h === 'journey') journey(); else if (h === 'profile') profile(); else if (h === 'glass') glassPage(); else if (h === 'today' || h === 'home') home();
+    restoreScroll();
   };
   function ageBottle(id, ok, score = ok ? 1 : 0) {
     const e = S.cellar[id];
@@ -2176,6 +2179,10 @@
     closeModal(); welcome();
   }
 
+  /* Each page remembers how far down it was scrolled, so opening something and coming back doesn't jump to the top */
+  const SCROLL = {};
+  document.addEventListener('scroll', e => { const t = e.target; if (t && t.classList && t.classList.contains('tabview')) SCROLL[location.hash || '#home'] = t.scrollTop; }, true);
+  function restoreScroll() { const tv = app.querySelector('.tabview'), k = location.hash || '#home'; if (tv && SCROLL[k] != null) { tv.scrollTop = SCROLL[k]; return true; } return false; }
   function route() {
     overlay.innerHTML = '';
     if (cloudOn && !myCode()) return welcome();
@@ -2192,6 +2199,7 @@
     else if (h === 'analytics') { lastTab = 'journey'; analytics(); }
     else if (h === 'practice') { lastTab = 'practice'; practicePage(); }
     else { lastTab = 'home'; home(); }
+    restoreScroll();
   }
   window.addEventListener('hashchange', route);
   route();
