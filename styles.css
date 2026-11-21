@@ -1183,3 +1183,20 @@ button.aroma:active { transform: scale(.96); }
 .glass-page.noted { display: block; overflow-y: scroll; touch-action: pan-y; }
 .glass-page.noted .glass-sheet { margin: 0 auto; }
 .glass-page.noted .gs-card, .glass-page.noted .taste-row, .glass-page.noted .aroma-picks { touch-action: pan-y; }
+
+/* ---------- Champagne: its own section, in gold ---------- */
+.learn-switch a.ls-ch.on { background: #c9a24a; color: #2a1a1f; }
+.champagne-page { background: radial-gradient(120% 50% at 50% 0%, #fbf1d2 0%, var(--paper) 60%) , var(--paper); }
+.ch-hero { display: flex; align-items: center; gap: 12px; margin: 14px 0 6px; }
+.ch-glass { flex: none; width: 86px; position: relative; }
+.ch-glass .big-glass { width: 86px; }
+.ch-hero h1 { margin: 0 0 4px; font-size: 40px; font-weight: 500; font-style: italic; font-variation-settings: 'SOFT' 100, 'WONK' 1; color: #2a1a1f; }
+.ch-sub { margin: 0 0 8px; font-size: 15px; line-height: 1.4; color: var(--ink-soft); }
+.ch-prog { color: #8a6a1f; }
+.ch-mod { border-left: 3px solid #c9a24a; padding-left: 10px; }
+.ch-mod-n { display: block; font-size: 10px; color: #8a6a1f; margin-bottom: 2px; }
+.ch-link { display: flex; align-items: center; gap: 12px; width: 100%; margin: 6px 0 10px; padding: 12px 14px; border-radius: 16px; text-align: left; background: #fbf1d2; border: 1px solid #ead9a8; color: var(--ink); }
+.ch-link strong { display: block; font-size: 16px; font-weight: 600; }
+.ch-link small { display: block; font-size: 13px; color: var(--ink-soft); }
+.ch-link-ic svg { width: 18px; height: 40px; display: block; }
+.ch-hero > div:last-child { text-align: left; }

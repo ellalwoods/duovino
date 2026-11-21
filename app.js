@@ -106,9 +106,15 @@
   let rn = 0;
   TB.continents.forEach(ct => ct.countries.forEach(c => c.regions.forEach(rg => {
     let p = null;
-    rg.units.forEach((u, ui) => { p = add(u, { track: 'B', part: 3, tag: `B2.${++rn}`, wine: c.wine, group: c.name === rg.name ? c.name : `${c.name} · ${rg.name}`, continent: ct, country: c, region: rg, prev: p, req: ui === 0 ? CORE_REQ : null }); });
+    const chMods = rg.name === 'Champagne AOC' && D.champagne ? D.champagne.modules : null, chN = {};
+    rg.units.forEach((u, ui) => {
+      const mi = chMods ? Math.max(0, chMods.findIndex(m => m.id === u.module)) : -1;
+      const tag = chMods ? `C${mi + 1}.${chN[mi] = (chN[mi] || 0) + 1}` : `B2.${++rn}`;
+      p = add(u, { track: 'B', part: 3, tag, wine: c.wine, group: chMods ? `Champagne · ${chMods[mi].name}` : c.name === rg.name ? c.name : `${c.name} · ${rg.name}`, continent: ct, country: c, region: rg, prev: p, req: ui === 0 ? CORE_REQ : null, champagne: !!chMods, module: chMods ? chMods[mi].id : null });
+    });
   })));
   const UNIT = Object.fromEntries(UNITS.map(r => [r.u.id, r]));
+  const learnHome = r => r.track === 'A' ? '#roots' : r.champagne ? '#champagne' : '#list';
   // Draft units (rules not yet checked against official regulations) are only playable with ?drafts
   const DRAFTS = /[?&]drafts\b/.test(location.search); // drafts only show with ?drafts in the address
   const playable = r => !!(r.u.questions && r.u.questions.length) && (!r.u.draft || DRAFTS);
@@ -931,7 +937,7 @@
     }).join('');
     app.innerHTML = `<div class="tabview roots-tab">
       <header class="roots-head">
-        <nav class="learn-switch seg"><a href="#roots" class="${'roots' === 'roots' ? 'on' : ''}">Roots</a><a href="#list" class="${'roots' === 'list' ? 'on' : ''}">Grapes & places</a></nav>
+        ${learnSwitch('roots')}
         <h1>How wine works</h1>
         ${doneAll().length ? `<button class="pr-entry" data-act="go" data-h="#practice"><span class="pr-entry-ic">↻</span><span class="pr-entry-txt"><strong>Practice what you've learned</strong><small>Shuffled questions from both tracks, any time</small></span><span class="pr-entry-go">›</span></button>` : ''}
       </header>
@@ -945,9 +951,41 @@
     });
   }
 
+  /* ---------- CHAMPAGNE: its own section, in modules ---------- */
+  function champagnePage() {
+    setWine('#c9a24a');
+    const all = UNITS.filter(r => r.champagne), mods = D.champagne ? D.champagne.modules : [];
+    const row = r => {
+      const s = unitState(r), rec = S.units[r.u.id];
+      const pill = s === 'done' ? `<span class="pill done">✓ ${rec.best}%</span>` : s === 'current' ? '<span class="pill start">Start</span>' : s === 'locked' ? '<span class="pill">Locked</span>' : '<span class="pill soon">Coming soon</span>';
+      return `<li><button class="wl-row ${s}" data-act="preview" data-id="${r.u.id}"><span class="wl-name">${r.u.title}${r.u.sub ? `<small>${r.u.sub}</small>` : ''}</span>${pill}</button></li>`;
+    };
+    const stats = rs => `${rs.filter(done).length} of ${rs.filter(playable).length} done`;
+    const cpLine = key => { const cp = cpDef(key); if (!cp) return ''; const ok = cpPassed(cp.key), rec = S.checkpoints && S.checkpoints[cp.key], open = cpOpen(cp);
+      return `<button class="cp-line ${ok ? 'done' : open ? 'ready' : 'locked'}" data-act="checkpoint" data-k="${cp.key}">${cpBadge(cp, ok)}<span><strong>${cp.title}</strong><small>${ok ? `Passed · best ${rec.best}% · revise any time` : open ? 'Ready: test all of it, with a blind finale' : 'Opens when every lesson above is done'}</small></span></button>`; };
+    const d = all.filter(done).length, n = all.filter(playable).length;
+    app.innerHTML = `<div class="tabview winelist champagne-page">
+      <header class="wl-head ch-head">
+        ${learnSwitch('champagne')}
+        <div class="ch-hero"><div class="ch-glass">${bigGlass('#efdc7c', true, false, 'flute')}</div>
+          <div><p class="eyebrow">A section of its own</p><h1>Champagne</h1><p class="ch-sub">The world's great sparkling wine, from the chalk up: how it's made, every vintage since 1990, and the houses behind the names.</p>
+          <p class="mono ch-prog">${d} of ${n} lessons · ${Math.round(d / Math.max(1, n) * 100)}%</p></div></div>
+      </header>
+      ${mods.map((m, i) => { const rs = all.filter(r => r.module === m.id);
+        return `<details class="wl-group ch-mod" data-g="${esc('ch:' + m.id)}" ${groupOpen('ch:' + m.id, rs.some(r => unitState(r) === 'current' && !done(r)) && i === mods.findIndex(x => all.some(r => r.module === x.id && !done(r)))) ? 'open' : ''}>
+          <summary><span class="wl-gname"><span class="mono ch-mod-n">Module ${i + 1}</span>${m.name}<small>${m.blurb}</small></span><span class="mono wl-count">${stats(rs)}</span></summary>
+          <ul class="wl-rows">${rs.filter(r => r.u.id !== 'b-fr-ch-check').map(row).join('')}</ul>
+          ${m.id === 'essentials' ? (UNIT['b-fr-ch-check'] ? `<ul class="wl-rows">${row(UNIT['b-fr-ch-check'])}</ul>` : '') : cpLine('K:' + m.id)}
+        </details>`; }).join('')}
+    </div>${tabbar('learn')}`;
+    app.querySelectorAll('details[data-g] > summary').forEach(sm => sm.addEventListener('click', () => setTimeout(() => {
+      const dd = sm.parentElement; S.groups = { ...(S.groups || {}), [dd.dataset.g]: dd.open }; save(); })));
+  }
+
   /* ---------- WINE LIST tab: Track B in three clear parts ---------- */
   // a section you've opened or collapsed stays that way (saved with your cellar); otherwise it opens where you're up to
   const groupOpen = (k, dflt) => S.groups && k in S.groups ? S.groups[k] : dflt;
+  const learnSwitch = cur => `<nav class="learn-switch seg">${[['roots', 'Roots'], ['list', 'Grapes & places'], ['champagne', 'Champagne']].map(([h, t]) => `<a href="#${h}" class="${cur === h ? 'on' : ''} ${h === 'champagne' ? 'ls-ch' : ''}">${t}</a>`).join('')}</nav>`;
   function wineList(scroll = true) {
     setWine(TB.wine);
     const B = UNITS.filter(r => r.track === 'B');
@@ -972,17 +1010,18 @@
       </details>`;
     };
     const countryHTML = c => {
-      const rs = p3.filter(r => r.country === c);
+      const rs = p3.filter(r => r.country === c && !r.champagne);
       const multi = c.regions.length > 1 || c.regions[0].name !== c.name;
       return `<details class="wl-group" data-g="${esc('c:' + c.name)}" ${groupOpen('c:' + c.name, rs.some(r => unitState(r) === 'current')) ? 'open' : ''}>
         <summary><span class="wl-gname">${c.name}</span><span class="mono wl-count">${stats(rs)}</span></summary>
-        ${c.regions.map(rg => `${multi ? `<h4 class="wl-region">${rg.name}</h4>` : ''}<ul class="wl-rows">${rs.filter(r => r.region === rg).map(row).join('')}</ul>`).join('')}
+        ${c.regions.map(rg => rg.name === 'Champagne AOC' ? `${multi ? `<h4 class="wl-region">Champagne</h4>` : ''}<button class="ch-link" data-act="go" data-h="#champagne"><span class="ch-link-ic">${miniGlass('#e8d48a', 'flute')}</span><span><strong>Champagne has its own section</strong><small>The essentials, vintages and the houses</small></span><span class="pr-entry-go">›</span></button>`
+          : `${multi ? `<h4 class="wl-region">${rg.name}</h4>` : ''}<ul class="wl-rows">${rs.filter(r => r.region === rg).map(row).join('')}</ul>`).join('')}
         ${cpLine('B:' + c.name)}
       </details>`;
     };
     app.innerHTML = `<div class="tabview winelist">
       <header class="wl-head">
-        <nav class="learn-switch seg"><a href="#roots" class="${'list' === 'roots' ? 'on' : ''}">Roots</a><a href="#list" class="${'list' === 'list' ? 'on' : ''}">Grapes & places</a></nav>
+        ${learnSwitch('list')}
         <h1>Grapes & places</h1>
         ${doneB().length ? `<button class="pr-entry" data-act="go" data-h="#practice"><span class="pr-entry-ic">↻</span><span class="pr-entry-txt"><strong>Practice what you\'ve learned</strong><small>Shuffled tastings and rules, any time</small></span><span class="pr-entry-go">›</span></button>` : ''}
         <ol class="steps-row">
@@ -1072,7 +1111,7 @@
   }
   function summaryPage(id) {
     const r = UNIT[id];
-    if (!r || !done(r)) { location.hash = r && r.track === 'A' ? '#roots' : '#list'; return; }
+    if (!r || !done(r)) { location.hash = r ? learnHome(r) : '#list'; return; }
     lastTab = 'learn'; setWine(r.wine);
     const u = r.u, wines = [...new Set((u.questions || []).flatMap(q => q.wines || []))].filter(w => D.wines[w]).slice(0, 6);
     const mini = id => { const w = D.wines[id], rows = TASTE_DIMS.filter(([k]) => w.profile[k] != null && k !== 'alcohol').slice(0, 4);
@@ -1080,7 +1119,7 @@
         ${rows.map(([k, n, L]) => { const [a, b] = span(w.profile[k]); return `<div class="bar-row"><span class="mono">${n}</span>${meter(a, b)}</div>`; }).join('')}
         <p class="sm-notes">${w.notes.slice(0, 3).join(' · ')}</p></div>`; };
     app.innerHTML = `<div class="tabview summary" style="--fw:${r.wine}">
-      <header class="pf-head"><button class="icon-btn" data-act="go" data-h="#${r.track === 'A' ? 'roots' : 'list'}" aria-label="Back">${backIcon()}</button><span class="mono">Summary · ${label(r)}</span><span class="pf-gap"></span></header>
+      <header class="pf-head"><button class="icon-btn" data-act="go" data-h="${learnHome(r)}" aria-label="Back">${backIcon()}</button><span class="mono">Summary · ${label(r)}</span><span class="pf-gap"></span></header>
       <h1>${u.title}</h1>${u.sub ? `<p class="sm-sub">${u.sub}</p>` : ''}
       <div class="sm-grid">${(u.lesson || []).map(summaryTile).join('')}</div>
       ${wines.length ? `<h2 class="j-h">The wines</h2><div class="sm-wines">${wines.map(mini).join('')}</div>` : ''}
@@ -1089,7 +1128,7 @@
   }
   function startUnit(id) {
     const r = UNIT[id];
-    if (!r || !playable(r) || !(unlocked(r) || done(r))) { location.hash = r && r.track === 'B' ? '#list' : '#roots'; return; }
+    if (!r || !playable(r) || !(unlocked(r) || done(r))) { location.hash = r ? learnHome(r) : '#roots'; return; }
     const qs = r.u.questions.slice();
     const rc = recallPick(new Set(qs.flatMap(q => q.wines || [])));
     if (rc) qs.splice(qs.length - 1, 0, { type: 'recall', wine: rc });
@@ -1487,7 +1526,7 @@
     pop(); buzz([20, 60, 20]);
     let unlock = '', nextBtn = '';
     const cand = UNITS[P.r.n + 1], nx = cand && cand.track === P.r.track && cand.part === P.r.part ? cand : null;
-    const home = P.r.track === 'A' ? '#roots' : '#list', homeName = P.r.track === 'A' ? 'Back to Track A' : 'Back to Track B';
+    const home = learnHome(P.r), homeName = P.r.track === 'A' ? 'Back to Track A' : P.r.champagne ? 'Back to Champagne' : 'Back to Track B';
     if (first && nx) {
       const newStratum = nx.track === 'A' && nx.ci !== P.r.ci;
       unlock = `<div class="unlock"><span class="mono">${newStratum ? 'New stratum reached' : 'Up next'}</span>
@@ -1572,7 +1611,7 @@
   const closeModal = () => {
     overlay.innerHTML = '';
     const h = location.hash.slice(1) || 'today';
-    if (h === 'cellar') cellar(); else if (h === 'roots') roots(false); else if (h === 'list') wineList(false); else if (h === 'journey') journey(); else if (h === 'profile') profile(); else if (h === 'glass') glassPage(); else if (h === 'today' || h === 'home') home();
+    if (h === 'cellar') cellar(); else if (h === 'roots') roots(false); else if (h === 'list') wineList(false); else if (h === 'champagne') champagnePage(); else if (h === 'journey') journey(); else if (h === 'profile') profile(); else if (h === 'glass') glassPage(); else if (h === 'today' || h === 'home') home();
     restoreScroll();
   };
   function ageBottle(id, ok, score = ok ? 1 : 0) {
@@ -2031,6 +2070,11 @@
     });
     const byC = new Map();
     UNITS.filter(r => r.track === 'B' && r.part === 3 && r.country).forEach(r => { const k = r.country.name; if (!byC.has(k)) byC.set(k, { c: r.country, units: [] }); byC.get(k).units.push(r); });
+    byC.forEach(v => { v.units = v.units.filter(r => !r.champagne); });
+    (D.champagne ? D.champagne.modules : []).filter(m => m.id !== 'essentials').forEach(m => {
+      const rs = UNITS.filter(r => r.champagne && r.module === m.id);
+      if (rs.filter(playable).length >= 2) defs.push({ key: 'K:' + m.id, title: `The ${m.name.replace(/^The /, '').toLowerCase()} tasting`, short: m.name.replace(/^The /, '').replace(/^./, x => x.toUpperCase()), units: rs, colour: '#c9a24a' });
+    });
     byC.forEach(({ c, units }, name) => { if (units.filter(playable).length >= 2) defs.push({ key: 'B:' + name, title: `The ${name} tasting`, short: name, units, colour: c.wine }); });
     return defs;
   }
@@ -2062,7 +2106,7 @@
     S.checkpoints[P.id] = { best: Math.max(prev ? prev.best : 0, pct), passed: !!(passed || (prev && prev.passed)), at: prev && prev.at || (passed ? now : null) };
     P.results.filter(r => !r.ok).flatMap(r => r.wines).forEach(id => { if (S.cellar[id]) S.cellar[id].due = Math.min(S.cellar[id].due, now); });
     save(); pop(); buzz(passed ? [20, 60, 20, 60, 40] : [20, 60, 20]);
-    const back = P.id.startsWith('A:') ? '#roots' : '#list';
+    const back = P.id.startsWith('A:') ? '#roots' : P.id.startsWith('K:') || P.id === 'b-fr-ch-check' ? '#champagne' : '#list';
     app.innerHTML = `<div class="player result" style="--fw:${P.wine}"><div class="tint"></div><div class="res">
       <p class="eyebrow">Checkpoint</p><h2>${P.title}</h2>
       <div class="big-ring">${ring(pct, P.wine, 200)}<div class="big-num"><strong>${pct}%</strong><span class="mono">${P.correct} of ${n} correct</span></div></div>
@@ -2192,6 +2236,7 @@
     if (h.startsWith('sum-')) { P = null; return summaryPage(h.slice(4)); }
     P = null;
     if (h === 'roots' || h === 'list') { lastTab = h; S.learnView = h; save(); h === 'roots' ? roots() : wineList(); }
+    else if (h === 'champagne') { lastTab = 'list'; S.learnView = 'champagne'; save(); champagnePage(); }
     else if (h === 'cellar') { lastTab = 'cellar'; cellar(); }
     else if (h === 'glass') { lastTab = 'glass'; glassPage(); }
     else if (h === 'journey') { lastTab = 'journey'; journey(); }

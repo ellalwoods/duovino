@@ -1,4 +1,4 @@
-/* Track B · France · Champagne AOC: 10 lessons + a checkpoint, then 5 vintage lessons (what makes a vintage; every year 1990–2026).
+/* Track B · France · Champagne AOC: 10 lessons + a checkpoint, then 5 vintage lessons (what makes a vintage; every year 1990–2026) and 4 house lessons. Shown as its own section in Learn, in three modules.
  *
  * STATUS (checked 2026-11-08): lessons 1–9 and the checkpoint were checked against the cahier des
  * charges of AOC Champagne homologated by arrêté of 31 July 2025 (JORF 5 Aug 2025, BO agri 7 Aug 2025),
@@ -23,6 +23,12 @@
   const AVELLAN = 'Essi Avellan MW, Champagne Vintage Guide (The Finest Bubble), read 2026-11-14';
   const vintage = (unit, extra = []) => ({ ...unit, draft: false, sources: [AVELLAN, ...extra, CDC], checked: '2026-11-14', toCheck: [],
     note: 'Weather, yields, harvest dates and analysis figures for each year are as reported in the vintage guide. The newest years (2024–2026) are early assessments.' });
+  // House lessons: founding years, towns, groups and cuvées from the UMC house pages; stories from the Comité Champagne and Pol Roger.
+  const UMC = 'Union des Maisons de Champagne, house pages (maisons-champagne.com), read 2026-11-21';
+  const CFR = 'Comité Champagne, producer directory and history pages (champagne.fr), read 2026-11-21';
+  const POLROGER = 'Pol Roger, house history (polroger.com), read 2026-11-21';
+  const house = unit => ({ ...unit, draft: false, sources: [UMC, CFR, POLROGER], checked: '2026-11-21', toCheck: [],
+    note: 'Founding dates are as the UMC gives them (Taittinger: 1932, under that name; Dom Pérignon: 1668, the monk\'s arrival at Hautvillers).' });
 
   Object.assign(D.concepts, {
     chLabel: { name: 'Reading a Champagne label', short: 'Ch. label', kind: 'Label', wine: C.lemon, style: 'white', shape: 'champagne',
@@ -657,7 +663,165 @@
           explain: 'Rot, a heatwave year, a frost-and-mildew year, then the wettest year on record.' },
       ],
     }),
+
+    /* ---------- The houses ----------
+       Founding dates, towns, owner groups and cuvée names: Union des Maisons de Champagne house pages (maisons-champagne.com).
+       Stories: Comité Champagne producer directory and history pages (champagne.fr); Pol Roger's own history page. Read 2026-11-21. */
+    house({
+      id: 'b-fr-ch-h1', title: 'How the houses began', sub: 'Monks, merchants and inventions',
+      lesson: [
+        { kind: 'text', title: 'What a house does', big: 'Buy, blend, age',
+          body: 'A Champagne <b>house</b> makes its wine from grapes bought from growers, plus any vines of its own. It blends crus and reserve wines to keep its <b>house style</b> the same year after year. Houses make more than <b>two-thirds</b> of Champagne\'s sales and <b>90%</b> of its exports.' },
+        { kind: 'text', title: '1668 · Dom Pérignon', big: 'The monk who blended',
+          body: 'Dom Pierre Pérignon was a Benedictine monk at <b>Hautvillers</b> Abbey. He was one of the first to see that different wines and crus could complement each other, and he blended them carefully, making more balanced wines. Between 1670 and 1720, making Champagne sparkle became a deliberate choice.' },
+        { kind: 'layers', title: 'The first houses', rows: [
+          { h: '1584 · Gosset', t: 'Among the earliest Champagne wine merchants, before Champagne even sparkled.' },
+          { h: '1729 · Ruinart', t: 'The oldest house founded to make Champagne.' },
+          { h: '1743 · Moët & Chandon', t: 'Épernay.' },
+          { h: '1760 · Lanson, Delamotte', t: 'Reims and Le Mesnil-sur-Oger.' },
+          { h: '1772 · Veuve Clicquot', t: 'Reims.' },
+          { h: '1776 · Louis Roederer', t: 'Reims.' },
+        ] },
+        { kind: 'facts', title: 'Inventions from the houses', rows: [
+          { k: '1816', v: 'Madame Clicquot invents the <b>riddling table</b>, sliding the sediment into the neck.' },
+          { k: '1837', v: 'A Châlons pharmacist finds a reliable way to measure the sugar, so far fewer bottles burst.' },
+          { k: '1855', v: 'Pol Roger starts favouring <b>brut</b> Champagne, the drier style the English preferred.' },
+          { k: '1884', v: 'Armand Walfard, a house owner, invents <b>cold disgorging</b>: freezing the sediment into a plug.' },
+        ] },
+        { kind: 'text', title: '1882 · The houses unite', big: 'From trade body to the UMC',
+          body: 'In 1882 the houses founded a trade association, now the <b>Union des Maisons de Champagne</b>. It fought producers elsewhere using the name "Champagne" and helped fight phylloxera. Since 1941 houses and growers have run the region together through the <b>Comité Champagne</b>.' },
+      ],
+      questions: [
+        { type: 'choice', concept: 'chProducers', q: 'Which house, founded in 1729, is the oldest one founded to make Champagne?',
+          options: ['Ruinart', 'Bollinger', 'Krug', 'Pol Roger'], answer: 0, explain: 'Ruinart, in Reims. Gosset (1584) is older, but began as a wine merchant before Champagne sparkled.' },
+        { type: 'choice', concept: 'disgorge', q: 'Who invented the riddling table in 1816?',
+          options: ['Madame Clicquot', 'Dom Pérignon', 'Pol Roger', 'Madame Pommery'], answer: 0,
+          explain: 'Barbe-Nicole Ponsardin, the widow Clicquot, the first woman to run a Champagne house.' },
+        { type: 'choice', concept: 'chProducers', q: 'What did Dom Pérignon do at Hautvillers?',
+          options: ['Blended different wines and crus carefully for balance', 'Invented the cork', 'Founded the first house in Reims', 'Planted the first Chardonnay'], answer: 0,
+          explain: 'He saw that different crus could complement each other.' },
+        { type: 'order', concept: 'chProducers', q: 'Put these houses in order of founding, oldest first.', items: ['Ruinart', 'Moët & Chandon', 'Veuve Clicquot', 'Pol Roger'],
+          explain: '1729, 1743, 1772, 1849.' },
+        { type: 'choice', concept: 'chProducers', q: 'Roughly what share of Champagne exports do the houses make?',
+          options: ['90%', 'A quarter', 'Half', '10%'], answer: 0, explain: 'And more than two-thirds of all sales.' },
+      ],
+    }),
+
+    house({
+      id: 'b-fr-ch-h2', title: 'The Reims houses', sub: 'Chalk cellars, widows and Cristal',
+      lesson: [
+        { kind: 'text', title: 'Veuve Clicquot · 1772', big: 'The Grande Dame',
+          body: 'Barbe-Nicole Ponsardin, the widow (<i>veuve</i>) Clicquot, was the <b>first woman to run a Champagne house</b>. She made her first vintage in <b>1810</b> and invented the riddling table in <b>1816</b>. Her prestige cuvée is <b>La Grande Dame</b>; the everyday Brut wears the famous yellow label.' },
+        { kind: 'text', title: 'Ruinart · 1729', big: 'The oldest Champagne house',
+          body: 'Its cellars are ancient <b>Gallo-Roman chalk pits</b>: eight kilometres of galleries over 30 metres down, listed as a historic monument since 1931.' },
+        { kind: 'text', title: 'Louis Roederer · 1776', big: 'Home of Cristal',
+          body: 'With some 244 hectares of its own vines. Its prestige cuvée is <b>Cristal</b> (and Cristal Rosé); its non-vintage is called <b>Collection</b>.' },
+        { kind: 'text', title: 'Krug · 1843', big: 'Grande Cuvée and two walled vineyards',
+          body: 'Krug\'s flagship is the <b>Grande Cuvée</b>. It also makes two single-vineyard Champagnes: <b>Clos du Mesnil</b> (Chardonnay country) and <b>Clos d\'Ambonnay</b> (Pinot Noir country).' },
+        { kind: 'text', title: 'Pommery · 1836', big: 'A château over the chalk',
+          body: 'Madame Pommery built the house\'s Elizabethan-style château in <b>1868</b>. A 116-step staircase leads down to 18 km of chalk cellars, now used for art exhibitions. The prestige cuvée is <b>Louise</b>.' },
+        { kind: 'facts', title: 'More Reims names', rows: [
+          { k: 'Taittinger', v: 'Under that name since 1932. Prestige: <b>Comtes de Champagne</b> Blanc de Blancs.' },
+          { k: 'Charles Heidsieck', v: '1851. Its chalk pits are UNESCO-listed (since 2015). Prestige: <b>Blanc des Millénaires</b>.' },
+          { k: 'Mumm', v: '1827. Famous for <b>Cordon Rouge</b>, with 25 km of cellars.' },
+          { k: 'Lanson', v: '1760. Has the walled <b>Clos Lanson</b>; its library holds a 1904 vintage.' },
+          { k: 'Piper-Heidsieck · Henriot', v: '1785 · 1808.' },
+          { k: 'Bruno Paillard', v: 'Founded in 1981.' },
+        ] },
+      ],
+      questions: [
+        { type: 'choice', concept: 'chProducers', q: 'Which Reims house\'s prestige cuvée is Cristal?',
+          options: ['Louis Roederer', 'Krug', 'Ruinart', 'Lanson'], answer: 0, explain: 'Louis Roederer, founded 1776.' },
+        { type: 'choice', concept: 'chProducers', q: 'Clos du Mesnil and Clos d\'Ambonnay are single-vineyard wines from which house?',
+          options: ['Krug', 'Mumm', 'Pommery', 'Veuve Clicquot'], answer: 0, explain: 'Alongside its flagship Grande Cuvée.' },
+        { type: 'choice', concept: 'chProducers', q: 'Which house was run by the first woman to lead a Champagne house?',
+          options: ['Veuve Clicquot', 'Taittinger', 'Charles Heidsieck', 'Mumm'], answer: 0, explain: 'Barbe-Nicole Ponsardin: first vintage 1810, riddling table 1816.' },
+        { type: 'sort', concept: 'chProducers', q: 'Match the prestige cuvée to its house.', buckets: ['Taittinger', 'Pommery', 'Veuve Clicquot'],
+          items: [{ t: 'Comtes de Champagne', b: 0 }, { t: 'Louise', b: 1 }, { t: 'La Grande Dame', b: 2 }],
+          explain: 'Taittinger: Comtes de Champagne. Pommery: Louise. Veuve Clicquot: La Grande Dame.' },
+        { type: 'choice', concept: 'chProducers', q: 'Whose cellars are ancient Gallo-Roman chalk pits, listed in 1931?',
+          options: ['Ruinart', 'Bruno Paillard', 'Lanson', 'Piper-Heidsieck'], answer: 0, explain: 'Ruinart\'s crayères: eight kilometres of galleries.' },
+      ],
+    }),
+
+    house({
+      id: 'b-fr-ch-h3', title: 'Épernay, Aÿ & beyond', sub: 'Napoleon, Churchill and James Bond',
+      lesson: [
+        { kind: 'text', title: 'Moët & Chandon · 1743', big: 'Napoleon\'s Champagne',
+          body: 'In <b>Épernay</b>. Napoleon Bonaparte was a favourite guest, and the house owes its <b>Impérial</b> cuvée to him. <b>Dom Pérignon</b>, named after the monk of Hautvillers, is a separate prestige Champagne in the same group.' },
+        { kind: 'text', title: 'Pol Roger · 1849', big: 'Churchill\'s Champagne',
+          body: 'Pol Roger made his first sale at 18 and moved the firm from <b>Aÿ</b> to Épernay in 1851. In 1900 part of the cellars collapsed, losing one and a half million bottles. Winston Churchill was a loyal customer, and <b>Cuvée Sir Winston Churchill</b> was launched in 1975, at first in magnums only. Still in the founding family.' },
+        { kind: 'text', title: 'Bollinger · 1829', big: 'James Bond\'s Champagne',
+          body: 'In <b>Aÿ</b>. Two of its plots, Chaudes Terres and Clos Saint-Jacques, survived phylloxera and were never replanted on American rootstock. Worked by horse, they make a rare vintage <b>Vieilles Vignes</b> Champagne.' },
+        { kind: 'facts', title: 'Around the Vallée de la Marne', rows: [
+          { k: 'Gosset', v: 'Épernay. Dates to 1584: among the oldest wine names in Champagne.' },
+          { k: 'Perrier-Jouët', v: 'Épernay, 1811. On the Avenue de Champagne. Prestige: <b>Belle Epoque</b>.' },
+          { k: 'Deutz', v: 'Aÿ, 1838. Prestige: <b>Amour de Deutz</b> and William Deutz.' },
+          { k: 'Billecart-Salmon', v: 'Mareuil-sur-Aÿ, 1818. A family house; its <b>rosé</b> is a favourite.' },
+          { k: 'Philipponnat', v: 'Mareuil-sur-Aÿ, 1910. Single-vineyard <b>Clos des Goisses</b>.' },
+          { k: 'Jacquesson', v: 'Dizy, 1798.' },
+          { k: 'Laurent-Perrier', v: 'Tours-sur-Marne, 1812. <b>Grand Siècle</b> and Cuvée Rosé.' },
+        ] },
+        { kind: 'text', title: 'Le Mesnil-sur-Oger', big: 'Salon and Delamotte',
+          body: 'Two houses in this Côte des Blancs grand cru, home of great Chardonnay: <b>Delamotte</b> (1760) and <b>Salon</b> (1921), both now part of the Laurent-Perrier group.' },
+      ],
+      questions: [
+        { type: 'choice', concept: 'chProducers', q: 'Which house\'s prestige cuvée honours Winston Churchill?',
+          options: ['Pol Roger', 'Bollinger', 'Moët & Chandon', 'Deutz'], answer: 0, explain: 'Cuvée Sir Winston Churchill, launched in 1975.' },
+        { type: 'choice', concept: 'chProducers', q: 'Which house in Aÿ has two plots of vines that survived phylloxera?',
+          options: ['Bollinger', 'Deutz', 'Gosset', 'Philipponnat'], answer: 0, explain: 'Chaudes Terres and Clos Saint-Jacques make its Vieilles Vignes Champagne.' },
+        { type: 'choice', concept: 'chProducers', q: 'Napoleon was a fan of which Épernay house?',
+          options: ['Moët & Chandon', 'Perrier-Jouët', 'Pol Roger', 'Laurent-Perrier'], answer: 0, explain: 'Its Impérial is named in his honour.' },
+        { type: 'sort', concept: 'chProducers', q: 'Which town is each house in?', buckets: ['Épernay', 'Aÿ', 'Le Mesnil-sur-Oger'],
+          items: [{ t: 'Perrier-Jouët', b: 0 }, { t: 'Bollinger', b: 1 }, { t: 'Salon', b: 2 }, { t: 'Deutz', b: 1 }],
+          explain: 'Perrier-Jouët: Épernay. Bollinger and Deutz: Aÿ. Salon: Le Mesnil-sur-Oger.' },
+        { type: 'choice', concept: 'chProducers', q: 'Clos des Goisses is a single-vineyard Champagne from…',
+          options: ['Philipponnat', 'Billecart-Salmon', 'Jacquesson', 'Gosset'], answer: 0, explain: 'Philipponnat, in Mareuil-sur-Aÿ.' },
+      ],
+    }),
+
+    house({
+      id: 'b-fr-ch-h4', title: 'Prestige cuvées & who owns whom', sub: 'The top bottles and the big groups',
+      lesson: [
+        { kind: 'text', title: 'The prestige cuvée', big: 'A house\'s finest wine',
+          body: 'Most houses make a <b>prestige cuvée</b>: their top blend, usually with the longest ageing on its lees. It\'s the bottle a house is proudest of, and often the one it\'s famous for.' },
+        { kind: 'facts', title: 'House → prestige cuvée', rows: [
+          { k: 'Louis Roederer', v: 'Cristal' }, { k: 'Veuve Clicquot', v: 'La Grande Dame' }, { k: 'Taittinger', v: 'Comtes de Champagne' },
+          { k: 'Pommery', v: 'Louise' }, { k: 'Laurent-Perrier', v: 'Grand Siècle' }, { k: 'Perrier-Jouët', v: 'Belle Epoque' },
+          { k: 'Pol Roger', v: 'Cuvée Sir Winston Churchill' }, { k: 'Charles Heidsieck', v: 'Blanc des Millénaires' }, { k: 'Deutz', v: 'Amour de Deutz' },
+        ] },
+        { kind: 'layers', title: 'Who owns whom', rows: [
+          { h: 'Moët Hennessy (MHCS)', t: 'Moët & Chandon, Dom Pérignon, Veuve Clicquot, Ruinart, Krug.' },
+          { h: 'Pernod Ricard', t: 'Mumm, Perrier-Jouët.' },
+          { h: 'Laurent-Perrier', t: 'Laurent-Perrier, Salon, Delamotte.' },
+          { h: 'Louis Roederer', t: 'Louis Roederer, Deutz.' },
+          { h: 'Lanson-BCC', t: 'Lanson, Philipponnat.' },
+          { h: 'Their own name', t: 'Bollinger, Taittinger, Pol Roger, Billecart-Salmon: not part of these big groups.' },
+        ] },
+      ],
+      questions: [
+        { type: 'sort', concept: 'chProducers', q: 'Which group owns each house?', buckets: ['Moët Hennessy', 'Pernod Ricard', 'Laurent-Perrier'],
+          items: [{ t: 'Krug', b: 0 }, { t: 'Mumm', b: 1 }, { t: 'Salon', b: 2 }, { t: 'Ruinart', b: 0 }],
+          explain: 'Krug and Ruinart: Moët Hennessy. Mumm: Pernod Ricard. Salon: Laurent-Perrier.' },
+        { type: 'choice', concept: 'chProducers', q: 'Grand Siècle is the prestige cuvée of…',
+          options: ['Laurent-Perrier', 'Lanson', 'Henriot', 'Mumm'], answer: 0, explain: 'Laurent-Perrier, in Tours-sur-Marne.' },
+        { type: 'choice', concept: 'chProducers', q: 'Belle Epoque comes from…',
+          options: ['Perrier-Jouët', 'Veuve Clicquot', 'Taittinger', 'Pommery'], answer: 0, explain: 'Perrier-Jouët, on the Avenue de Champagne in Épernay.' },
+        { type: 'choice', concept: 'chProducers', q: 'Which house owns Deutz?',
+          options: ['Louis Roederer', 'Bollinger', 'Moët & Chandon', 'Pol Roger'], answer: 0, explain: 'Deutz, in Aÿ, is part of Louis Roederer.' },
+        { type: 'odd', concept: 'chProducers', q: 'Three of these are in the same group. Which one isn\'t?',
+          options: ['Bollinger', 'Krug', 'Ruinart', 'Veuve Clicquot'], answer: 0, explain: 'Krug, Ruinart and Veuve Clicquot are Moët Hennessy; Bollinger is not.' },
+      ],
+    }),
   ];
 
+  // Champagne has its own section in Learn, in three modules
+  const MODULES = [
+    { id: 'essentials', name: 'The essentials', blurb: 'Labels, place, grapes, how it\'s made, styles and taste.', test: id => !/^b-fr-ch-[vh]/.test(id) },
+    { id: 'vintages', name: 'Vintages', blurb: 'What makes a year, and every vintage from 1990 to 2026.', test: id => /^b-fr-ch-v/.test(id) },
+    { id: 'houses', name: 'The houses', blurb: 'The great names: their stories, towns and prestige cuvées.', test: id => /^b-fr-ch-h/.test(id) },
+  ];
+  units.forEach(u => { u.module = MODULES.find(m => m.test(u.id)).id; });
+  D.champagne = { modules: MODULES.map(({ id, name, blurb }) => ({ id, name, blurb })) };
   D.champagneUnits = units;
 })();
