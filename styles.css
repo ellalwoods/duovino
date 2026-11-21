@@ -768,8 +768,9 @@ em { font-style: italic; }
 .pcard.locked .pcard-name { color: #a8977e; }
 
 /* Learn switch & leaner headers */
-.learn-switch { max-width: 300px; margin: 0 auto 14px; }
-.learn-switch a { flex: 1; padding: 10px; border-radius: 99px; font-size: 15px; text-align: center; text-decoration: none; color: inherit; }
+.learn-switch { max-width: 380px; margin: 0 auto 14px; gap: 2px; }
+.learn-switch a { flex: 1 1 auto; display: flex; align-items: center; justify-content: center; padding: 9px 12px; border-radius: 99px; font-size: 15px; line-height: 1.2; white-space: nowrap; text-align: center; text-decoration: none; color: inherit; }
+@media (max-width: 360px) { .learn-switch a { padding: 8px 8px; font-size: 13.5px; } }
 .learn-switch a.on { background: var(--btn); color: #fff; }
 .roots-head h1, .wl-head h1 { text-align: center; }
 .roots-head { padding-top: calc(18px + var(--safe-top)); }
